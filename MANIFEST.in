@@ -1,0 +1,4 @@
+include *.txt
+recursive-include examples *
+recursive-include test *.py
+recursive-include test-data *.xml

@@ -1,0 +1,11 @@
+Authors:
+
+   Matthias Friedrich <matt@mafr.de>
+    - Designed, implemented and documented this package.
+
+
+Contributors:
+
+
+--
+$Id$

@@ -1,0 +1,37 @@
+Installation Instructions
+-------------------------
+
+First of all, install the following dependencies:
+  
+  1. python (tested with 2.4)
+     Standard python 2.3 or later should work.
+     
+     -> http://www.python.org/
+
+  2. libmusicbrainz (tested with 2.1.1)
+     Any version above 2.0 should do, so the packages shipped with most
+     linux distributions should work. Required for DiscID calculation.
+
+     -> http://musicbrainz.org/products/client/download.html
+
+  3. ctypes (tested with 0.9.6)
+     Version 0.9.0 or later should work, which is included in recent
+     linux distributions. This is required forDiscID calculation.
+
+     -> http://starship.python.net/crew/theller/ctypes/
+
+
+Installation works using python's standard distutils (on most systems,
+root permissions are required):
+
+    python setup.py install
+
+
+Optionally, API documentation can be generated using epydoc. This command
+runs epydoc (http://epydoc.sf.net) which creates a 'html' directory containing
+the documentation:
+
+    python setup.py docs
+
+--
+$Id$
