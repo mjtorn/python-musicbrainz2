@@ -47,7 +47,7 @@ class GenerateDocsCommand(Command):
 
 
 setup(
-	name		= 'python-webservice',
+	name		= 'python-musicbrainz2',
 	version		= musicbrainz2.__version__,
 	description	= 'An interface to the MusicBrainz XML web service',
 	author		= 'Matthias Friedrich',
