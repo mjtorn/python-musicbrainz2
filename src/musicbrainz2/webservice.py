@@ -332,25 +332,40 @@ class ArtistFilter(IFilter):
 class ReleaseFilter(IFilter):
 	"""A filter for the release collection."""
 
-	def __init__(self, title=None, discId=None,
+	def __init__(self, title=None, discId=None, releaseTypes=None,
 			artistName=None, artistId=None, limit=None):
 		"""Constructor.
 
 		If C{discId} or C{artistId} are set, only releases matching
-		those IDs are returned.
+		those IDs are returned. The C{releaseTypes} parameter allows
+		to limit the types of the releases returned. You can set it to
+		('Album', 'Official'), for example, to only get officially 
+		released albums. Note that those values are connected using
+		the I{AND} operator. MusicBrainz' support is currently very
+		limited, so 'Live' and 'Compilation' exclude each other (see
+		U{the documentation on release attributes
+		<http://wiki.musicbrainz.org/AlbumAttribute>} for more
+		information and all valid values).
 
 		If both the C{artistName} and the C{artistId} parameter are
 		given, the server will ignore C{artistName}.
 
 		@param title: a string containing the release's title
 		@param discId: a string containing the DiscID
+		@param releaseTypes: a sequence of strings with release types
 		@param artistName: a string containing the artist's name
 		@param artistId: a string containing the artist's ID
 		@param limit: the maximum number of releases to return
 		"""
+		if releaseTypes is None or len(releaseTypes) == 0:
+			releaseTypesStr = None
+		else:
+			releaseTypesStr = ' '.join(releaseTypes)
+
 		self.params = [
 			('title', title),
 			('discid', discId),
+			('release-type', releaseTypesStr),
 			('artist', artistName),
 			('artistid', artistId),
 			('limit', limit),
@@ -422,14 +437,18 @@ class IIncludes:
 
 
 class ArtistIncludes(IIncludes):
-	"""A specification on how much data to return with an artist."""
-	def __init__(self, aliases=False, releases=False, vaReleases=False,
+	"""A specification on how much data to return with an artist.
+
+	@note: The MusicBrainz web service currently doesn't return releases
+	for an artist because of the huge amount of data that would be sent
+	for some artists. You have to use the release collection to query for
+	an artist's releases (ie. using L{Query.getReleases}).
+	"""
+	def __init__(self, aliases=False,
 			artistRelations=False, releaseRelations=False,
 			trackRelations=False, urlRelations=False):
 		self.includes = {
 			'aliases':		aliases,
-			'releases':		releases,
-			'va-releases':		vaReleases,
 			'artist-rels':		artistRelations,
 			'release-rels':		releaseRelations,
 			'track-rels':		trackRelations,

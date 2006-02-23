@@ -246,6 +246,8 @@ class MbXmlParser:
 			elif matches(node, 'disc-list'):
 				self._addDiscs(node, release)
 			elif matches(node, 'track-list'):
+				offset = getPositiveIntAttr(node, 'offset')
+				release.setTracksOffset(offset)
 				self._addTracksToList(node, release.getTracks())
 			elif matches(node, 'relation-list'):
 				self._addRelationsToEntity(node, release)

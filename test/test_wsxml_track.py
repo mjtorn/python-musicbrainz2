@@ -81,7 +81,7 @@ class ParseTrackTest(unittest.TestCase):
 		releases = track.getReleases()
 		self.assertEquals(len(releases), 1)
 		self.assertEquals(releases[0].getTitle(), 'Little Earthquakes')
-
+		self.assertEquals(releases[0].getTracksOffset(), 2)
 
 
 # EOF

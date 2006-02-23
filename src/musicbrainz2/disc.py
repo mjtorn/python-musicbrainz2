@@ -55,7 +55,8 @@ def _openLibrary():
 	elif sys.platform == 'win32':
 		libName = 'libmusicbrainz.dll'
 	else:
-		raise NotImplementedError('Unknown platform: ' + sys.platform)
+		# This should at least work for Un*x-style operating systems
+		libName = 'libmusicbrainz.so.4'
 
 	try:
 		libMb = ctypes.cdll.LoadLibrary(libName)
@@ -166,7 +167,7 @@ def readDisc(deviceName=None):
 	return disc
 
 
-def getSubmissionUrl(disc):
+def getSubmissionUrl(disc, host='musicbrainz.org', port=80):
 	"""Returns a URL for adding a disc to the MusicBrainz database.
 
 	A fully initialized L{musicbrainz2.model.Disc} object is needed, as
@@ -174,10 +175,13 @@ def getSubmissionUrl(disc):
 	doesn't provide the necessary information.
 
 	Note that the created URL is intended for interactive use and points
-	to the MusicBrainz disc submission wizard. This method just returns a
-	URL, no network connection is needed. The disc drive isn't used.
+	to the MusicBrainz disc submission wizard by default. This method
+	just returns a URL, no network connection is needed. The disc drive
+	isn't used.
 
 	@param disc: a fully initialized L{musicbrainz2.model.Disc} object
+	@param host: a string containing a host name
+	@param port: an integer containing a port number
 
 	@return: a string containing the submission URL
 
@@ -196,7 +200,12 @@ def getSubmissionUrl(disc):
 
 	query = urllib.urlencode({ 'id': discid, 'toc': toc, 'tracks': tracks })
 
-	url = ('http', 'musicbrainz.org', '/bare/cdlookup.html', '', query, '')
+	if port == 80:
+		netloc = host
+	else:
+		netloc = host + ':' + str(port)
+
+	url = ('http', netloc, '/bare/cdlookup.html', '', query, '')
 		
 	return urlparse.urlunparse(url)
 

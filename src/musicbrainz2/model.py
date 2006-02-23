@@ -358,6 +358,10 @@ class Artist(Entity):
 		(aka VA-Releases).
 
 		@return: a list of L{Release} objects
+
+		@note: The MusicBrainz web service currently doesn't return
+		releases for an artist because of the huge amount of data
+		that would be sent for some artists.
 		"""
 		return self.releases
 
@@ -398,6 +402,7 @@ class Release(Entity):
 		self.discs = [ ]
 		#self.discIdsCount = None
 		self.tracks = [ ]
+		self.tracksOffset = None
 
 
 	def getTypes(self):
@@ -534,6 +539,8 @@ class Release(Entity):
 		"""Returns the tracks this release contains.
 
 		@return: a list containing L{Track} objects
+
+		@see: L{getTracksOffset}
 		"""
 		return self.tracks
 
@@ -545,6 +552,29 @@ class Release(Entity):
 		@param track: a L{Track} object
 		"""
 		self.tracks.append(track)
+
+	def getTracksOffset(self):
+		"""Returns the offset of the track list.
+
+		This is used if the track list is incomplete (ie. the web
+		service only returned part of the tracks on this release).
+		Note that the offset value is zero-based, which means track
+		C{0} is the first track.
+
+		@return: an integer containing the offset, or None
+
+		@see: L{getTracks}
+		"""
+		return self.tracksOffset
+
+	def setTracksOffset(self, offset):
+		"""Sets the offset of the track list.
+
+		@param offset: an integer containing the offset, or None
+
+		@see: L{getTracksOffset}
+		"""
+		self.tracksOffset = offset
 
 	def getReleaseEvents(self):
 		"""Returns the list of release events.
@@ -653,6 +683,10 @@ class Track(Entity):
 
 	This class represents a track which may appear on one or more releases.
 	A track may be associated with exactly one artist (the I{main} artist).
+
+	Using L{getReleases}, you can find out on which releases this track
+	appears. To get the track number, too, use the
+	L{Release.getTracksOffset} method.
 
 	@note: Currently, the MusicBrainz server doesn't support tracks to
 	       be on more than one release.

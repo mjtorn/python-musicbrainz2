@@ -41,7 +41,8 @@ class GenerateDocsCommand(Command):
 	def run(self):
 		from distutils.spawn import find_executable, spawn
 		bin = find_executable('epydoc')
-		cmd = (bin, os.path.join('src', 'musicbrainz2'))
+		noPrivate = '--no-private'
+		cmd = (bin, noPrivate, os.path.join('src', 'musicbrainz2'))
 
 		spawn(cmd)
 
