@@ -358,10 +358,6 @@ class Artist(Entity):
 		(aka VA-Releases).
 
 		@return: a list of L{Release} objects
-
-		@note: The MusicBrainz web service currently doesn't return
-		releases for an artist because of the huge amount of data
-		that would be sent for some artists.
 		"""
 		return self.releases
 

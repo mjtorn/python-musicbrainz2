@@ -437,18 +437,14 @@ class IIncludes:
 
 
 class ArtistIncludes(IIncludes):
-	"""A specification on how much data to return with an artist.
-
-	@note: The MusicBrainz web service currently doesn't return releases
-	for an artist because of the huge amount of data that would be sent
-	for some artists. You have to use the release collection to query for
-	an artist's releases (ie. using L{Query.getReleases}).
-	"""
-	def __init__(self, aliases=False,
+	"""A specification on how much data to return with an artist."""
+	def __init__(self, aliases=False, releases=False, vaReleases=False,
 			artistRelations=False, releaseRelations=False,
 			trackRelations=False, urlRelations=False):
 		self.includes = {
 			'aliases':		aliases,
+			'releases':		releases,
+			'va-releases':		vaReleases,
 			'artist-rels':		artistRelations,
 			'release-rels':		releaseRelations,
 			'track-rels':		trackRelations,
