@@ -39,10 +39,10 @@ NS_EXT_1 = 'http://musicbrainz.org/ns/ext-1.0#'
 
 # Relation target types
 #
-RELATION_TO_ARTIST = 'http://musicbrainz.org/ns/rel-1.0#Artist'
-RELATION_TO_RELEASE = 'http://musicbrainz.org/ns/rel-1.0#Release'
-RELATION_TO_TRACK = 'http://musicbrainz.org/ns/rel-1.0#Track'
-RELATION_TO_URL = 'http://musicbrainz.org/ns/rel-1.0#Url'
+RELATION_TO_ARTIST = NS_REL_1 + 'Artist'
+RELATION_TO_RELEASE = NS_REL_1 + 'Release'
+RELATION_TO_TRACK = NS_REL_1 + 'Track'
+RELATION_TO_URL = NS_REL_1 + 'Url'
 
 # Relation reading directions
 #
@@ -380,6 +380,25 @@ class Release(Entity):
 	@note: The current MusicBrainz server implementation supports only a
 	limited set of types.
 	"""
+	# TODO: we need a type for NATs
+	TYPE_NONE = NS_MMD_1 + 'None'
+
+	TYPE_ALBUM = NS_MMD_1 + 'Album'
+	TYPE_SINGLE = NS_MMD_1 + 'Single'
+	TYPE_EP = NS_MMD_1 + 'Ep'
+	TYPE_COMPILATION = NS_MMD_1 + 'Compilation'
+	TYPE_SOUNDTRACK = NS_MMD_1 + 'Soundtrack'
+	TYPE_SPOKENWORD = NS_MMD_1 + 'Spokenword'
+	TYPE_INTERVIEW = NS_MMD_1 + 'Interview'
+	TYPE_AUDIOBOOK = NS_MMD_1 + 'Audiobook'
+	TYPE_LIVE = NS_MMD_1 + 'Live'
+	TYPE_REMIX = NS_MMD_1 + 'Remix'
+	TYPE_OTHER = NS_MMD_1 + 'Other'
+
+	TYPE_OFFICIAL = NS_MMD_1 + 'Official'
+	TYPE_PROMOTION = NS_MMD_1 + 'Promotion'
+	TYPE_BOOTLEG = NS_MMD_1 + 'Bootleg'
+
 	def __init__(self, id_=None, title=None):
 		"""Constructor.
 

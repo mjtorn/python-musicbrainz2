@@ -1,7 +1,7 @@
 Python Bindings for the MusicBrainz XML Web Service
 ---------------------------------------------------
 
-NOTE: This is an alpha release. Interfaces may change in case serious
+NOTE: This is a beta release. Interfaces may change in case serious
       issues are found.
 
 This python package contains various modules for accessing the MusicBrainz

@@ -16,7 +16,8 @@ First of all, install the following dependencies:
 
   3. ctypes (tested with 0.9.6)
      Version 0.9.0 or later should work, which is included in recent
-     linux distributions. This is required forDiscID calculation.
+     linux distributions. This is required for DiscID calculation.
+     NOTE: Version 0.9.9.3 is incompatible and does *not* work!
 
      -> http://starship.python.net/crew/theller/ctypes/
 

@@ -437,19 +437,45 @@ class IIncludes:
 
 
 class ArtistIncludes(IIncludes):
-	"""A specification on how much data to return with an artist."""
-	def __init__(self, aliases=False, releases=False, vaReleases=False,
+	"""A specification on how much data to return with an artist.
+
+	Example:
+
+	>>> from musicbrainz2.model import Release
+	>>> from musicbrainz2.webservice import ArtistIncludes
+	>>> inc = ArtistIncludes(artistRelations=True, releaseRelations=True,
+	... 		releases=(Release.TYPE_ALBUM, Release.TYPE_OFFICIAL))
+	>>>
+
+	The MusicBrainz server only supports some combinations of release
+	types for the C{releases} and C{vaReleases} include tags. At the
+	moment, not more than two release types should be selected, while
+	one of them has to be C{Release.TYPE_OFFICIAL},
+	C{Release.TYPE_PROMOTION} or C{Release.TYPE_BOOTLEG}.
+
+	@note: Only one of C{releases} and C{vaReleases} may be given.
+	"""
+	def __init__(self, aliases=False, releases=(), vaReleases=(),
 			artistRelations=False, releaseRelations=False,
 			trackRelations=False, urlRelations=False):
+
+		assert not isinstance(releases, basestring)
+		assert not isinstance(vaReleases, basestring)
+		assert len(releases) == 0 or len(vaReleases) == 0
+
 		self.includes = {
 			'aliases':		aliases,
-			'releases':		releases,
-			'va-releases':		vaReleases,
 			'artist-rels':		artistRelations,
 			'release-rels':		releaseRelations,
 			'track-rels':		trackRelations,
 			'url-rels':		urlRelations,
 		}
+
+		for elem in releases:
+			self.includes['sa-' + _extractFragment(elem)] = True
+
+		for elem in vaReleases:
+			self.includes['va-' + _extractFragment(elem)] = True
 
 	def createIncludeTags(self):
 		return _createIncludes(self.includes)
@@ -891,8 +917,16 @@ def _extractUuid(uriStr, resType=None):
 		raise ValueError('%s is no valid MB ID.' % uriStr)
 
 
-def _createIncludes(seq):
-	selected = filter(lambda x: x[1] == True, seq.items())
+def _extractFragment(uriStr):
+	(scheme, netloc, path, params, query, frag) = urlparse.urlparse(uriStr)
+	if scheme == '':
+		return uriStr # this is no uri
+	else:
+		return frag
+
+
+def _createIncludes(tagMap):
+	selected = filter(lambda x: x[1] == True, tagMap.items())
 	return map(lambda x: x[0], selected)
 
 # EOF
