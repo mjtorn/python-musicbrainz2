@@ -32,3 +32,6 @@ class ArtistIncludesTest(unittest.TestCase):
 		tags5 = inc5.createIncludeTags()
 		tags5.sort()
 		self.assertEqual(tags5, ['aliases', 'va-Bootleg'])
+
+
+# EOF

@@ -339,11 +339,12 @@ class ReleaseFilter(IFilter):
 		If C{discId} or C{artistId} are set, only releases matching
 		those IDs are returned. The C{releaseTypes} parameter allows
 		to limit the types of the releases returned. You can set it to
-		('Album', 'Official'), for example, to only get officially 
-		released albums. Note that those values are connected using
-		the I{AND} operator. MusicBrainz' support is currently very
-		limited, so 'Live' and 'Compilation' exclude each other (see
-		U{the documentation on release attributes
+		C{(Release.TYPE_ALBUM, Release.TYPE_OFFICIAL)}, for example,
+		to only get officially released albums. Note that those values
+		are connected using the I{AND} operator. MusicBrainz' support
+		is currently very limited, so C{Release.TYPE_LIVE} and
+		C{Release.TYPE_COMPILATION} exclude each other (see U{the
+		documentation on release attributes
 		<http://wiki.musicbrainz.org/AlbumAttribute>} for more
 		information and all valid values).
 
@@ -352,20 +353,23 @@ class ReleaseFilter(IFilter):
 
 		@param title: a string containing the release's title
 		@param discId: a string containing the DiscID
-		@param releaseTypes: a sequence of strings with release types
+		@param releaseTypes: a sequence of release type URIs
 		@param artistName: a string containing the artist's name
 		@param artistId: a string containing the artist's ID
 		@param limit: the maximum number of releases to return
+
+		@see: the constants in L{musicbrainz2.model.Release}
 		"""
 		if releaseTypes is None or len(releaseTypes) == 0:
 			releaseTypesStr = None
 		else:
-			releaseTypesStr = ' '.join(releaseTypes)
+			tmp = [ _extractFragment(x) for x in releaseTypes ]
+			releaseTypesStr = ' '.join(tmp)
 
 		self.params = [
 			('title', title),
 			('discid', discId),
-			('release-type', releaseTypesStr),
+			('releasetypes', releaseTypesStr),
 			('artist', artistName),
 			('artistid', artistId),
 			('limit', limit),
