@@ -1,7 +1,7 @@
 """Tests for parsing releases using MbXmlParser."""
 import unittest
 from musicbrainz2.wsxml import MbXmlParser, ParseError
-from musicbrainz2.model import VARIOUS_ARTISTS_ID, NS_MMD_1, RELATION_TO_URL
+from musicbrainz2.model import VARIOUS_ARTISTS_ID, NS_MMD_1, Relation
 import StringIO
 import os.path
 
@@ -74,7 +74,7 @@ class ParseReleaseTest(unittest.TestCase):
 		self.assertEquals(release.getId(),
 			makeId('d61a2bd9-81ac-4023-bd22-1c884d4a176c'))
 
-		(rel1, rel2) = release.getRelations(RELATION_TO_URL)
+		(rel1, rel2) = release.getRelations(Relation.TO_URL)
 
 		self.assertEquals(rel1.getTargetId(),
 			'http://en.wikipedia.org/wiki/Highway_61_Revisited')

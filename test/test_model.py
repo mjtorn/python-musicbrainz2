@@ -1,7 +1,6 @@
 """Tests for various model classes."""
 import unittest
-from musicbrainz2.model import Artist, Release, Track, Relation, \
-	RELATION_TO_RELEASE
+from musicbrainz2.model import Artist, Release, Track, Relation
 
 class RelationTest(unittest.TestCase):
 	"""Test the most basic cases: empty and invalid docments."""
@@ -10,11 +9,11 @@ class RelationTest(unittest.TestCase):
 		unittest.TestCase.__init__(self, name)
 
 	def testAddRelation(self):
-		rel = Relation('Producer', RELATION_TO_RELEASE, 'al_id')
+		rel = Relation('Producer', Relation.TO_RELEASE, 'al_id')
 		artist = Artist('ar_id', 'Tori Amos', 'Person')
 		artist.addRelation(rel)
 
-		rel2 = artist.getRelations(RELATION_TO_RELEASE)[0]
+		rel2 = artist.getRelations(Relation.TO_RELEASE)[0]
 		self.assertEquals(rel.getType(), rel2.getType())
 		self.assertEquals(rel.getTargetType(), rel2.getTargetType())
 		self.assertEquals(rel.getTargetId(), rel2.getTargetId())
@@ -23,11 +22,11 @@ class RelationTest(unittest.TestCase):
 		self.assertEquals(rel.getEndDate(), rel2.getEndDate())
 
 		self.assertEquals(artist.getRelationTargetTypes(),
-			[ RELATION_TO_RELEASE ])
+			[ Relation.TO_RELEASE ])
 
 		# works because we only have one relation
 		self.assertEquals(artist.getRelations(),
-			artist.getRelations(RELATION_TO_RELEASE))
+			artist.getRelations(Relation.TO_RELEASE))
 
 	def testTrackDuration(self):
 		t = Track()

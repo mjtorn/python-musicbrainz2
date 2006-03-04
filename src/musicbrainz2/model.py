@@ -14,15 +14,6 @@ L{Artist}, L{Release}, and L{Track}.
 @var NS_REL_1: Namespace prefix for relations.
 @var NS_EXT_1: Namespace prefix for MusicBrainz extensions.
 
-@var RELATION_TO_ARTIST: Identifies relations linking to an artist.
-@var RELATION_TO_RELEASE: Identifies relations linking to a release.
-@var RELATION_TO_TRACK: Identifies relations linking to a track.
-@var RELATION_TO_URL: Identifies relations linking to an URL.
-
-@var RELATION_DIR_BOTH: Relation reading direction doesn't matter.
-@var RELATION_DIR_FORWARD: Relation reading direction is from source to target.
-@var RELATION_DIR_BACKWARD: Relation reading direction is from target to source.
-
 @see: L{musicbrainz2.webservice}
 
 @author: Matthias Friedrich <matt@mafr.de>
@@ -36,19 +27,6 @@ VARIOUS_ARTISTS_ID = 'http://musicbrainz.org/artist/89ad4ac3-39f7-470e-963a-5650
 NS_MMD_1 = 'http://musicbrainz.org/ns/mmd-1.0#'
 NS_REL_1 = 'http://musicbrainz.org/ns/rel-1.0#'
 NS_EXT_1 = 'http://musicbrainz.org/ns/ext-1.0#'
-
-# Relation target types
-#
-RELATION_TO_ARTIST = NS_REL_1 + 'Artist'
-RELATION_TO_RELEASE = NS_REL_1 + 'Release'
-RELATION_TO_TRACK = NS_REL_1 + 'Track'
-RELATION_TO_URL = NS_REL_1 + 'Url'
-
-# Relation reading directions
-#
-RELATION_DIR_BOTH = 'both'
-RELATION_DIR_FORWARD = 'forward'
-RELATION_DIR_BACKWARD = 'backward'
 
 
 class Entity:
@@ -65,10 +43,10 @@ class Entity:
 	L{getRelations} and pass one of the following constants as the
 	parameter:
 
-	 - L{RELATION_TO_ARTIST}
-	 - L{RELATION_TO_RELEASE}
-	 - L{RELATION_TO_TRACK}
-	 - L{RELATION_TO_URL}
+	 - L{Relation.TO_ARTIST}
+	 - L{Relation.TO_RELEASE}
+	 - L{Relation.TO_TRACK}
+	 - L{Relation.TO_URL}
 
 	@see: L{Relation}
 	"""
@@ -104,12 +82,12 @@ class Entity:
 		If C{targetType} is given, only relations of that target
 		type are returned. For MusicBrainz, the following target
 		types are defined:
-		 - L{RELATION_TO_ARTIST}
-		 - L{RELATION_TO_RELEASE}
-		 - L{RELATION_TO_TRACK}
-		 - L{RELATION_TO_URL}
+		 - L{Relation.TO_ARTIST}
+		 - L{Relation.TO_RELEASE}
+		 - L{Relation.TO_TRACK}
+		 - L{Relation.TO_URL}
 
-		If C{targetType} is L{RELATION_TO_ARTIST}, for example,
+		If C{targetType} is L{Relation.TO_ARTIST}, for example,
 		this method returns all relations between this Entity and
 		artists.
 
@@ -161,7 +139,7 @@ class Entity:
 		Use this to find out to which types of targets this entity
 		has relations. If the entity only has relations to tracks and
 		artists, for example, then a list containg the strings
-		L{RELATION_TO_TRACK} and L{RELATION_TO_ARTIST} is returned.
+		L{Relation.TO_TRACK} and L{Relation.TO_ARTIST} is returned.
 
 		@return: a list of strings containing URIs
 
@@ -832,17 +810,39 @@ class Relation:
 	the source end of the relation.
 
 	@todo: Add some examples.
+
+	@cvar TO_ARTIST: Identifies relations linking to an artist.
+	@cvar TO_RELEASE: Identifies relations linking to a release.
+	@cvar TO_TRACK: Identifies relations linking to a track.
+	@cvar TO_URL: Identifies relations linking to an URL.
+
+	@cvar DIR_BOTH: Relation reading direction doesn't matter.
+	@cvar DIR_FORWARD: Relation reading direction is from source to target.
+	@cvar DIR_BACKWARD: Relation reading direction is from target to source.
 	"""
+	# Relation target types
+	#
+	TO_ARTIST = NS_REL_1 + 'Artist'
+	TO_RELEASE = NS_REL_1 + 'Release'
+	TO_TRACK = NS_REL_1 + 'Track'
+	TO_URL = NS_REL_1 + 'Url'
+
+	# Relation reading directions
+	#
+	DIR_BOTH = 'both'
+	DIR_FORWARD = 'forward'
+	DIR_BACKWARD = 'backward'
+
 	def __init__(self, relationType=None, targetType=None, targetId=None,
-			direction=RELATION_DIR_BOTH, attributes=None,
+			direction=DIR_BOTH, attributes=None,
 			beginDate=None, endDate=None, target=None):
 		"""Constructor.
 
 		@param relationType: a string containing an absolute URI
 		@param targetType: a string containing an absolute URI
 		@param targetId: a string containing an absolute URI
-		@param direction: one of C{RELATION_DIR_FORWARD},
-		C{RELATION_DIR_BACKWARD}, or C{RELATION_DIR_BOTH}
+		@param direction: one of C{Relation.DIR_FORWARD},
+		C{Relation.DIR_BACKWARD}, or C{Relation.DIR_BOTH}
 		@param attributes: a list of strings containing absolute URIs
 		@param beginDate: a string containing a date
 		@param endDate: a string containing a date
@@ -896,10 +896,10 @@ class Relation:
 		"""Returns the target's type.
 
 		For MusicBrainz data, the following target types are defined:
-		 - artists: L{RELATION_TO_ARTIST}
-		 - releases: L{RELATION_TO_RELEASE}
-		 - tracks: L{RELATION_TO_TRACK}
-		 - urls: L{RELATION_TO_URL}
+		 - artists: L{Relation.TO_ARTIST}
+		 - releases: L{Relation.TO_RELEASE}
+		 - tracks: L{Relation.TO_TRACK}
+		 - urls: L{Relation.TO_URL}
 
 		@return: a string containing an absolute URI
 		"""
@@ -976,24 +976,24 @@ class Relation:
 	def getDirection(self):
 		"""Returns the reading direction.
 
-		The direction may be one of L{RELATION_DIR_FORWARD},
-		L{RELATION_DIR_BACKWARD}, or L{RELATION_DIR_BOTH},
+		The direction may be one of L{Relation.DIR_FORWARD},
+		L{Relation.DIR_BACKWARD}, or L{Relation.DIR_BOTH},
 		depending on how the relation should be read. For example,
-		if direction is L{RELATION_DIR_FORWARD} for a cover relation,
+		if direction is L{Relation.DIR_FORWARD} for a cover relation,
 		it is read as "X is a cover of Y". Some relations are
 		bidirectional, like marriages. In these cases, the direction
-		is L{RELATION_DIR_BOTH}.
+		is L{Relation.DIR_BOTH}.
 
-		@return: L{RELATION_DIR_FORWARD}, L{RELATION_DIR_BACKWARD},
-		or L{RELATION_DIR_BOTH}
+		@return: L{Relation.DIR_FORWARD}, L{Relation.DIR_BACKWARD},
+		or L{Relation.DIR_BOTH}
 		"""
 		return self.direction
 
 	def setDirection(self, direction):
 		"""Sets the reading direction.
 
-		@param direction: L{RELATION_DIR_FORWARD},
-		L{RELATION_DIR_BACKWARD}, or L{RELATION_DIR_BOTH}
+		@param direction: L{Relation.DIR_FORWARD},
+		L{Relation.DIR_BACKWARD}, or L{Relation.DIR_BOTH}
 
 		@see: L{getDirection}
 		"""

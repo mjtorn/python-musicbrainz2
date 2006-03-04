@@ -513,10 +513,10 @@ def getBooleanAttr(element, attrName):
 def getDirectionAttr(element, attrName):
 	"""Gets the Relation reading direction from an attribute."""
 	regex = '^\s*(' + '|'.join((
-				model.RELATION_DIR_BOTH,
-				model.RELATION_DIR_FORWARD,
-				model.RELATION_DIR_BACKWARD)) + ')\s*$'
-	return getAttr(element, 'direction', regex, model.RELATION_DIR_BOTH)
+				model.Relation.DIR_BOTH,
+				model.Relation.DIR_FORWARD,
+				model.Relation.DIR_BACKWARD)) + ')\s*$'
+	return getAttr(element, 'direction', regex, model.Relation.DIR_BOTH)
 
 
 def makeAbsoluteUri(prefix, uriStr):

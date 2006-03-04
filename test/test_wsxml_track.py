@@ -1,7 +1,7 @@
 """Tests for parsing tracks using MbXmlParser."""
 import unittest
 from musicbrainz2.wsxml import MbXmlParser, ParseError
-from musicbrainz2.model import NS_MMD_1, NS_REL_1, RELATION_TO_TRACK
+from musicbrainz2.model import NS_MMD_1, NS_REL_1, Relation
 import StringIO
 import os.path
 
@@ -39,7 +39,7 @@ class ParseTrackTest(unittest.TestCase):
 		self.assertEquals(track.getTitle(), 'Silent All These Years')
 		self.assertEquals(track.getDuration(), 253466)
 
-		trackRels = track.getRelations(RELATION_TO_TRACK)
+		trackRels = track.getRelations(Relation.TO_TRACK)
 		self.assertEquals(len(trackRels), 1)
 		rel1 = trackRels[0]
 		self.assertEquals(rel1.getType(), NS_REL_1 + 'Cover')
