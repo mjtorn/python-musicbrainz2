@@ -171,18 +171,18 @@ class MbXmlParser:
 			elif matches(node, 'track'):
 				res.track = self._createTrack(node)	
 			elif matches(node, 'artist-list'):
-				self._addArtistToList(node, res.getArtistList())
+				self._addArtistsToList(node, res.getArtistList())
 			elif matches(node, 'release-list'):
 				self._addReleasesToList(node, res.getReleaseList())
 			elif matches(node, 'track-list'):
-				self._addTrackToList(node, res.getTrackList())
+				self._addTracksToList(node, res.getTrackList())
 			elif matches(node, 'user-list', NS_EXT_1):
 				self._addUsersToList(node, res.getUserList())
 
 		return res
 
 
-	def _addArtistToList(self, listNode, resultList):
+	def _addArtistsToList(self, listNode, resultList):
 		self._addToList(listNode, resultList, self._createArtist)
 
 	def _addReleasesToList(self, listNode, resultList):
