@@ -41,8 +41,8 @@ class ParseArtistTest(unittest.TestCase):
 			makeId('c0b2500e-0cef-4130-869d-732b23ed9df5'))
 		self.assertEquals(artist.getName(), 'Tori Amos')
 		self.assertEquals(artist.getSortName(), 'Amos, Tori')
-		self.assertTrue(artist.getDisambiguation() is None)
-		self.assertTrue(artist.getUniqueName(), artist.getName())
+		self.assert_(artist.getDisambiguation() is None)
+		self.assertEquals(artist.getUniqueName(), artist.getName())
 		self.assertEquals(artist.getBeginDate(), '1963-08-22')
 		self.assertEquals(len(artist.getReleases()), 3)
 

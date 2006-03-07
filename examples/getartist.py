@@ -3,10 +3,9 @@ import sys
 import logging
 from musicbrainz2.webservice import WebService, Query, WebServiceError
 
-logging.basicConfig(
-        level=logging.DEBUG,
-	format='%(levelname)-8s: %(message)s'
-)
+logging.basicConfig()
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
 
 
 if len(sys.argv) < 2:

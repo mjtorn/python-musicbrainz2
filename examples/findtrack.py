@@ -3,11 +3,10 @@ import sys
 import logging
 from musicbrainz2.webservice import Query, TrackFilter, WebServiceError
 
-logging.basicConfig(
-        level=logging.DEBUG,
-	format='%(levelname)-8s: %(message)s'
-)
-
+logging.basicConfig()
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+	
 
 if len(sys.argv) < 2:
 	print "Usage: findartist.py 'track name' ['artist name']"
