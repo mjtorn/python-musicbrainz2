@@ -839,7 +839,7 @@ class Query:
 		@raise ResponseError: server returned invalid data
 		"""
 		filter = UserFilter(name=name)
-		result = self._getFromWebService('user', '', ( ), filter)
+		result = self._getFromWebService('user', '', None, filter)
 
 		if len(result.getUserList()) > 0:
 			return result.getUserList()[0]
