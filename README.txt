@@ -26,5 +26,10 @@ development mailing list (mb-devel):
 
 	http://musicbrainz.org/list.html
 
+There is also a wiki page with an FAQ section which could be of help
+in case you run into problems:
+
+	http://wiki.musicbrainz.org/PythonMusicBrainz2
+
 --
 $Id$

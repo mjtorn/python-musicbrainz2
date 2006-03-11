@@ -598,7 +598,7 @@ class Query:
 
 	This returned just the basic artist data, however. To get more detail
 	about a resource, the C{include} parameters may be used which expect
-	an L{ArtistIncludes}, L{ReleaseIncludes}, or L{TrackIncludes}) object,
+	an L{ArtistIncludes}, L{ReleaseIncludes}, or L{TrackIncludes} object,
 	depending on the resource type.
 
 	To get data about a release which also includes the main artist
