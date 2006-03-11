@@ -1,7 +1,14 @@
 #! /usr/bin/env python
 import sys
+import logging
 import musicbrainz2.disc as mbdisc
 import musicbrainz2.webservice as mbws
+
+# Activate logging.
+#
+logging.basicConfig()
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
 
 
 # Setup a Query object.
