@@ -696,7 +696,7 @@ class Track(Entity):
 		self.title = title
 		self.artist = None
 		self.duration = None
-		self.trmIds = [ ]
+		self.puids = [ ]
 		self.releases = [ ]
 
 	def getTitle(self):
@@ -765,22 +765,22 @@ class Track(Entity):
 			seconds = int( round(duration / 1000.0) )
 			return (seconds / 60, seconds % 60)
 
-	def getTrmIds(self):
-		"""Returns the TRM IDs associated with this track.
+	def getPuids(self):
+		"""Returns the PUIDs associated with this track.
 
-		Please note that a TRM ID may be associated with more than one
+		Please note that a PUID may be associated with more than one
 		track.
 
-		@return: a list of strings, each containing one TRM ID
+		@return: a list of strings, each containing one PUID
 		"""
-		return self.trmIds
+		return self.puids
 
-	def addTrmId(self, trmId):
-		"""Add a TRM ID to this track.
+	def addPuid(self, puid):
+		"""Add a PUID to this track.
 
-		@param trmId: a string containing a TRM ID
+		@param puid: a string containing a PUID
 		"""
-		self.trmIds.append(trmId)
+		self.puids.append(puid)
 
 	def getReleases(self):
 		"""Returns the list of releases this track appears on.

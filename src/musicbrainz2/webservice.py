@@ -383,10 +383,10 @@ class TrackFilter(IFilter):
 
 	def __init__(self, title=None, artistName=None, artistId=None,
 			releaseTitle=None, releaseId=None,
-			duration=None, trmId=None, limit=None):
+			duration=None, puid=None, limit=None):
 		"""Constructor.
 
-		If C{artistId}, C{releaseId} or C{trmId} are set, only tracks
+		If C{artistId}, C{releaseId} or C{puid} are set, only tracks
 		matching those IDs are returned.
 
 		The server will ignore C{artistName} and C{releaseTitle} if
@@ -398,7 +398,7 @@ class TrackFilter(IFilter):
 		@param releaseTitle: a string containing the release's title
 		@param releaseId: a string containing the release's title
 		@param duration: the track's length in milliseconds
-		@param trmId: a string containing a TRM ID
+		@param puid: a string containing a PUID
 		@param limit: the maximum number of releases to return
 		"""
 		self.params = [
@@ -408,7 +408,7 @@ class TrackFilter(IFilter):
 			('release', releaseTitle),
 			('releaseid', releaseId),
 			('duration', duration),
-			('trmid', trmId),
+			('puid', puid),
 			('limit', limit),
 		]
 
@@ -508,13 +508,13 @@ class ReleaseIncludes(IIncludes):
 
 class TrackIncludes(IIncludes):
 	"""A specification on how much data to return with a track."""
-	def __init__(self, artist=False, releases=False, trmIds=False,
+	def __init__(self, artist=False, releases=False, puids=False,
 			artistRelations=False, releaseRelations=False,
 			trackRelations=False, urlRelations=False):
 		self.includes = {
 			'artist':		artist,
 			'releases':		releases,
-			'trmids':		trmIds,
+			'puids':		puids,
 			'artist-rels':		artistRelations,
 			'release-rels':		releaseRelations,
 			'track-rels':		trackRelations,
@@ -865,31 +865,31 @@ class Query:
 			raise ResponseError(str(e), e)
 
 
-	def submitTrms(self, tracks2trms):
-		"""Submit track to TRM Id mappings.
+	def submitPuids(self, tracks2puids):
+		"""Submit track to PUID mappings.
 
-		The C{tracks2trms} parameter has to be a dictionary, with the
+		The C{tracks2puids} parameter has to be a dictionary, with the
 		keys being MusicBrainz track IDs (either as absolute URIs or
 		in their 36 character ASCII representation) and the values
-		being TRM IDs (ASCII, 36 characters).
+		being PUIDs (ASCII, 36 characters).
 
 		Note that this method only works if a valid user name and
 		password have been set. See the example in L{Query} on how
 		to supply authentication data.
 
-		@param tracks2trms: a dictionary mapping track IDs to TRM IDs
+		@param tracks2puids: a dictionary mapping track IDs to PUIDs
 
 		@raise ConnectionError: couldn't connect to server
-		@raise RequestError: invalid track- or TRM IDs
+		@raise RequestError: invalid track- or PUIDs
 		@raise AuthenticationError: invalid user name and/or password
 		"""
 		assert self.clientId is not None, 'Please supply a client ID'
 		params = [ ]
 		params.append( ('client', self.clientId) )
 
-		for (trackId, trmId) in tracks2trms.iteritems():
+		for (trackId, puid) in tracks2puids.iteritems():
 			trackId = _extractUuid(trackId, 'track')
-			params.append( ('trm', trackId + ' ' + trmId) )
+			params.append( ('puid', trackId + ' ' + puid) )
 
 		encodedStr = urllib.urlencode(params, True)
 

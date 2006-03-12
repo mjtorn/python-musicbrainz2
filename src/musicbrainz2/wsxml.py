@@ -297,8 +297,8 @@ class MbXmlParser:
 				track.setDuration(getPositiveIntText(node))
 			elif matches(node, 'release-list'):
 				self._addReleasesToList(node, track.getReleases())
-			elif matches(node, 'trmid-list'):
-				self._addTrmIds(node, track)
+			elif matches(node, 'puid-list'):
+				self._addPuids(node, track)
 			elif matches(node, 'relation-list'):
 				self._addRelationsToEntity(node, track)
 
@@ -319,10 +319,10 @@ class MbXmlParser:
 		return user
 
 
-	def _addTrmIds(self, trmIdListNode, track):
-		for node in getChildElements(trmIdListNode):
-			if matches(node, 'trmid') and node.hasAttribute('id'):
-				track.addTrmId(node.getAttribute('id'))
+	def _addPuids(self, puidListNode, track):
+		for node in getChildElements(puidListNode):
+			if matches(node, 'puid') and node.hasAttribute('id'):
+				track.addPuid(node.getAttribute('id'))
 
 
 	def _addRelationsToEntity(self, relationListNode, entity):

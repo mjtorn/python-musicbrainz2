@@ -73,10 +73,10 @@ class ParseTrackTest(unittest.TestCase):
 		self.assertEquals(artist.getName(), 'Tori Amos')
 		self.assertEquals(artist.getSortName(), 'Amos, Tori')
 
-		trmIds = track.getTrmIds()
-		self.assertEquals(len(trmIds), 7)
-		self.assertEquals(trmIds[0], 'c2a2cee5-a8ca-4f89-a092-c3e1e65ab7e6')
-		self.assertEquals(trmIds[6], '42ab76ea-5d42-4259-85d7-e7f2c69e4485')
+		puids = track.getPuids()
+		self.assertEquals(len(puids), 7)
+		self.assertEquals(puids[0], 'c2a2cee5-a8ca-4f89-a092-c3e1e65ab7e6')
+		self.assertEquals(puids[6], '42ab76ea-5d42-4259-85d7-e7f2c69e4485')
 
 		releases = track.getReleases()
 		self.assertEquals(len(releases), 1)
