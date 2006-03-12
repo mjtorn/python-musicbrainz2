@@ -15,7 +15,6 @@ model <musicbrainz2.model>}.
 __revision__ = '$Id$'
 
 import re
-import httplib
 import urllib
 import urllib2
 import urlparse
@@ -240,11 +239,11 @@ class WebService(IWebService):
 			return self.opener.open(url)
 		except urllib2.HTTPError, e:
 			self.log.debug("GET failed: " + str(e))
-			if e.code == httplib.BAD_REQUEST:
+			if e.code == 400:   # in python 2.4: httplib.BAD_REQUEST
 				raise RequestError(str(e), e)
-			elif e.code == httplib.UNAUTHORIZED:
+			elif e.code == 401: # httplib.UNAUTHORIZED
 				raise AuthenticationError(str(e), e)
-			elif e.code == httplib.NOT_FOUND:
+			elif e.code == 404: # httplib.NOT_FOUND
 				raise ResourceNotFoundError(str(e), e)
 			else:
 				raise WebServiceError(str(e), e)
@@ -279,11 +278,11 @@ class WebService(IWebService):
 			self.opener.open(req, data)
 		except urllib2.HTTPError, e:
 			self.log.debug("POST failed: " + str(e))
-			if e.code == httplib.BAD_REQUEST:
+			if e.code == 400:   # in python 2.4: httplib.BAD_REQUEST
 				raise RequestError(str(e), e)
-			elif e.code == httplib.UNAUTHORIZED:
+			elif e.code == 401: # httplib.UNAUTHORIZED
 				raise AuthenticationError(str(e), e)
-			elif e.code == httplib.NOT_FOUND:
+			elif e.code == 404: # httplib.NOT_FOUND
 				raise ResourceNotFoundError(str(e), e)
 			else:
 				raise WebServiceError(str(e), e)
