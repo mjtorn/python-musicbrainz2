@@ -17,6 +17,6 @@ interesting.
 @author: Matthias Friedrich <matt@mafr.de>
 """
 __revision__ = '$Id$'
-__version__ = '0.1.0'
+__version__ = '0.2.0'
 
 # EOF

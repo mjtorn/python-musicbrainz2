@@ -6,6 +6,9 @@ Authors:
 
 Contributors:
 
+   Lukáš Lalinský <lalinsky@gmail.com>
+    - Fixed several bugs.
+    - Patch for changing TRMs to PUIDs.
 
 --
 $Id$

@@ -1,0 +1,8 @@
+Changes from 0.1.0:
+
+  * API change: Switched from TRM to PUID (Luks)
+    All interfaces with 'Trm' or 'trm' in the name are affected.
+  * python 2.3 compatibility fixes (#1160)
+
+--
+$Id$
