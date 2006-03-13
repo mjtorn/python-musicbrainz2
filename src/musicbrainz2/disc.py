@@ -48,6 +48,20 @@ def _openLibrary():
 
 	@raise NotImplementedError: if the library can't be opened
 	"""
+	# This only works for ctypes >= 0.9.9.6. Any libmusicbrainz is found,
+	# no matter how it's called on this platform.
+	try:
+		if hasattr(ctypes.cdll, 'find'):
+			libMb = ctypes.cdll.find('musicbrainz')
+			_setPrototypes(libMb)
+			return libMb
+	except OSError, e:
+		raise NotImplementedError('Error opening library: ' + str(e))
+
+	# For compatibility with ctypes < 0.9.9.3 try to figure out the library
+	# name without the help of ctypes. We use cdll.LoadLibrary() below,
+	# which isn't available for ctypes == 0.9.9.3.
+	#
 	if sys.platform == 'linux2':
 		libName = 'libmusicbrainz.so.4'
 	elif sys.platform == 'darwin':
@@ -60,12 +74,12 @@ def _openLibrary():
 
 	try:
 		libMb = ctypes.cdll.LoadLibrary(libName)
+		_setPrototypes(libMb)
+		return libMb
 	except OSError, e:
 		raise NotImplementedError('Error opening library: ' + str(e))
 
-	_setPrototypes(libMb)
-
-	return libMb
+	assert False # not reached
 
 
 def _setPrototypes(libMb):
