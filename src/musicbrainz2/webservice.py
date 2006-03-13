@@ -190,8 +190,9 @@ class WebService(IWebService):
 		else:
 			self.opener = opener
 
-		authHandler = urllib2.HTTPDigestAuthHandler()
-		authHandler.add_password(self.realm, self.host,
+		passwordMgr = self._RedirectPasswordMgr()
+		authHandler = urllib2.HTTPDigestAuthHandler(passwordMgr)
+		authHandler.add_password(self.realm, (), # no host set
 			self.username, self.password)
 		self.opener.add_handler(authHandler)
 
@@ -289,6 +290,26 @@ class WebService(IWebService):
 		except urllib2.URLError, e:
 			self.log.debug("POST failed: " + str(e))
 			raise ConnectionError(str(e), e)
+
+
+	# Special password manager which also works with redirects by simply
+	# ignoring the URI. As a consequence, only *ONE* (username, password)
+	# tuple per realm can be used for all URIs.
+	#
+	class _RedirectPasswordMgr(urllib2.HTTPPasswordMgr):
+		def __init__(self):
+			self.realms = { }
+
+		def find_user_password(self, realm, uri):
+			# ignoring the uri parameter intentionally
+			try:
+				return self.realms[realm]
+			except KeyError:
+				return (None, None)
+
+		def add_password(self, realm, uri, username, password):
+			# ignoring the uri parameter intentionally
+			self.realms[realm] = (username, password)
 
 
 class IFilter:
