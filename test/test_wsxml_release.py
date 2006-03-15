@@ -92,6 +92,10 @@ class ParseReleaseTest(unittest.TestCase):
 		artistId = release.getArtist().getId()
 		self.assertEquals(artistId, VARIOUS_ARTISTS_ID)
 
+		events = release.getReleaseEventsAsDict()
+		self.assertEquals(len(events), 1)
+		self.assertEquals(events['EU'], '2000')
+
 		track14 = release.getTracks()[14]
 		self.assertEquals(track14.getTitle(), 'Carnival')
 		self.assertEquals(track14.getArtist().getName(), 'Tori Amos')

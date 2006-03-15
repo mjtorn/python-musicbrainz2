@@ -446,7 +446,7 @@ def getAttr(element, attrName, regex=None, default=None):
 
 def getDateAttr(element, attrName):
 	"""Gets an incomplete date from an attribute."""
-	return getAttr(element, attrName, '^\d+(-\d\d)?-(\d\d)?$')
+	return getAttr(element, attrName, '^\d+(-\d\d)?(-\d\d)?$')
 
 
 def getIdAttr(element, attrName, typeName):
