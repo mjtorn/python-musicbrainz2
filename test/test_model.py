@@ -2,8 +2,7 @@
 import unittest
 from musicbrainz2.model import Artist, Release, Track, Relation
 
-class RelationTest(unittest.TestCase):
-	"""Test the most basic cases: empty and invalid docments."""
+class MiscModelTest(unittest.TestCase):
 	
 	def __init__(self, name):
 		unittest.TestCase.__init__(self, name)

@@ -1,3 +1,11 @@
+Changes from 0.2.0:
+
+  * Release date parsing has been fixed (#1181).
+  * ctypes 0.9.9.3 is now supported.
+  * Authentication now works even after HTTP redirects (#1166).
+  * Added type and script support to ArtistAlias.
+
+
 Changes from 0.1.0:
 
   * API change: Switched from TRM to PUID (Luks)
