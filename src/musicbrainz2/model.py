@@ -1184,15 +1184,24 @@ class Disc:
 class ArtistAlias:
 	"""Represents an artist alias.
 
-	An alias is a different representation of an artist's name. This
-	may be a common misspelling or a transliteration.
+	An alias (the I{alias value}) is a different representation of an
+	artist's name. This may be a common misspelling or a transliteration
+	(the I{alias type}).
+
+	The I{alias script} is interesting mostly for transliterations and
+	indicates which script is used for the alias value. To represent the
+	script, ISO-15924 script codes like 'Latn', 'Cyrl', or 'Hebr' are used.
 	"""
-	def __init__(self, value=None):
+	def __init__(self, value=None, typeUri=None, script=None):
 		"""Constructor.
 
 		@param value: a string containing the alias
+		@param typeUri: a string containing an absolute URI
+		@param script: a string containing an ISO-15924 script code
 		"""
 		self.value = value
+		self.typeUri = typeUri
+		self.script = script
 
 	def getValue(self):
 		"""Returns the alias.
@@ -1207,6 +1216,34 @@ class ArtistAlias:
 		@param value: a string containing the alias
 		"""
 		self.value = value
+
+	def getType(self):
+		"""Returns the alias type.
+
+		@return: a string containing an absolute URI, or None 
+		"""
+		return self.typeUri
+
+	def setType(self, typeUri):
+		"""Sets the alias type.
+
+		@param typeUri: a string containing an absolute URI, or None
+		"""
+		self.typeUri = typeUri
+
+	def getScript(self):
+		"""Returns the alias script.
+
+		@return: a string containing an ISO-15924 script code
+		"""
+		return self.script
+
+	def setScript(self, script):
+		"""Sets the alias script.
+
+		@param script: a string containing an ISO-15924 script code
+		"""
+		self.script = script
 
 
 class User:

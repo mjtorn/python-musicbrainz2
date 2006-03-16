@@ -87,9 +87,11 @@ class ParseArtistTest(unittest.TestCase):
 			'Tori Amos (yes, that one)')
 
 		aliases = artist.getAliases()
-		self.assertEquals(len(aliases), 2)
+		self.assertEquals(len(aliases), 3)
 		self.assertEquals(aliases[0].getValue(), 'Myra Ellen Amos')
-		self.assertEquals(aliases[1].getValue(), 'Torie Amos')
-
+		self.assertEquals(aliases[0].getScript(), 'Latn')
+		self.assertEquals(aliases[1].getValue(), 'Myra Amos')
+		self.assertEquals(aliases[2].getValue(), 'Torie Amos')
+		self.assertEquals(aliases[2].getType(), NS_MMD_1 + 'Misspelling')
 
 # EOF

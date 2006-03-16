@@ -281,6 +281,9 @@ class MbXmlParser:
 			if matches(node, 'alias'):
 				alias = self.factory.newArtistAlias()
 				alias.setValue(getText(node))
+				alias.setType(getUriAttr(node, 'type'))
+				alias.setScript(getAttr(node, 'script',
+					'^[A-Z][a-z]{3}$'))
 				artist.addAlias(alias)
 
 
