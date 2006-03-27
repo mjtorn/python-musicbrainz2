@@ -33,7 +33,9 @@ use cases. The following demo scripts are available:
     name and password to use this.
 
  ripper.py
-    This example shows the web service 
+    This example shows how to get a MusicBrainz DiscID for a CD in the disc
+    drive and to get the matching releases from the web service. This is
+    the typical workflow for a simple CD ripper application.
 
 --
 $Id$
