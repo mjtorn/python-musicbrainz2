@@ -10,6 +10,10 @@ This package contains the following modules:
 
  3. L{wsxml}: A parser for the web service XML format.
 
+ 4. L{disc}: Functions for creating and submitting DiscIDs.
+
+ 5. L{utils}: Utilities for working with URIs and other commonly needed tools.
+
 To get started quickly, have a look at L{webservice.Query} and the examples
 there. The source distribution also contains example code you might find
 interesting.
@@ -17,6 +21,6 @@ interesting.
 @author: Matthias Friedrich <matt@mafr.de>
 """
 __revision__ = '$Id$'
-__version__ = '0.2.2'
+__version__ = '0.2.1'
 
 # EOF

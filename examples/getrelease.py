@@ -1,8 +1,19 @@
 #! /usr/bin/env python
+#
+# Retrieve a release by ID and display it.
+#
+# Usage:
+#	python getrelease.py release-id
+#
+# Interesting releases IDs for testing:
+#	http://musicbrainz.org/release/290e10c5-7efc-4f60-ba2c-0dfc0208fbf5
+#	http://musicbrainz.org/release/fa9f1bdd-495f-41b9-8944-1a766da29120
+#
+# $Id$
+#
 import sys
 import logging
-from musicbrainz2.webservice import WebService, Query, WebServiceError,\
-	ReleaseIncludes
+import musicbrainz2.webservice as ws
 
 logging.basicConfig()
 logger = logging.getLogger()
@@ -10,61 +21,66 @@ logger.setLevel(logging.DEBUG)
 
 
 if len(sys.argv) < 2:
-	print "Usage: getrelease.py releaseId"
+	print "Usage: getrelease.py release-id"
 	sys.exit(1)
 
-ws = WebService(host='test.musicbrainz.org', port=80)
-q = Query(ws)
+q = ws.Query()
 
 try:
-	inc = ReleaseIncludes(artist=True, releaseEvents=True,
-		discs=True, tracks=True)
+	# Additionally to the release itself, we want the server to include
+	# the release's artist, all release events, associated discs and
+	# the track list.
+	#
+	inc = ws.ReleaseIncludes(artist=True, releaseEvents=True,
+			discs=True, tracks=True)
 	release = q.getReleaseById(sys.argv[1], inc)
-except WebServiceError, e:
+except ws.WebServiceError, e:
 	print 'Error:', e
 	sys.exit(1)
 
 
-print "Id          :", release.getId()
-print "Title       :", release.getTitle()
-print "ASIN        :", release.getAsin()
-print "Lang/Script :", release.getTextLanguage(), '/', release.getTextScript()
+print "Id          :", release.id
+print "Title       :", release.title
+print "ASIN        :", release.asin
+print "Lang/Script :", release.textLanguage, '/', release.textScript
 
 
-artist = release.getArtist()
-
-if artist:
+# Print the main artist of this release.
+#
+if release.artist:
 	print
 	print "Artist:"
-	print "  Id        :", artist.getId()
-	print "  Name      :", artist.getName()
-	print "  SortName  :", artist.getSortName()
+	print "  Id        :", release.artist.id
+	print "  Name      :", release.artist.name
+	print "  SortName  :", release.artist.sortName
 
 
-if len(release.getReleaseEvents()) > 0:
+# Release events are the dates and times when a release took place.
+#
+if len(release.releaseEvents) > 0:
 	print
-	print "Released:"
+	print "Released (earliest: %s):" % release.getEarliestReleaseDate()
 
-for event in release.getReleaseEvents():
-	print "  %s %s" % (event.getCountryId(), event.getDate())
+for event in release.releaseEvents:
+	print "  %s %s" % (event.country, event.date)
 
 
-if len(release.getDiscs()) > 0:
+if len(release.discs) > 0:
 	print
 	print "Discs:"
 
-for disc in release.getDiscs():
-	print "  DiscId: %s (%d sectors)" % (disc.getId(), disc.getSectors())
+for disc in release.discs:
+	print "  DiscId: %s (%d sectors)" % (disc.id, disc.sectors)
 
 
-if len(release.getTracks()) > 0:
+if len(release.tracks) > 0:
 	print
 	print "Tracks:"
 
-for track in release.getTracks():
-	print "  Id        :", track.getId()
-	print "  Title     :", track.getTitle()
-	print "  Duration  :", track.getDuration()
+for track in release.tracks:
+	print "  Id        :", track.id
+	print "  Title     :", track.title
+	print "  Duration  :", track.duration
 	print
 
 # EOF

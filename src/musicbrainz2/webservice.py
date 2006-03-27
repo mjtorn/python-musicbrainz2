@@ -21,12 +21,20 @@ import urlparse
 import logging
 import os.path
 from StringIO import StringIO
-import musicbrainz2
 from musicbrainz2.model import Artist, Release, Track
 from musicbrainz2.wsxml import MbXmlParser, ParseError
+import musicbrainz2.utils as mbutils
+
+__all__ = [
+	'WebServiceError', 'AuthenticationError', 'ConnectionError',
+	'RequestError', 'ResourceNotFoundError', 'ResponseError', 
+	'IIncludes', 'ArtistIncludes', 'ReleaseIncludes', 'TrackIncludes',
+	'IFilter', 'ArtistFilter', 'ReleaseFilter', 'TrackFilter', 'UserFilter',
+	'IWebService', 'WebService', 'Query',
+]
 
 
-class IWebService:
+class IWebService(object):
 	"""An interface all concrete web service classes have to implement.
 
 	All web service classes have to implement this and follow the
@@ -177,24 +185,24 @@ class WebService(IWebService):
 		@param realm: a string containing the realm used for authentication
 		@param opener: an C{urllib2.OpenerDirector} object used for queries
 		"""
-		self.host = host
-		self.port = port
-		self.username = username
-		self.password = password
-		self.realm = realm
-		self.pathPrefix = pathPrefix
-		self.log = logging.getLogger(str(self.__class__))
+		self._host = host
+		self._port = port
+		self._username = username
+		self._password = password
+		self._realm = realm
+		self._pathPrefix = pathPrefix
+		self._log = logging.getLogger(str(self.__class__))
 
 		if opener is None:
-			self.opener = urllib2.build_opener()
+			self._opener = urllib2.build_opener()
 		else:
-			self.opener = opener
+			self._opener = opener
 
 		passwordMgr = self._RedirectPasswordMgr()
 		authHandler = urllib2.HTTPDigestAuthHandler(passwordMgr)
-		authHandler.add_password(self.realm, (), # no host set
-			self.username, self.password)
-		self.opener.add_handler(authHandler)
+		authHandler.add_password(self._realm, (), # no host set
+			self._username, self._password)
+		self._opener.add_handler(authHandler)
 
 
 	def _makeUrl(self, entity, id_, include=( ), filter={ },
@@ -205,10 +213,10 @@ class WebService(IWebService):
 		if len(include) > 0:
 			params['inc'] = ' '.join(include)
 
-		netloc = self.host
-		if self.port != 80:
-			netloc += ':' + str(self.port)
-		path = '/'.join((self.pathPrefix, version, entity, id_))
+		netloc = self._host
+		if self._port != 80:
+			netloc += ':' + str(self._port)
+		path = '/'.join((self._pathPrefix, version, entity, id_))
 
 		query = urllib.urlencode(params)
 
@@ -234,12 +242,12 @@ class WebService(IWebService):
 		"""
 		url = self._makeUrl(entity, id_, include, filter, version)
 
-		self.log.debug('GET ' + url)
+		self._log.debug('GET ' + url)
 
 		try:
-			return self.opener.open(url)
+			return self._opener.open(url)
 		except urllib2.HTTPError, e:
-			self.log.debug("GET failed: " + str(e))
+			self._log.debug("GET failed: " + str(e))
 			if e.code == 400:   # in python 2.4: httplib.BAD_REQUEST
 				raise RequestError(str(e), e)
 			elif e.code == 401: # httplib.UNAUTHORIZED
@@ -249,7 +257,7 @@ class WebService(IWebService):
 			else:
 				raise WebServiceError(str(e), e)
 		except urllib2.URLError, e:
-			self.log.debug("GET failed: " + str(e))
+			self._log.debug("GET failed: " + str(e))
 			raise ConnectionError(str(e), e)
 
 
@@ -274,11 +282,11 @@ class WebService(IWebService):
 			req = urllib2.Request(url)
 			req.add_header('User-Agent', userAgent)
 
-			self.log.debug('POST ' + url)
-			self.log.debug('POST-BODY: ' + data)
-			self.opener.open(req, data)
+			self._log.debug('POST ' + url)
+			self._log.debug('POST-BODY: ' + data)
+			self._opener.open(req, data)
 		except urllib2.HTTPError, e:
-			self.log.debug("POST failed: " + str(e))
+			self._log.debug("POST failed: " + str(e))
 			if e.code == 400:   # in python 2.4: httplib.BAD_REQUEST
 				raise RequestError(str(e), e)
 			elif e.code == 401: # httplib.UNAUTHORIZED
@@ -288,7 +296,7 @@ class WebService(IWebService):
 			else:
 				raise WebServiceError(str(e), e)
 		except urllib2.URLError, e:
-			self.log.debug("POST failed: " + str(e))
+			self._log.debug("POST failed: " + str(e))
 			raise ConnectionError(str(e), e)
 
 
@@ -298,21 +306,21 @@ class WebService(IWebService):
 	#
 	class _RedirectPasswordMgr(urllib2.HTTPPasswordMgr):
 		def __init__(self):
-			self.realms = { }
+			self._realms = { }
 
 		def find_user_password(self, realm, uri):
 			# ignoring the uri parameter intentionally
 			try:
-				return self.realms[realm]
+				return self._realms[realm]
 			except KeyError:
 				return (None, None)
 
 		def add_password(self, realm, uri, username, password):
 			# ignoring the uri parameter intentionally
-			self.realms[realm] = (username, password)
+			self._realms[realm] = (username, password)
 
 
-class IFilter:
+class IFilter(object):
 	"""A filter for collections.
 
 	This is the interface all filters have to implement.
@@ -340,13 +348,13 @@ class ArtistFilter(IFilter):
 		@param name: a string containing the artist's name
 		@param limit: the maximum number of artists to return
 		"""
-		self.params = [
+		self._params = [
 			('name', name),
 			('limit', limit),
 		]
 
 	def createParameters(self):
-		return filter(lambda x: x[1] is not None, self.params)
+		return filter(lambda x: x[1] is not None, self._params)
 
 
 class ReleaseFilter(IFilter):
@@ -383,10 +391,10 @@ class ReleaseFilter(IFilter):
 		if releaseTypes is None or len(releaseTypes) == 0:
 			releaseTypesStr = None
 		else:
-			tmp = [ _extractFragment(x) for x in releaseTypes ]
+			tmp = [ mbutils.extractFragment(x) for x in releaseTypes ]
 			releaseTypesStr = ' '.join(tmp)
 
-		self.params = [
+		self._params = [
 			('title', title),
 			('discid', discId),
 			('releasetypes', releaseTypesStr),
@@ -396,7 +404,7 @@ class ReleaseFilter(IFilter):
 		]
 
 	def createParameters(self):
-		return filter(lambda x: x[1] is not None, self.params)
+		return filter(lambda x: x[1] is not None, self._params)
 
 
 class TrackFilter(IFilter):
@@ -422,7 +430,7 @@ class TrackFilter(IFilter):
 		@param puid: a string containing a PUID
 		@param limit: the maximum number of releases to return
 		"""
-		self.params = [
+		self._params = [
 			('title', title),
 			('artist', artistName),
 			('artistid', artistId),
@@ -434,7 +442,7 @@ class TrackFilter(IFilter):
 		]
 
 	def createParameters(self):
-		return filter(lambda x: x[1] is not None, self.params)
+		return filter(lambda x: x[1] is not None, self._params)
 
 
 class UserFilter(IFilter):
@@ -445,16 +453,16 @@ class UserFilter(IFilter):
 
 		@param name: a string containing a MusicBrainz user name
 		"""
-		self.name = name
+		self._name = name
 
 	def createParameters(self):
-		if self.name is not None:
-			return [ ('name', self.name) ]
+		if self._name is not None:
+			return [ ('name', self._name) ]
 		else:
 			return [ ]
 
 
-class IIncludes:
+class IIncludes(object):
 	"""An interface implemented by include tag generators."""
 	def createIncludeTags(self):
 		raise NotImplementedError()
@@ -487,7 +495,7 @@ class ArtistIncludes(IIncludes):
 		assert not isinstance(vaReleases, basestring)
 		assert len(releases) == 0 or len(vaReleases) == 0
 
-		self.includes = {
+		self._includes = {
 			'aliases':		aliases,
 			'artist-rels':		artistRelations,
 			'release-rels':		releaseRelations,
@@ -496,13 +504,13 @@ class ArtistIncludes(IIncludes):
 		}
 
 		for elem in releases:
-			self.includes['sa-' + _extractFragment(elem)] = True
+			self._includes['sa-' + mbutils.extractFragment(elem)] = True
 
 		for elem in vaReleases:
-			self.includes['va-' + _extractFragment(elem)] = True
+			self._includes['va-' + mbutils.extractFragment(elem)] = True
 
 	def createIncludeTags(self):
-		return _createIncludes(self.includes)
+		return _createIncludes(self._includes)
 
 
 class ReleaseIncludes(IIncludes):
@@ -511,7 +519,7 @@ class ReleaseIncludes(IIncludes):
 			discs=False, tracks=False,
 			artistRelations=False, releaseRelations=False,
 			trackRelations=False, urlRelations=False):
-		self.includes = {
+		self._includes = {
 			'artist':		artist,
 			'counts':		counts,
 			'release-events':	releaseEvents,
@@ -524,7 +532,7 @@ class ReleaseIncludes(IIncludes):
 		}
 
 	def createIncludeTags(self):
-		return _createIncludes(self.includes)
+		return _createIncludes(self._includes)
 
 
 class TrackIncludes(IIncludes):
@@ -532,7 +540,7 @@ class TrackIncludes(IIncludes):
 	def __init__(self, artist=False, releases=False, puids=False,
 			artistRelations=False, releaseRelations=False,
 			trackRelations=False, urlRelations=False):
-		self.includes = {
+		self._includes = {
 			'artist':		artist,
 			'releases':		releases,
 			'puids':		puids,
@@ -543,10 +551,10 @@ class TrackIncludes(IIncludes):
 		}
 
 	def createIncludeTags(self):
-		return _createIncludes(self.includes)
+		return _createIncludes(self._includes)
 
 
-class Query:
+class Query(object):
 	"""A simple interface to the MusicBrainz web service.
 
 	This is a facade which provides a simple interface to the MusicBrainz
@@ -608,11 +616,11 @@ class Query:
 	>>> import musicbrainz2.webservice as ws
 	>>> q = ws.Query()
 	>>> artist = q.getArtistById('c0b2500e-0cef-4130-869d-732b23ed9df5')
-	>>> print artist.getName()
-	Tori Amos
-	>>> print artist.getSortName()
-	Amos, Tori
-	>>> print artist.getType()
+	>>> artist.getName()
+	u'Tori Amos'
+	>>> artist.sortName
+	u'Amos, Tori'
+	>>> print artist.type
 	http://musicbrainz.org/ns/mmd-1.0#Person
 	>>>
 
@@ -629,11 +637,11 @@ class Query:
 	>>> releaseId = '33dbcf02-25b9-4a35-bdb7-729455f33ad7'
 	>>> include = ws.ReleaseIncludes(artist=True, tracks=True)
 	>>> release = q.getReleaseById(releaseId, include)
-	>>> print release.getTitle()
+	>>> print release.title
 	Tales of a Librarian
-	>>> print release.getArtist().getName()
+	>>> print release.artist.name
 	Tori Amos
-	>>> print release.getTracks()[0].getTitle()
+	>>> print release.tracks[0].title
 	Precious Things
 	>>>
 
@@ -644,22 +652,37 @@ class Query:
 	Searching in Collections
 	========================
 
-	Searching for resources matching given criteria works using the
-	L{getArtists}, L{getReleases}, and L{getTracks} methods and their
-	corresponding filter classes L{ArtistFilter}, L{ReleaseFilter},
-	and L{TrackFilter}. This is an example to query for all releases
-	matching a given DiscID:
+	For each resource type (artist, release, and track), there is one
+	collection which contains all resources of a type. You can search
+	these collections using the L{getArtists}, L{getReleases}, and
+	L{getTracks} methods. The collections are huge, so you have to
+	use filters (L{ArtistFilter}, L{ReleaseFilter}, or L{TrackFilter})
+	to retrieve only resources matching given criteria.
+
+	For example, If you want to search the release collection for
+	releases with a specified DiscID, you would use L{getReleases}
+	and a L{ReleaseFilter} object:
 
 	>>> import musicbrainz2.webservice as ws
 	>>> q = ws.Query()
 	>>> filter = ws.ReleaseFilter(discId='8jJklE258v6GofIqDIrE.c5ejBE-')
-	>>> releases = q.getReleases(filter=filter)
-	>>> print releases[0].getTitle()
+	>>> results = q.getReleases(filter=filter)
+	>>> print results[0].score
+	100
+	>>> print results[0].release.title
 	Under the Pink
 	>>>
 
-	All filters also support a C{limit} argument to limit the number of
-	results returned.
+	The query returns a list of results (L{wsxml.ReleaseResult} objects
+	in this case), which are ordered by score, with a higher score
+	indicating a better match. Note that those results don't contain
+	all the data about a resource. If you need more detail, you can then
+	use the L{getArtistById}, L{getReleaseById}, or L{getTrackById}
+	methods to request the resource.
+
+	All filters support the C{limit} argument to limit the number of
+	results returned. This defaults to 25, but the server won't send
+	more than 100 results to save bandwidth and processing power.
 
 
 	Error Handling
@@ -707,12 +730,12 @@ class Query:
 		@param clientId: a string containing the application's ID
 		"""
 		if ws is None:
-			self.ws = wsFactory()
+			self._ws = wsFactory()
 		else:
-			self.ws = ws
+			self._ws = ws
 
-		self.clientId = clientId
-		self.log = logging.getLogger(str(self.__class__))
+		self._clientId = clientId
+		self._log = logging.getLogger(str(self.__class__))
 
 
 	def getArtistById(self, id_, include=None):
@@ -732,7 +755,7 @@ class Query:
 		@raise ResourceNotFoundError: artist doesn't exist
 		@raise ResponseError: server returned invalid data
 		"""
-		uuid = _extractUuid(id_, 'artist')
+		uuid = mbutils.extractUuid(id_, 'artist')
 		result = self._getFromWebService('artist', uuid, include)
 		artist = result.getArtist()
 		if artist is not None:
@@ -746,14 +769,14 @@ class Query:
 
 		@param filter: an L{ArtistFilter} object
 
-		@return: a list of L{musicbrainz2.model.Artist} objects
+		@return: a list of L{musicbrainz2.wsxml.ArtistResult} objects
 
 		@raise ConnectionError: couldn't connect to server
 		@raise RequestError: invalid ID or include tags
 		@raise ResponseError: server returned invalid data
 		"""
 		result = self._getFromWebService('artist', '', filter=filter)
-		return result.getArtistList()
+		return result.getArtistResults()
 
 
 	def getReleaseById(self, id_, include=None):
@@ -773,7 +796,7 @@ class Query:
 		@raise ResourceNotFoundError: release doesn't exist
 		@raise ResponseError: server returned invalid data
 		"""
-		uuid = _extractUuid(id_, 'release')
+		uuid = mbutils.extractUuid(id_, 'release')
 		result = self._getFromWebService('release', uuid, include)
 		release = result.getRelease()
 		if release is not None:
@@ -787,14 +810,14 @@ class Query:
 
 		@param filter: a L{ReleaseFilter} object
 
-		@return: a list of L{musicbrainz2.model.Release} objects
+		@return: a list of L{musicbrainz2.wsxml.ReleaseResult} objects
 
 		@raise ConnectionError: couldn't connect to server
 		@raise RequestError: invalid ID or include tags
 		@raise ResponseError: server returned invalid data
 		"""
 		result = self._getFromWebService('release', '', filter=filter)
-		return result.getReleaseList()
+		return result.getReleaseResults()
 
 
 	def getTrackById(self, id_, include=None):
@@ -814,7 +837,7 @@ class Query:
 		@raise ResourceNotFoundError: track doesn't exist
 		@raise ResponseError: server returned invalid data
 		"""
-		uuid = _extractUuid(id_, 'track')
+		uuid = mbutils.extractUuid(id_, 'track')
 		result = self._getFromWebService('track', uuid, include)
 		track = result.getTrack()
 		if track is not None:
@@ -828,14 +851,14 @@ class Query:
 
 		@param filter: a L{TrackFilter} object
 
-		@return: a list of L{musicbrainz2.model.Track} objects
+		@return: a list of L{musicbrainz2.wsxml.TrackResult} objects
 
 		@raise ConnectionError: couldn't connect to server
 		@raise RequestError: invalid ID or include tags
 		@raise ResponseError: server returned invalid data
 		"""
 		result = self._getFromWebService('track', '', filter=filter)
-		return result.getTrackList()
+		return result.getTrackResults()
 
 
 	def getUserByName(self, name):
@@ -878,7 +901,7 @@ class Query:
 		else:
 			includeParams = include.createIncludeTags()
 
-		stream = self.ws.get(entity, id_, includeParams, filterParams)
+		stream = self._ws.get(entity, id_, includeParams, filterParams)
 		try:
 			parser = MbXmlParser()
 			return parser.parse(stream)
@@ -904,53 +927,26 @@ class Query:
 		@raise RequestError: invalid track- or PUIDs
 		@raise AuthenticationError: invalid user name and/or password
 		"""
-		assert self.clientId is not None, 'Please supply a client ID'
+		assert self._clientId is not None, 'Please supply a client ID'
 		params = [ ]
-		params.append( ('client', self.clientId) )
+		params.append( ('client', self._clientId) )
 
 		for (trackId, puid) in tracks2puids.iteritems():
-			trackId = _extractUuid(trackId, 'track')
+			trackId = mbutils.extractUuid(trackId, 'track')
 			params.append( ('puid', trackId + ' ' + puid) )
 
 		encodedStr = urllib.urlencode(params, True)
 
-		self.ws.post('track', '', encodedStr)
-
-
-
-def _extractUuid(uriStr, resType=None):
-	if uriStr is None:
-		return None
-
-	(scheme, netloc, path) = urlparse.urlparse(uriStr)[:3]
-
-	if scheme == '':
-		return uriStr	# no URI, probably already the UUID
-
-	m = re.match('^/(artist|release|track)/(.*)$', path)
-
-	if m:
-		if resType is None:
-			return m.group(2)
-		else:
-			if m.group(1) == resType:
-				return m.group(2)
-			else:
-				raise ValueError('expected "%s" Id' % resType)
-	else:
-		raise ValueError('%s is no valid MB ID.' % uriStr)
-
-
-def _extractFragment(uriStr):
-	(scheme, netloc, path, params, query, frag) = urlparse.urlparse(uriStr)
-	if scheme == '':
-		return uriStr # this is no uri
-	else:
-		return frag
+		self._ws.post('track', '', encodedStr)
 
 
 def _createIncludes(tagMap):
 	selected = filter(lambda x: x[1] == True, tagMap.items())
 	return map(lambda x: x[0], selected)
+
+
+if __name__ == '__main__':
+	import doctest
+	doctest.testmod()
 
 # EOF

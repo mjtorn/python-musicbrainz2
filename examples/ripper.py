@@ -1,8 +1,17 @@
 #! /usr/bin/env python
+#
+# This shows the web service interaction needed for a typical CD ripper.
+#
+# Usage:
+#	python ripper.py
+#
+# $Id$
+#
 import sys
 import logging
 import musicbrainz2.disc as mbdisc
 import musicbrainz2.webservice as mbws
+
 
 # Activate logging.
 #
@@ -13,37 +22,50 @@ logger.setLevel(logging.DEBUG)
 
 # Setup a Query object.
 #
-service = mbws.WebService(host='test.musicbrainz.org')
+service = mbws.WebService()
 query = mbws.Query(service)
 
 # Read the disc in the drive
 #
 try:
 	disc = mbdisc.readDisc()
-	#disc.setId('YipB1z_otuvvPZBCi3yR0pcsUi0-') # FIXME: just for testing
 except mbdisc.DiscError, e:
 	print "Error:", e
 	sys.exit(1)
+
 
 # Query for all discs matching the given DiscID.
 #
 try:
 	filter = mbws.ReleaseFilter(discId=disc.getId())
-	releases = query.getReleases(filter)
+	results = query.getReleases(filter)
 except mbws.WebServiceError, e:
 	print "Error:", e
 	sys.exit(2)
 
+
 # No disc matching this DiscID has been found.
 #
-if len(releases) == 0:
+if len(results) == 0:
 	print "Disc is not yet in the MusicBrainz database."
 	print "Consider adding it via", mbdisc.getSubmissionUrl(disc)
 	sys.exit(0)
 
-# Select one of the returned releases. Usually the user should be asked.
+
+# Display the returned results to the user.
 #
-selectedRelease = releases[0]
+print 'Matching releases:'
+
+for result in results:
+	release = result.release
+	print 'Artist  :', release.artist.name
+	print 'Title   :', release.title
+	print
+
+
+# Select one of the returned releases. We just pick the first one.
+#
+selectedRelease = results[0].release
 
 
 # The returned release object only contains title and artist, but no tracks.
@@ -59,24 +81,23 @@ except mbws.WebServiceError, e:
 
 # Now display the returned data.
 #
-artist = release.getArtist()
 isSingleArtist = release.isSingleArtistRelease()
 
-print "%s - %s" % (artist.getUniqueName(), release.getTitle())
+print "%s - %s" % (release.artist.getUniqueName(), release.title)
 
 i = 1
-for t in release.getTracks():
+for t in release.tracks:
 	if isSingleArtist:
-		title = t.getTitle()
+		title = t.title
 	else:
-		title = t.getArtist().getName() + ' - ' +  t.getTitle()
+		title = t.artist.name + ' - ' +  t.title
 
 	(minutes, seconds) = t.getDurationSplit()
 	print " %2d. %s (%d:%02d)" % (i, title, minutes, seconds)
 	i+=1
 
 
-# Now actually rip the CD :-)
+# All data has been retrieved, now actually rip the CD :-)
 #
 
 # EOF

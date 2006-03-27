@@ -1,6 +1,6 @@
 """Tests for the MbXmlParser class."""
 import unittest
-from musicbrainz2.wsxml import MbXmlParser, ParseError, makeAbsoluteUri
+from musicbrainz2.wsxml import MbXmlParser, ParseError, _makeAbsoluteUri
 import StringIO
 import os.path
 
@@ -42,16 +42,16 @@ class BaseParserTest(unittest.TestCase):
 
 
 	def testMakeAbsoluteUri(self):
-		self.assert_(makeAbsoluteUri('http://mb.org/artist/', None) is None)
+		self.assert_(_makeAbsoluteUri('http://mb.org/artist/', None) is None)
 		self.assertEquals('http://mb.org/artist/some_id',
-			makeAbsoluteUri('http://mb.org/artist/', 'some_id'))
+			_makeAbsoluteUri('http://mb.org/artist/', 'some_id'))
 		self.assertEquals('http://mb.org/artist/some_id',
-			makeAbsoluteUri('http://mb.org/artist/',
+			_makeAbsoluteUri('http://mb.org/artist/',
 				'http://mb.org/artist/some_id'))
 		self.assertEquals('http://mb.org/ns/mmd-1.0#name',
-			makeAbsoluteUri('http://mb.org/ns/mmd-1.0#', 'name'))
+			_makeAbsoluteUri('http://mb.org/ns/mmd-1.0#', 'name'))
 		self.assertEquals('http://mb.org/ns/mmd-1.0#name',
-			makeAbsoluteUri('http://mb.org/ns/mmd-1.0#',
+			_makeAbsoluteUri('http://mb.org/ns/mmd-1.0#',
 				'http://mb.org/ns/mmd-1.0#name'))
 
 

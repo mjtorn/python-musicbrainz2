@@ -1,4 +1,12 @@
 #! /usr/bin/env python
+# 
+# Search for a track by title (and optionally by artist name).
+#
+# Usage:
+#	python findtrack.py 'track name' ['artist name']
+#
+# $Id$
+#
 import sys
 import logging
 from musicbrainz2.webservice import Query, TrackFilter, WebServiceError
@@ -9,7 +17,7 @@ logger.setLevel(logging.DEBUG)
 	
 
 if len(sys.argv) < 2:
-	print "Usage: findartist.py 'track name' ['artist name']"
+	print "Usage: findtrack.py 'track name' ['artist name']"
 	sys.exit(1)
 
 if len(sys.argv) > 2:
@@ -21,15 +29,18 @@ q = Query()
 
 try:
 	f = TrackFilter(title=sys.argv[1], artistName=artistName)
-	tracks = q.getTracks(f)
+	results = q.getTracks(f)
 except WebServiceError, e:
 	print 'Error:', e
 	sys.exit(1)
 
 
-for track in tracks:
-	print "Id        :", track.getId()
-	print "Name      :", track.getTitle()
-	print "Artist    :", track.getArtist().getUniqueName()
+for result in results:
+	track = result.track
+	print "Score     :", result.score
+	print "Id        :", track.id
+	print "Title     :", track.title
+	print "Artist    :", track.artist.name
 	print
 
+# EOF

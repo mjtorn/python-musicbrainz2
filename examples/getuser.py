@@ -1,4 +1,12 @@
 #! /usr/bin/env python
+#
+# Display data about a MusicBrainz user (user name and password required).
+#
+# Usage:
+#	python user.py
+#
+# $Id$
+#
 import sys
 import logging
 import getpass
@@ -24,8 +32,8 @@ except WebServiceError, e:
 	sys.exit(1)
 
 
-print 'Name            :', user.getName()
-print 'ShowNag         :', user.getShowNag()
-print 'Types           :', ' '.join(user.getTypes())
+print 'Name            :', user.name
+print 'ShowNag         :', user.showNag
+print 'Types           :', ' '.join(user.types)
 
 # EOF

@@ -9,6 +9,8 @@ __revision__ = '$Id$'
 import re
 import urlparse
 
+__all__ = [ 'extractUuid', 'extractFragment' ]
+
 
 def extractUuid(uriStr, resType=None):
 	"""Extract the UUID part from a MusicBrainz identifier.

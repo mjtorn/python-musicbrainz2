@@ -20,6 +20,13 @@ L{Artist}, L{Release}, and L{Track}.
 """
 __revision__ = '$Id$'
 
+__all__ = [
+	'VARIOUS_ARTISTS_ID', 'NS_MMD_1', 'NS_REL_1', 'NS_EXT_1', 
+	'Entity', 'Artist', 'Release', 'Track', 'User', 
+	'Relation', 'ArtistAlias', 'Disc', 'ReleaseEvent', 
+]
+
+
 VARIOUS_ARTISTS_ID = 'http://musicbrainz.org/artist/89ad4ac3-39f7-470e-963a-56509c546377'
 
 # Namespace URI prefixes
@@ -29,7 +36,7 @@ NS_REL_1 = 'http://musicbrainz.org/ns/rel-1.0#'
 NS_EXT_1 = 'http://musicbrainz.org/ns/ext-1.0#'
 
 
-class Entity:
+class Entity(object):
 	"""A first-level MusicBrainz class.
 
 	All entities in MusicBrainz have unique IDs (which are absolute URIs)
@@ -58,23 +65,24 @@ class Entity:
 
 		@param id_: a string containing an absolute URI
 		"""
-		self.id = id_
-		self.relations = { }
+		self._id = id_
+		self._relations = { }
 
 	def getId(self):
 		"""Returns a MusicBrainz ID.
 
 		@return: a string containing a URI, or None
 		"""
-		return self.id
+		return self._id
 
 	def setId(self, value):
 		"""Sets a MusicBrainz ID.
 
 		@param value: a string containing an absolute URI 
 		"""
-		self.id = value
+		self._id = value
 
+	id = property(getId, setId, doc='The MusicBrainz ID.')
 
 	def getRelations(self, targetType=None, relationType=None):
 		"""Returns a list of relations.
@@ -103,9 +111,9 @@ class Entity:
 		"""
 		allRels = [ ]
 		if targetType is not None:
-			allRels = self.relations.setdefault(targetType, [ ])
+			allRels = self._relations.setdefault(targetType, [ ])
 		else:
-			for (k, relList) in self.relations.items():
+			for (k, relList) in self._relations.items():
 				for rel in relList:
 					allRels.append(rel)
 
@@ -129,7 +137,7 @@ class Entity:
 		assert relation.getType is not None
 		assert relation.getTargetType is not None
 		assert relation.getTargetId is not None
-		l = self.relations.setdefault(relation.targetType, [ ])
+		l = self._relations.setdefault(relation.getTargetType(), [ ])
 		l.append(relation)
 
 
@@ -145,7 +153,7 @@ class Entity:
 
 		@see: L{getRelations}
 		"""
-		return self.relations.keys()
+		return self._relations.keys()
 
 
 class Artist(Entity):
@@ -156,7 +164,12 @@ class Artist(Entity):
 
 	 - C{http://musicbrainz.org/ns/mmd-1.0#Person}
 	 - C{http://musicbrainz.org/ns/mmd-1.0#Group}
+
+	Use the L{TYPE_PERSON} and L{TYPE_GROUP} constants for comparison.
 	"""
+	TYPE_PERSON = NS_MMD_1 + 'Person'
+	TYPE_GROUP = NS_MMD_1 + 'Group'
+
 	def __init__(self, id_=None, type_=None, name=None, sortName=None):
 		"""Constructor.
 
@@ -166,54 +179,58 @@ class Artist(Entity):
 		@param sortName: a string containing the artist's sort name
 		"""
 		Entity.__init__(self, id_)
-		self.type = type_
-		self.name = name
-		self.sortName = sortName
-		self.disambiguation = None
-		self.beginDate = None
-		self.endDate = None
-		self.aliases = [ ]
-		self.releases = [ ]
+		self._type = type_
+		self._name = name
+		self._sortName = sortName
+		self._disambiguation = None
+		self._beginDate = None
+		self._endDate = None
+		self._aliases = [ ]
+		self._releases = [ ]
 
 	def getType(self):
 		"""Returns the artist's type.
 
 		@return: a string containing an absolute URI, or None 
 		"""
-		return self.type
+		return self._type
 
-	def setType(self, typeUri):
+	def setType(self, type_):
 		"""Sets the artist's type.
 
-		@param typeUri: a string containing an absolute URI
+		@param type_: a string containing an absolute URI
 		"""
-		self.type = typeUri
+		self._type = type_
+
+	type = property(getType, setType, doc="The artist's type.")
 
 	def getName(self):
 		"""Returns the artist's name.
 
 		@return: a string containing the artist's name, or None
 		"""
-		return self.name
+		return self._name
 
 	def setName(self, name):
 		"""Sets the artist's name.
 
 		@param name: a string containing the artist's name
 		"""
-		self.name = name
+		self._name = name
+
+	name = property(getName, setName, doc="The artist's name.")
 
 	def getSortName(self):
 		"""Returns the artist's sort name.
 
 		The sort name is the artist's name in a special format which
-		is better suited for sorting. The MusicBrainz style guide 
-		specifies this format.
+		is better suited for lexicographic sorting. The MusicBrainz
+		style guide specifies this format.
 
 		@see: U{The MusicBrainz Style Guidelines
 			<http://musicbrainz.org/style.html>}
 		"""
-		return self.sortName
+		return self._sortName
 
 	def setSortName(self, sortName):
 		"""Sets the artist's sort name.
@@ -222,7 +239,10 @@ class Artist(Entity):
 
 		@see: L{getSortName}
 		"""
-		self.sortName = sortName
+		self._sortName = sortName
+
+	sortName = property(getSortName, setSortName,
+		doc="The artist's sort name.")
 
 	def getDisambiguation(self):
 		"""Returns the disambiguation attribute.
@@ -239,7 +259,7 @@ class Artist(Entity):
 
 		@see: L{getUniqueName}
 		"""
-		return self.disambiguation
+		return self._disambiguation
 
 	def setDisambiguation(self, disambiguation):
 		"""Sets the disambiguation attribute.
@@ -248,7 +268,10 @@ class Artist(Entity):
 
 		@see: L{getDisambiguation}, L{getUniqueName}
 		"""
-		self.disambiguation = disambiguation
+		self._disambiguation = disambiguation
+
+	disambiguation = property(getDisambiguation, setDisambiguation,
+		doc="The disambiguation comment.")
 
 	def getUniqueName(self):
 		"""Returns a unique artist name (using disambiguation).
@@ -281,7 +304,7 @@ class Artist(Entity):
 
 		@see: L{getType}
 		"""
-		return self.beginDate
+		return self._beginDate
 
 	def setBeginDate(self, dateStr):
 		"""Sets the begin/foundation date.
@@ -290,7 +313,10 @@ class Artist(Entity):
 
 		@see: L{getBeginDate}
 		"""
-		self.beginDate = dateStr
+		self._beginDate = dateStr
+
+	beginDate = property(getBeginDate, setBeginDate,
+		doc="The begin/foundation date.")
 
 	def getEndDate(self):
 		"""Get the death/dissolving date.
@@ -303,7 +329,7 @@ class Artist(Entity):
 
 		@see: L{getBeginDate}
 		"""
-		return self.endDate
+		return self._endDate
 
 	def setEndDate(self, dateStr):
 		"""Sets the death/dissolving date.
@@ -312,21 +338,26 @@ class Artist(Entity):
 
 		@see: L{setEndDate}, L{getBeginDate}
 		"""
-		self.endDate = dateStr
+		self._endDate = dateStr
+
+	endDate = property(getEndDate, setEndDate,
+		doc="The death/dissolving date.")
 
 	def getAliases(self):
 		"""Returns the list of aliases for this artist.
 
 		@return: a list of L{ArtistAlias} objects
 		"""
-		return self.aliases
+		return self._aliases
+
+	aliases = property(getAliases, doc='The list of aliases')
 
 	def addAlias(self, alias):
 		"""Adds an alias for this artist.
 		
 		@param alias: an L{ArtistAlias} object
 		"""
-		self.aliases.append(alias)
+		self._aliases.append(alias)
 
 	def getReleases(self):
 		"""Returns a list of releases from this artist.
@@ -337,14 +368,16 @@ class Artist(Entity):
 
 		@return: a list of L{Release} objects
 		"""
-		return self.releases
+		return self._releases
+
+	releases = property(getReleases, doc='The list of releases')
 
 	def addRelease(self, release):
 		"""Adds a release to this artist's list of releases.
 
 		@param release: a L{Release} object
 		"""
-		self.release.append(release)
+		self._release.append(release)
 
 
 class Release(Entity):
@@ -363,7 +396,7 @@ class Release(Entity):
 
 	TYPE_ALBUM = NS_MMD_1 + 'Album'
 	TYPE_SINGLE = NS_MMD_1 + 'Single'
-	TYPE_EP = NS_MMD_1 + 'Ep'
+	TYPE_EP = NS_MMD_1 + 'EP'
 	TYPE_COMPILATION = NS_MMD_1 + 'Compilation'
 	TYPE_SOUNDTRACK = NS_MMD_1 + 'Soundtrack'
 	TYPE_SPOKENWORD = NS_MMD_1 + 'Spokenword'
@@ -384,26 +417,31 @@ class Release(Entity):
 		@param title: a string containing the title
 		"""
 		Entity.__init__(self, id_)
-		self.types = [ ]
-		self.title = title
-		self.textLanguage = None
-		self.textScript = None
-		self.asin = None
-		self.artist = None
-		self.releaseEvents = [ ]
-		#self.releaseEventsCount = None
-		self.discs = [ ]
-		#self.discIdsCount = None
-		self.tracks = [ ]
-		self.tracksOffset = None
+		self._types = [ ]
+		self._title = title
+		self._textLanguage = None
+		self._textScript = None
+		self._asin = None
+		self._artist = None
+		self._releaseEvents = [ ]
+		#self._releaseEventsCount = None
+		self._discs = [ ]
+		#self._discIdsCount = None
+		self._tracks = [ ]
+		self._tracksOffset = None
 
 
 	def getTypes(self):
 		"""Returns the types of this release.
 
+		To test for release types, you can use the constants
+		L{TYPE_ALBUM}, L{TYPE_SINGLE}, etc.
+
 		@return: a list of strings containing absolute URIs
 		"""
-		return self.types
+		return self._types
+
+	types = property(getTypes, doc='The list of types for this release.')
 
 	def addType(self, type_):
 		"""Add a type to the list of types.
@@ -412,21 +450,23 @@ class Release(Entity):
 
 		@see: L{getTypes}
 		"""
-		self.types.append(type_)
+		self._types.append(type_)
 
 	def getTitle(self):
 		"""Returns the release's title.
 
 		@return: a string containing the release's title
 		"""
-		return self.title
+		return self._title
 
 	def setTitle(self, title):
 		"""Sets the release's title.
 
 		@param title: a string containing the release's title, or None
 		"""
-		self.title = title
+		self._title = title
+
+	title = property(getTitle, setTitle, doc='The title of this release.')
 
 	def getTextLanguage(self):
 		"""Returns the language used in release and track titles.
@@ -440,7 +480,7 @@ class Release(Entity):
 
 		@return: a string containing the language code, or None
 		"""
-		return self.textLanguage
+		return self._textLanguage
 
 	def setTextLanguage(self, language):
 		"""Sets the language used in releaes and track titles.
@@ -449,7 +489,10 @@ class Release(Entity):
 
 		@see: L{getTextLanguage}
 		"""
-		self.textLanguage = language
+		self._textLanguage = language
+
+	textLanguage = property(getTextLanguage, setTextLanguage,
+		doc='The language used in release and track titles.')
 
 	def getTextScript(self):
 		"""Returns the script used in release and track titles.
@@ -462,7 +505,7 @@ class Release(Entity):
 
 		@return: a string containing the script code, or None
 		"""
-		return self.textScript
+		return self._textScript
 
 	def setTextScript(self, script):
 		"""Sets the script used in releaes and track titles.
@@ -471,7 +514,10 @@ class Release(Entity):
 
 		@see: L{getTextScript}
 		"""
-		self.textScript = script
+		self._textScript = script
+
+	textScript = property(getTextScript, setTextScript,
+		doc='The script used in release and track titles.')
 
 	def getAsin(self):
 		"""Returns the amazon shop identifier (ASIN).
@@ -481,7 +527,7 @@ class Release(Entity):
 
 		@return: a string containing the ASIN, or None
 		"""
-		return self.asin
+		return self._asin
 
 	def setAsin(self, asin):
 		"""Sets the amazon shop identifier (ASIN).
@@ -490,21 +536,26 @@ class Release(Entity):
 
 		@see: L{getAsin}
 		"""
-		self.asin = asin
+		self._asin = asin
+
+	asin = property(getAsin, setAsin, doc='The amazon shop identifier.')
 
 	def getArtist(self):
 		"""Returns the main artist of this release.
 
 		@return: an L{Artist} object, or None
 		"""
-		return self.artist
+		return self._artist
 
 	def setArtist(self, artist):
 		"""Sets this release's main artist.
 
 		@param artist: an L{Artist} object
 		"""
-		self.artist = artist
+		self._artist = artist
+
+	artist = property(getArtist, setArtist,
+		doc='The main artist of this release.')
 
 	def isSingleArtistRelease(self):
 		"""Checks if this is a single artist's release.
@@ -535,7 +586,9 @@ class Release(Entity):
 
 		@see: L{getTracksOffset}
 		"""
-		return self.tracks
+		return self._tracks
+
+	tracks = property(getTracks, doc='The list of tracks.')
 
 	def addTrack(self, track):
 		"""Adds a track to this release.
@@ -544,7 +597,7 @@ class Release(Entity):
 
 		@param track: a L{Track} object
 		"""
-		self.tracks.append(track)
+		self._tracks.append(track)
 
 	def getTracksOffset(self):
 		"""Returns the offset of the track list.
@@ -558,7 +611,7 @@ class Release(Entity):
 
 		@see: L{getTracks}
 		"""
-		return self.tracksOffset
+		return self._tracksOffset
 
 	def setTracksOffset(self, offset):
 		"""Sets the offset of the track list.
@@ -567,7 +620,10 @@ class Release(Entity):
 
 		@see: L{getTracksOffset}
 		"""
-		self.tracksOffset = offset
+		self._tracksOffset = offset
+
+	tracksOffset = property(getTracksOffset, setTracksOffset,
+		doc='The offset of the track list.')
 
 	def getReleaseEvents(self):
 		"""Returns the list of release events.
@@ -580,7 +636,10 @@ class Release(Entity):
 
 		@see: L{getReleaseEventsAsDict}
 		"""
-		return self.releaseEvents
+		return self._releaseEvents
+
+	releaseEvents = property(getReleaseEvents,
+		doc='The list of release events.')
 
 	def addReleaseEvent(self, event):
 		"""Adds a release event to this release.
@@ -589,7 +648,7 @@ class Release(Entity):
 
 		@see: L{getReleaseEvents}
 		"""
-		self.releaseEvents.append(event)
+		self._releaseEvents.append(event)
 
 	def getReleaseEventsAsDict(self):
 		"""Returns the release events represented as a dict.
@@ -603,7 +662,7 @@ class Release(Entity):
 		"""
 		d = { }
 		for event in self.getReleaseEvents():
-			d[event.getCountryId()] = event.getDate()
+			d[event.getCountry()] = event.getDate()
 		return d
 
 	def getEarliestReleaseDate(self):
@@ -641,10 +700,10 @@ class Release(Entity):
 	#	getReleaseEvents() returns. If the count is higher than
 	#	the list, it indicates that the list is incomplete.
 	#	"""
-	#	return self.releaseEventsCount
+	#	return self._releaseEventsCount
 
 	#def setReleaseEventsCount(self, value):
-	#	self.releaseEventsCount = value
+	#	self._releaseEventsCount = value
 
 	def getDiscs(self):
 		"""Returns the discs associated with this release.
@@ -655,20 +714,22 @@ class Release(Entity):
 
 		@return: a list of L{Disc} objects
 		"""
-		return self.discs
+		return self._discs
+
+	discs = property(getDiscs, doc='The list of associated discs.')
 
 	def addDisc(self, disc):
 		"""Adds a disc to this release.
 
 		@param disc: a L{Disc} object
 		"""
-		self.discs.append(disc)
+		self._discs.append(disc)
 
 	#def getDiscIdsCount(self):
-	#	return self.discIdsCount
+	#	return self._discIdsCount
 
 	#def setDiscIdsCount(self, value):
-	#	self.discIdsCount = value
+	#	self._discIdsCount = value
 
 
 class Track(Entity):
@@ -693,11 +754,11 @@ class Track(Entity):
 		@param title: a string containing the title
 		"""
 		Entity.__init__(self, id_)
-		self.title = title
-		self.artist = None
-		self.duration = None
-		self.puids = [ ]
-		self.releases = [ ]
+		self._title = title
+		self._artist = None
+		self._duration = None
+		self._puids = [ ]
+		self._releases = [ ]
 
 	def getTitle(self):
 		"""Returns the track's title.
@@ -710,7 +771,7 @@ class Track(Entity):
 		@see: U{The MusicBrainz Style Guidelines
 			<http://musicbrainz.org/style.html>}
 		"""
-		return self.title
+		return self._title
 
 	def setTitle(self, title):
 		"""Sets the track's title.
@@ -719,35 +780,42 @@ class Track(Entity):
 
 		@see: L{getTitle}
 		"""
-		self.title = title
+		self._title = title
+
+	title = property(getTitle, setTitle, doc="The track's title.")
 
 	def getArtist(self):
 		"""Returns the main artist of this track.
 
 		@return: an L{Artist} object, or None
 		"""
-		return self.artist
+		return self._artist
 
 	def setArtist(self, artist):
 		"""Sets this track's main artist.
 
 		@param artist: an L{Artist} object
 		"""
-		self.artist = artist
+		self._artist = artist
+
+	artist = property(getArtist, setArtist, doc="The track's main artist.")
 
 	def getDuration(self):
 		"""Returns the duration of this track in milliseconds.
 
 		@return: an int containing the duration in milliseconds, or None
 		"""
-		return self.duration
+		return self._duration
 
 	def setDuration(self, duration):
 		"""Sets the duration of this track in milliseconds.
 
 		@param duration: an int containing the duration in milliseconds
 		"""
-		self.duration = duration
+		self._duration = duration
+
+	duration = property(getDuration, setDuration,
+		doc='The duration in milliseconds.')
 
 	def getDurationSplit(self):
 		"""Returns the duration as a (minutes, seconds) tuple.
@@ -773,32 +841,36 @@ class Track(Entity):
 
 		@return: a list of strings, each containing one PUID
 		"""
-		return self.puids
+		return self._puids
+
+	puids = property(getPuids, doc='The list of associated PUIDs.')
 
 	def addPuid(self, puid):
 		"""Add a PUID to this track.
 
 		@param puid: a string containing a PUID
 		"""
-		self.puids.append(puid)
+		self._puids.append(puid)
 
 	def getReleases(self):
 		"""Returns the list of releases this track appears on.
 
 		@return: a list of L{Release} objects
 		"""
-		return self.releases
+		return self._releases
+
+	releases = property(getReleases,
+		doc='The releases on which this track appears.')
 
 	def addRelease(self, release):
 		"""Add a release on which this track appears.
 
 		@param release: a L{Release} object
 		"""
-		self.releases.append(release)
+		self._releases.append(release)
 
 
-
-class Relation:
+class Relation(object):
 	"""Represents a relation between two Entities.
 
 	There may be an arbitrary number of relations between all first
@@ -848,30 +920,32 @@ class Relation:
 		@param endDate: a string containing a date
 		@param target: an instance of a subclass of L{Entity}
 		"""
-		self.relationType = relationType
-		self.targetType = targetType
-		self.targetId = targetId
-		self.direction = direction
-		self.beginDate = beginDate
-		self.endDate = endDate
-		self.target = target
-		self.attributes = attributes
-		if self.attributes is None:
-			self.attributes = [ ]
+		self._relationType = relationType
+		self._targetType = targetType
+		self._targetId = targetId
+		self._direction = direction
+		self._beginDate = beginDate
+		self._endDate = endDate
+		self._target = target
+		self._attributes = attributes
+		if self._attributes is None:
+			self._attributes = [ ]
 
 	def getType(self):
 		"""Returns this relation's type.
 
 		@return: a string containing an absolute URI, or None 
 		"""
-		return self.relationType
+		return self._relationType
 
 	def setType(self, type_):
 		"""Sets this relation's type.
 
 		@param type_: a string containing an absolute URI
 		"""
-		self.relationType = type_
+		self._relationType = type_
+
+	type = property(getType, setType, doc="The relation's type.")
 
 	def getTargetId(self):
 		"""Returns the target's ID.
@@ -881,7 +955,7 @@ class Relation:
 
 		@return: a string containing an absolute URI
 		"""
-		return self.targetId
+		return self._targetId
 
 	def setTargetId(self, targetId):
 		"""Sets the target's ID.
@@ -890,7 +964,9 @@ class Relation:
 
 		@see: L{getTargetId}
 		"""
-		self.targetId = targetId
+		self._targetId = targetId
+
+	targetId = property(getTargetId, setTargetId, doc="The target's ID.")
 
 	def getTargetType(self):
 		"""Returns the target's type.
@@ -903,7 +979,7 @@ class Relation:
 
 		@return: a string containing an absolute URI
 		"""
-		return self.targetType
+		return self._targetType
 
 	def setTargetType(self, targetType):
 		"""Sets the target's type.
@@ -912,7 +988,10 @@ class Relation:
 
 		@see: L{getTargetType}
 		"""
-		self.targetType = targetType
+		self._targetType = targetType
+
+	targetId = property(getTargetId, setTargetId,
+		doc="The type of target this relation points to.")
 
 	def getAttributes(self):
 		"""Returns a list of attributes describing this relation.
@@ -921,14 +1000,17 @@ class Relation:
 
 		@return: a list of strings containing absolute URIs
 		"""
-		return self.attributes
+		return self._attributes
+
+	attributes = property(getAttributes,
+		doc='The list of attributes describing this relation.')
 
 	def addAttribute(self, attribute):
 		"""Adds an attribute to the list.
 
 		@param attribute: a string containing an absolute URI
 		"""
-		self.attributes.append(attribute)
+		self._attributes.append(attribute)
 
 	def getBeginDate(self):
 		"""Returns the begin date.
@@ -940,7 +1022,7 @@ class Relation:
 
 		@return: a string containing a date
 		"""
-		return self.beginDate
+		return self._beginDate
 
 	def setBeginDate(self, dateStr):
 		"""Sets the begin date.
@@ -949,7 +1031,9 @@ class Relation:
 
 		@see: L{getBeginDate}
 		"""
-		self.beginDate = dateStr
+		self._beginDate = dateStr
+
+	beginDate = property(getBeginDate, setBeginDate, doc="The begin date.")
 
 	def getEndDate(self):
 		"""Returns the end date.
@@ -962,7 +1046,7 @@ class Relation:
 
 		@see: L{getBeginDate}
 		"""
-		return self.endDate
+		return self._endDate
 
 	def setEndDate(self, dateStr):
 		"""Sets the end date.
@@ -971,7 +1055,9 @@ class Relation:
 
 		@see: L{getBeginDate}
 		"""
-		self.endDate = dateStr
+		self._endDate = dateStr
+
+	endDate = property(getEndDate, setEndDate, doc="The end date.")
 
 	def getDirection(self):
 		"""Returns the reading direction.
@@ -987,7 +1073,7 @@ class Relation:
 		@return: L{Relation.DIR_FORWARD}, L{Relation.DIR_BACKWARD},
 		or L{Relation.DIR_BOTH}
 		"""
-		return self.direction
+		return self._direction
 
 	def setDirection(self, direction):
 		"""Sets the reading direction.
@@ -997,7 +1083,10 @@ class Relation:
 
 		@see: L{getDirection}
 		"""
-		self.direction = direction
+		self._direction = direction
+
+	direction = property(getDirection, setDirection,
+		doc="The reading direction.")
 
 	def getTarget(self):
 		"""Returns this relation's target object.
@@ -1007,7 +1096,7 @@ class Relation:
 
 		@return: a subclass of L{Entity}, or None
 		"""
-		return self.target
+		return self._target
 
 	def setTarget(self, target):
 		"""Sets this relation's target object.
@@ -1017,10 +1106,13 @@ class Relation:
 
 		@param target: a subclass of L{Entity}
 		"""
-		self.target = target
+		self._target = target
+
+	target = property(getTarget, setTarget,
+		doc="The relation's target object.")
 
 
-class ReleaseEvent:
+class ReleaseEvent(object):
 	"""A release event, indicating where and when a release took place.
 
 	All country codes used must be valid ISO-3166 country codes (i.e. 'DE',
@@ -1028,46 +1120,55 @@ class ReleaseEvent:
 	'YYYY-MM' or 'YYYY-MM-DD'.
 	"""
 
-	def __init__(self, countryId=None, dateStr=None):
+	def __init__(self, country=None, dateStr=None):
 		"""Constructor.
 
-		@param countryId: a string containing an ISO-3166 country code
+		@param country: a string containing an ISO-3166 country code
 		@param dateStr: a string containing a date string
 		"""
-		self.countryId = countryId
-		self.dateStr = dateStr
+		self._countryId = country
+		self._dateStr = dateStr
 
-	def getCountryId(self):
+	def getCountry(self):
 		"""Returns the country a release took place.
 
-		@return: a string containing an ISO-3166 country code
-		"""
-		return self.countryId
+		@note: Due to a server limitation, the web service does not
+		return country IDs for release collection queries. This only
+		affects the L{musicbrainz2.webservice.Query.getReleases} query.
 
-	def setCountryId(self, countryId):
+		@return: a string containing an ISO-3166 country code, or None
+		"""
+		return self._countryId
+
+	def setCountry(self, country):
 		"""Sets the country a release took place.
 
-		@param countryId: a string containing an ISO-3166 country code
+		@param country: a string containing an ISO-3166 country code
 		"""
-		self.countryId = countryId
+		self._countryId = country
+
+	country = property(getCountry, setCountry,
+		doc='The country a release took place.')
 
 	def getDate(self):
 		"""Returns the date a release took place.
 
 		@return: a string containing a date
 		"""
-		return self.dateStr
+		return self._dateStr
 
 	def setDate(self, dateStr):
 		"""Sets the date a release took place.
 
 		@param dateStr: a string containing a date
 		"""
-		self.dateStr = dateStr
+		self._dateStr = dateStr
+
+	date = property(getDate, setDate, doc='The date a release took place.')
 
 
 
-class Disc:
+class Disc(object):
 	"""Represents an Audio CD.
 
 	This class represents an Audio CD. A disc can have an ID (the
@@ -1092,80 +1193,94 @@ class Disc:
 
 		@param id_: a string containing a 28-character DiscID 
 		"""
-		self.id = id_
-		self.sectors = None
-		self.firstTrackNum = None
-		self.lastTrackNum = None
-		self.tracks = [ ]
+		self._id = id_
+		self._sectors = None
+		self._firstTrackNum = None
+		self._lastTrackNum = None
+		self._tracks = [ ]
 
 	def getId(self):
 		"""Returns the MusicBrainz DiscID.
 
 		@return: a string containing a 28-character DiscID 
 		"""
-		return self.id
+		return self._id
 
 	def setId(self, id_):
 		"""Sets the MusicBrainz DiscId.
 
 		@param id_: a string containing a 28-character DiscID
 		"""
-		self.id = id_
+		self._id = id_
+
+	id = property(getId, setId, doc="The MusicBrainz DiscID.")
 
 	def getSectors(self):
 		"""Returns the length of the disc in sectors.
 
 		@return: the length in sectors as an integer, or None
 		"""
-		return self.sectors
+		return self._sectors
 
 	def setSectors(self, sectors):
 		"""Sets the length of the disc in sectors.
 
 		@param sectors: the length in sectors as an integer
 		"""
-		self.sectors = sectors
+		self._sectors = sectors
+
+	sectors = property(getSectors, setSectors,
+		doc="The length of the disc in sectors.")
 
 	def getFirstTrackNum(self):
 		"""Returns the number of the first track on this disc.
 
 		@return: an int containing the track number, or None
 		"""
-		return self.firstTrackNum
+		return self._firstTrackNum
 
 	def setFirstTrackNum(self, trackNum):
 		"""Sets the number of the first track on this disc.
 
 		@param trackNum: an int containing the track number, or None
 		"""
-		self.firstTrackNum = trackNum
+		self._firstTrackNum = trackNum
+
+	firstTrackNum = property(getFirstTrackNum, setFirstTrackNum,
+		doc="The number of the first track on this disc.")
 
 	def getLastTrackNum(self):
 		"""Returns the number of the last track on this disc.
 
 		@return: an int containing the track number, or None
 		"""
-		return self.lastTrackNum
+		return self._lastTrackNum
 
 	def setLastTrackNum(self, trackNum):
 		"""Sets the number of the last track on this disc.
 
 		@param trackNum: an int containing the track number, or None
 		"""
-		self.lastTrackNum = trackNum
+		self._lastTrackNum = trackNum
+
+	lastTrackNum = property(getLastTrackNum, setLastTrackNum,
+		doc="The number of the last track on this disc.")
 
 	def getTracks(self):
 		"""Returns the sector offset and length of this disc.
 
 		This method returns a list of tuples containing the track
-		offset and length in sectors. The track offset is measured
-		from the beginning of the disc, the length is relative to
-		the track's offset. Note that the leadout track is I{not}
-		included.
+		offset and length in sectors for all tracks on this disc.
+		The track offset is measured from the beginning of the disc,
+		the length is relative to the track's offset. Note that the
+		leadout track is I{not} included.
 
 		@return: a list of (offset, length) tuples (values are ints)
 		"""
-		return self.tracks
+		return self._tracks
+
+	tracks = property(getTracks,
+		doc='Sector offset and length of all tracks.')
 
 	def addTrack(self, track):
 		"""Adds a track to the list.
@@ -1178,10 +1293,10 @@ class Disc:
 
 		@see: L{getTracks}
 		"""
-		self.tracks.append(track)
+		self._tracks.append(track)
 
 
-class ArtistAlias:
+class ArtistAlias(object):
 	"""Represents an artist alias.
 
 	An alias (the I{alias value}) is a different representation of an
@@ -1192,82 +1307,91 @@ class ArtistAlias:
 	indicates which script is used for the alias value. To represent the
 	script, ISO-15924 script codes like 'Latn', 'Cyrl', or 'Hebr' are used.
 	"""
-	def __init__(self, value=None, typeUri=None, script=None):
+	def __init__(self, value=None, type_=None, script=None):
 		"""Constructor.
 
 		@param value: a string containing the alias
-		@param typeUri: a string containing an absolute URI
+		@param type_: a string containing an absolute URI
 		@param script: a string containing an ISO-15924 script code
 		"""
-		self.value = value
-		self.typeUri = typeUri
-		self.script = script
+		self._value = value
+		self._type = type_
+		self._script = script
 
 	def getValue(self):
 		"""Returns the alias.
 
 		@return: a string containing the alias
 		"""
-		return self.value
+		return self._value
 
 	def setValue(self, value):
 		"""Sets the alias.
 
 		@param value: a string containing the alias
 		"""
-		self.value = value
+		self._value = value
+
+	value = property(getValue, setValue, doc='The alias value.')
 
 	def getType(self):
 		"""Returns the alias type.
 
 		@return: a string containing an absolute URI, or None 
 		"""
-		return self.typeUri
+		return self._type
 
-	def setType(self, typeUri):
+	def setType(self, type_):
 		"""Sets the alias type.
 
-		@param typeUri: a string containing an absolute URI, or None
+		@param type_: a string containing an absolute URI, or None
 		"""
-		self.typeUri = typeUri
+		self._type = type_
+
+	type = property(getType, setType, doc='The alias type.')
 
 	def getScript(self):
 		"""Returns the alias script.
 
 		@return: a string containing an ISO-15924 script code
 		"""
-		return self.script
+		return self._script
 
 	def setScript(self, script):
 		"""Sets the alias script.
 
 		@param script: a string containing an ISO-15924 script code
 		"""
-		self.script = script
+		self._script = script
+
+	script = property(getScript, setScript, doc='The alias script.')
 
 
-class User:
+
+class User(object):
 	"""Represents a MusicBrainz user."""
 
 	def __init__(self):
 		"""Constructor."""
-		self.name = None
-		self.types = [ ]
-		self.showNag = None
+		self._name = None
+		self._types = [ ]
+		self._showNag = None
 
 	def getName(self):
 		"""Returns the user name.
 
 		@return: a string containing the user name
 		"""
-		return self.name
+		return self._name
 
 	def setName(self, name):
 		"""Sets the user name.
 
 		@param name: a string containing the user name
 		"""
-		self.name = name
+		self._name = name
+
+	name = property(getName, setName, doc='The MusicBrainz user name.')
 
 	def getTypes(self):
 		"""Returns the types of this user.
@@ -1282,7 +1406,9 @@ class User:
 
 		@return: a list of strings containing absolute URIs
 		"""
-		return self.types
+		return self._types
+
+	types = property(getTypes, doc="The user's types.")
 
 	def addType(self, type_):
 		"""Add a type to the list of types.
@@ -1291,14 +1417,14 @@ class User:
 
 		@see: L{getTypes}
 		"""
-		self.types.append(type_)
+		self._types.append(type_)
 
 	def getShowNag(self):
 		"""Returns true if a nag screen should be displayed to the user.
 
 		@return: C{True}, C{False}, or None
 		"""
-		return self.showNag
+		return self._showNag
 
 	def setShowNag(self, value):
 		"""Sets the value of the nag screen flag.
@@ -1309,7 +1435,9 @@ class User:
 
 		@see: L{getShowNag}
 		"""
-		self.showNag = value
+		self._showNag = value
 
+	showNag = property(getShowNag, setShowNag,
+		doc='The value of the nag screen flag.')
 
 # EOF

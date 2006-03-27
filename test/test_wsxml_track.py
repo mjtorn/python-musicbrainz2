@@ -84,4 +84,16 @@ class ParseTrackTest(unittest.TestCase):
 		self.assertEquals(releases[0].getTracksOffset(), 2)
 
 
+	def testSearchResults(self):
+		f = os.path.join(VALID_TRACK_DIR, 'search_result_1.xml')
+		md = MbXmlParser().parse(f)
+
+		results = md.getTrackResults()
+		self.assertEquals(len(results), 3)
+
+		self.assertEquals(results[0].getScore(), 100)
+		track1 = results[0].getTrack()
+		self.assertEquals(track1.getTitle(), 'Little Earthquakes')
+
+
 # EOF

@@ -65,9 +65,9 @@ class ParseArtistTest(unittest.TestCase):
 
 		events = release3.getReleaseEvents()
 		self.assertEquals(len(events), 5)
-		self.assertEquals(events[0].getCountryId(), 'DE')
+		self.assertEquals(events[0].getCountry(), 'DE')
 		self.assertEquals(events[0].getDate(), '1994-01-28')
-		self.assertEquals(events[4].getCountryId(), 'AU')
+		self.assertEquals(events[4].getCountry(), 'AU')
 		self.assertEquals(events[4].getDate(), '1994-11')
 
 		self.assertEquals(release3.getEarliestReleaseDate(), '1994-01-28')
@@ -93,5 +93,18 @@ class ParseArtistTest(unittest.TestCase):
 		self.assertEquals(aliases[1].getValue(), 'Myra Amos')
 		self.assertEquals(aliases[2].getValue(), 'Torie Amos')
 		self.assertEquals(aliases[2].getType(), NS_MMD_1 + 'Misspelling')
+
+	def testSearchResults(self):
+		f = os.path.join(VALID_ARTIST_DIR, 'search_result_1.xml')
+		md = MbXmlParser().parse(f)
+
+		results = md.getArtistResults()
+		self.assertEquals(len(results), 3)
+
+		self.assertEquals(results[0].getScore(), 100)
+		artist1 = results[0].getArtist()
+		self.assertEquals(artist1.getName(), 'Tori Amos')
+
+
 
 # EOF

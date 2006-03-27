@@ -1,3 +1,48 @@
+Changes from 0.2.2:
+
+  * API changes in model.Query to support relevance scores (#1175):
+      - Changed getArtists() to return a list of ArtistResult objects.
+      - Changed getReleases() to return a list of ReleaseResult objects.
+      - Changed getTracks() to return a list of TrackResult objects.
+
+  * API changes in model.ReleaseEvent:
+      - Renamed getCountryId() to getCountry()
+      - Renamed __init__()'s 'countryId' parameter to 'country'.
+
+  * API changes in model.Artist:
+      - Renamed setType()'s 'typeUri' parameter to 'type_'.
+
+  * API changes in model.ArtistAlias:
+      - Renamed __init__()'s and setType()'s 'typeUri' parameter to 'type_'.
+
+  * API changes to wsxml.Metadata:
+      - Removed getArtistList(), getReleaseList(), getTrackList()
+      - Added getArtistResults(), getReleaseResults(), and getTrackResults(),
+	returning ArtistResult, ReleaseResult, and TrackResult objects,
+	respectively.
+
+  * General API changes:
+      - Classes are now derived from 'object' (new-style classes).
+      - Marked all supposedly private attributes as private ('attr' -> '_attr').
+      - Marked the DOM utility functions in wsxml.py as private.
+
+  * All getter and setter methods are now exposed as properties, too.
+
+  * Added the class wsxml.MbXmlWriter which generates MMD XML.
+
+  * Fixed model.Release.TYPE_EP ('Ep' -> 'EP').
+
+  * Added TYPE_PERSON and TYPE_GROUP constans to model.Artist.
+
+  * Modules now have __all__, which makes 'import *' possible (but don't do it).
+
+  * The country code in model.ReleaseEvent is now optional. This is due to
+    the server which doesn't provide country codes for release collection
+    queries (and just the earliest date).
+
+  * Added more example code and improved the documentation.
+
+
 Changes from 0.2.1:
 
   * Added the musicbrainz2.utils module (#1192).
@@ -13,7 +58,7 @@ Changes from 0.2.0:
 
 Changes from 0.1.0:
 
-  * API change: Switched from TRM to PUID (Luks).
+  * API change: Switched from TRM to PUID (Luks)
     All interfaces with 'Trm' or 'trm' in the name are affected.
   * python 2.3 compatibility fixes (#1160)
 

@@ -101,4 +101,17 @@ class ParseReleaseTest(unittest.TestCase):
 		self.assertEquals(track14.getArtist().getName(), 'Tori Amos')
 
 
+	def testIncompleteReleaseEvent(self):
+		f = os.path.join(VALID_RELEASE_DIR, 'Under_the_Pink_1.xml')
+		md = MbXmlParser().parse(f)
+		release = md.getRelease()
+
+		self.failIf( release is None )
+		self.assertEquals(release.getTitle(), 'Under the Pink')
+
+		events = release.getReleaseEvents()
+		self.assertEquals(len(events), 1)
+		self.assertEquals(events[0].getDate(), '1994-01-28')
+		
+
 # EOF

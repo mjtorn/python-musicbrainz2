@@ -17,6 +17,8 @@ import urlparse
 import ctypes
 from musicbrainz2.model import Disc
 
+__all__ = [ 'DiscError', 'readDisc', 'getSubmissionUrl' ]
+
 
 # Define some magic strings from libmusicbrainz' queries.h.
 #
@@ -48,7 +50,7 @@ def _openLibrary():
 
 	@raise NotImplementedError: if the library can't be opened
 	"""
-	# This only works for ctypes >= 0.9.9.6. Any libmusicbrainz is found,
+	# This only works for ctypes >= 0.9.9.3. Any libmusicbrainz is found,
 	# no matter how it's called on this platform.
 	try:
 		if hasattr(ctypes.cdll, 'find'):
