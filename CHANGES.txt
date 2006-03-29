@@ -36,6 +36,8 @@ Changes from 0.2.2:
 
   * Modules now have __all__, which makes 'import *' possible (but don't do it).
 
+  * The utils module is now a package.
+
   * The country code in model.ReleaseEvent is now optional. This is due to
     the server which doesn't provide country codes for release collection
     queries (and just the earliest date).
