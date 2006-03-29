@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-__revision__ = '$Id'
+__revision__ = '$Id$'
 
 import os
 import sys
