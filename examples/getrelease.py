@@ -14,6 +14,7 @@
 import sys
 import logging
 import musicbrainz2.webservice as ws
+import musicbrainz2.utils as u
 
 logging.basicConfig()
 logger = logging.getLogger()
@@ -62,7 +63,7 @@ if len(release.releaseEvents) > 0:
 	print "Released (earliest: %s):" % release.getEarliestReleaseDate()
 
 for event in release.releaseEvents:
-	print "  %s %s" % (event.country, event.date)
+	print "  %s %s" % (u.getCountryName(event.country), event.date)
 
 
 if len(release.discs) > 0:

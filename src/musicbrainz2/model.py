@@ -438,6 +438,8 @@ class Release(Entity):
 		L{TYPE_ALBUM}, L{TYPE_SINGLE}, etc.
 
 		@return: a list of strings containing absolute URIs
+
+		@see: L{musicbrainz2.utils.getReleaseTypeName}
 		"""
 		return self._types
 
@@ -479,6 +481,8 @@ class Release(Entity):
 		lyrics.
 
 		@return: a string containing the language code, or None
+
+		@see: L{musicbrainz2.utils.getLanguageName}
 		"""
 		return self._textLanguage
 
@@ -504,6 +508,8 @@ class Release(Entity):
 		lyrics.
 
 		@return: a string containing the script code, or None
+
+		@see: L{musicbrainz2.utils.getScriptName}
 		"""
 		return self._textScript
 
@@ -658,7 +664,7 @@ class Release(Entity):
 
 		@return: a dict containing (countryCode, date) entries
 
-		@see: L{getReleaseEvents}
+		@see: L{getReleaseEvents}, L{musicbrainz2.utils.getCountryName}
 		"""
 		d = { }
 		for event in self.getReleaseEvents():
@@ -1137,6 +1143,8 @@ class ReleaseEvent(object):
 		affects the L{musicbrainz2.webservice.Query.getReleases} query.
 
 		@return: a string containing an ISO-3166 country code, or None
+
+		@see: L{musicbrainz2.utils.getCountryName}
 		"""
 		return self._countryId
 

@@ -1,7 +1,7 @@
 """Tests for the utils module."""
 import unittest
-from musicbrainz2.model import NS_MMD_1
-from musicbrainz2.utils import extractUuid, extractFragment
+import musicbrainz2.model as m
+import musicbrainz2.utils as u
 
 class UtilsTest(unittest.TestCase):
 	
@@ -14,32 +14,50 @@ class UtilsTest(unittest.TestCase):
 		uuid = 'c0b2500e-0cef-4130-869d-732b23ed9df5'
 		mbid = artistPrefix + uuid
 
-		self.assertEquals(extractUuid(None), None)
-		self.assertEquals(extractUuid(uuid), uuid)
-		self.assertEquals(extractUuid(mbid), uuid)
-		self.assertEquals(extractUuid(mbid, 'artist'), uuid)
+		self.assertEquals(u.extractUuid(None), None)
+		self.assertEquals(u.extractUuid(uuid), uuid)
+		self.assertEquals(u.extractUuid(mbid), uuid)
+		self.assertEquals(u.extractUuid(mbid, 'artist'), uuid)
 
 		# not correct, but not enough data to catch this
-		self.assertEquals(extractUuid(uuid, 'release'), uuid)
+		self.assertEquals(u.extractUuid(uuid, 'release'), uuid)
 
-		self.assertRaises(ValueError, extractUuid, mbid, 'release')
-		self.assertRaises(ValueError, extractUuid, mbid, 'track')
-		self.assertRaises(ValueError, extractUuid, mbid+'/xy', 'artist')
+		self.assertRaises(ValueError, u.extractUuid, mbid, 'release')
+		self.assertRaises(ValueError, u.extractUuid, mbid, 'track')
+		self.assertRaises(ValueError, u.extractUuid, mbid+'/xy', 'artist')
 
 		invalidId = 'http://example.invalid/' + uuid
-		self.assertRaises(ValueError, extractUuid, invalidId)
+		self.assertRaises(ValueError, u.extractUuid, invalidId)
 
 
 	def testExtractFragment(self):
 		fragment = 'Album'
-		uri = NS_MMD_1 + fragment
+		uri = m.NS_MMD_1 + fragment
 
-		self.assertEquals(extractFragment(None), None)
-		self.assertEquals(extractFragment(fragment), fragment)
-		self.assertEquals(extractFragment(uri), fragment)
-		self.assertEquals(extractFragment(uri, NS_MMD_1), fragment)
+		self.assertEquals(u.extractFragment(None), None)
+		self.assertEquals(u.extractFragment(fragment), fragment)
+		self.assertEquals(u.extractFragment(uri), fragment)
+		self.assertEquals(u.extractFragment(uri, m.NS_MMD_1), fragment)
 
 		prefix = 'http://example.invalid/'
-		self.assertRaises(ValueError, extractFragment, uri, prefix)
+		self.assertRaises(ValueError, u.extractFragment, uri, prefix)
+
+
+	def testGetCountryName(self):
+		self.assertEquals(u.getCountryName('DE'), 'Germany')
+		self.assertEquals(u.getCountryName('FR'), 'France')
+
+	def testGetLanguageName(self):
+		self.assertEquals(u.getLanguageName('DEU'), 'German')
+		self.assertEquals(u.getLanguageName('ENG'), 'English')
+
+	def testGetScriptName(self):
+		self.assertEquals(u.getScriptName('Latn'), 'Latin')
+		self.assertEquals(u.getScriptName('Cyrl'), 'Cyrillic')
+
+	def testGetReleaseTypeName(self):
+		self.assertEquals(u.getReleaseTypeName(m.Release.TYPE_ALBUM),
+			'Album')
+		self.assertEquals(u.getReleaseTypeName(m.Release.TYPE_COMPILATION), 'Compilation')
 
 # EOF

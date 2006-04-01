@@ -8,8 +8,13 @@ __revision__ = '$Id$'
 
 import re
 import urlparse
+import csv
+import os.path
 
-__all__ = [ 'extractUuid', 'extractFragment' ]
+__all__ = [
+	'extractUuid', 'extractFragment', 'getReleaseTypeName',
+	'getCountryName', 'getLanguageName', 'getScriptName',
+]
 
 
 def extractUuid(uriStr, resType=None):
@@ -93,6 +98,91 @@ def extractFragment(uriStr, uriPrefix=None):
 		return frag
 	else:
 		raise ValueError("prefix doesn't match URI %s" % uriStr)
+
+
+
+_NAME_CACHE = { }
+
+def _getFromNameCache(name, id_):
+	if not _NAME_CACHE.has_key(name):
+		path = os.path.join(os.path.dirname(__file__), 'data', name)
+		reader = csv.reader(file(path, 'rb'))
+
+		d = { }
+		for (k, v) in reader:
+			d[k] = v
+
+		_NAME_CACHE[name] = d
+
+	try:
+		return _NAME_CACHE[name][id_]
+	except KeyError:
+		return None
+
+
+def getReleaseTypeName(releaseType):
+	"""Returns the name of a release type URI.
+
+	@param releaseType: a string containing a release type URI
+
+	@return: a string containing a printable name for the release type
+
+	@see: L{musicbrainz2.model.Release}
+	"""
+	return _getFromNameCache('release_type_names.csv', releaseType)
+
+
+def getCountryName(id_):
+	"""Returns a country's name based on an ISO-3166 country code.
+
+	The country table this function is based on has been modified for
+	MusicBrainz purposes by using the extension mechanism defined in
+	ISO-3166. All IDs are still valid ISO-3166 country codes, but some
+	IDs have been added to include historic countries and some of the
+	country names have been modified to make them better suited for
+	display purposes.
+
+	If the country ID is not found, None is returned. This may happen
+	for example, when new countries are added to the MusicBrainz web
+	service which aren't known to this library yet.
+
+	@param id_: a two-letter upper case string containing an ISO-3166 code
+
+	@return: a string containing the country's name, or None
+
+	@see: L{musicbrainz2.model}
+	"""
+	return _getFromNameCache('country_names.csv', id_)
+
+
+def getLanguageName(id_):
+	"""Returns a language name based on an ISO-639-2/T code.
+
+	This function uses a subset of the ISO-639-2/T code table to map
+	language IDs (terminologic, not bibliographic ones!) to names.
+
+	@param id_: a three-letter upper case string containing an ISO-639-2/T code
+
+	@return: a string containing the language's name, or None
+
+	@see: L{musicbrainz2.model}
+	"""
+	return _getFromNameCache('language_names.csv', id_)
+
+
+def getScriptName(id_):
+	"""Returns a script name based on an ISO-15924 code.
+
+	This function uses a subset of the ISO-15924 code table to map
+	script IDs to names.
+
+	@param id_: a four-letter string containing an ISO-15924 script code
+
+	@return: a string containing the script's name, or None
+
+	@see: L{musicbrainz2.model}
+	"""
+	return _getFromNameCache('script_names.csv', id_)
 
 
 # EOF
