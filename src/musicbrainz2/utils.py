@@ -115,7 +115,7 @@ def _getFromNameCache(name, id_):
 		_NAME_CACHE[name] = d
 
 	try:
-		return _NAME_CACHE[name][id_]
+		return unicode(_NAME_CACHE[name][id_], "UTF-8")
 	except KeyError:
 		return None
 
