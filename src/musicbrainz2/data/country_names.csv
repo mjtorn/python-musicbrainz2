@@ -2,7 +2,6 @@ BD,Bangladesh
 BE,Belgium
 BF,Burkina Faso
 BG,Bulgaria
-BA,Bosnia and Herzegowina
 BB,Barbados
 WF,Wallis and Futuna Islands
 BM,Bermuda
@@ -49,7 +48,6 @@ GH,Ghana
 OM,Oman
 TN,Tunisia
 JO,Jordan
-HR,Croatia (Local Name: Hrvatska)
 HT,Haiti
 HU,Hungary
 HK,Hong Kong
@@ -111,7 +109,6 @@ MX,Mexico
 IL,Israel
 FR,France
 IO,British Indian Ocean Territory
-FX,"France, Metropolitan"
 SH,St. Helena
 FI,Finland
 FJ,Fiji
@@ -159,10 +156,7 @@ KH,Cambodia
 KN,Saint Kitts and Nevis
 KM,Comoros
 ST,Sao Tome and Principe
-SK,Slovakia (Slovak Republic)
-KR,"Korea, Republic of"
 SI,Slovenia
-KP,"Korea, Democratic People's Republic of"
 KW,Kuwait
 SN,Senegal
 SM,San Marino
@@ -183,7 +177,6 @@ YE,Yemen
 DZ,Algeria
 US,United States
 UY,Uruguay
-YU,Yugoslavia
 YT,Mayotte
 UM,United States Minor Outlying Islands
 LB,Lebanon
@@ -194,7 +187,6 @@ TW,Taiwan
 TT,Trinidad and Tobago
 TR,Turkey
 LK,Sri Lanka
-TP,East Timor
 LI,Liechtenstein
 LV,Latvia
 TO,Tonga
@@ -236,3 +228,18 @@ ID,Indonesia
 UA,Ukraine
 QA,Qatar
 MZ,Mozambique
+BA,Bosnia and Herzegovina
+CD,"Congo, The Democratic Republic of the"
+CS,Serbia and Montenegro
+HR,Croatia
+KP,"Korea (North), Democratic People's Republic of"
+KR,"Korea (South), Republic of"
+SK,Slovakia
+SU,"Soviet Union (historical, 1922-1991)"
+TL,East Timor
+XC,"Czechoslovakia (historical, 1918-1992)"
+XE,Europe
+XG,"East Germany (historical, 1949-1990)"
+XU,[Unknown Country]
+XW,[Worldwide]
+YU,"Yugoslavia (historical, 1918-1992)"
