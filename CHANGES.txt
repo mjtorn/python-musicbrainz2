@@ -43,6 +43,8 @@ Changes from 0.2.2:
     the server which doesn't provide country codes for release collection
     queries (and just the earliest date).
 
+  * Added model.Release.getEarliestReleaseEvent() (#1260).
+
   * Added more example code and improved the documentation.
 
 

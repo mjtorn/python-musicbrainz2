@@ -53,6 +53,12 @@ class ParseReleaseTest(unittest.TestCase):
 		self.assertEquals(events['DE'], '1992-01-17')
 		self.assertEquals(events['US'], '1992-02-25')
 
+		date = release.getEarliestReleaseDate()
+		self.assertEquals(date, '1992-01-13')
+		event = release.getEarliestReleaseEvent()
+		self.assertEquals(event.date, date)
+		self.assertEquals(event.country, 'GB')
+
 		discs = release.getDiscs()
 		self.assertEquals(len(discs), 3)
 		self.assertEquals(discs[0].getId(), 'ILKp3.bZmvoMO7wSrq1cw7WatfA-')

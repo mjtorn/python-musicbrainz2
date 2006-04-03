@@ -676,28 +676,46 @@ class Release(Entity):
 
 		This favours complete dates. For example, '2006-09' is
 		returned if there is '2000', too. If there is no release
-		event assiciated with this release, None is returned.
+		event associated with this release, None is returned.
 
 		@return: a string containing the date, or None 
 
 		@see: L{getReleaseEvents}, L{getReleaseEventsAsDict}
 		"""
+		event = self.getEarliestReleaseEvent()
+
+		if event is None:
+			return None
+		else:
+			return event.getDate()
+
+	def getEarliestReleaseEvent(self):
+		"""Returns the earliest release event.
+
+		This works like L{getEarliestReleaseDate}, but instead of
+		just the date, this returns a L{ReleaseEvent} object.
+
+		@return: a L{ReleaseEvent} object, or None 
+
+		@see: L{getReleaseEvents}, L{getEarliestReleaseDate}
+		"""
 		dates = [ ]
 		for event in self.getReleaseEvents():
 			date = event.getDate()
 			if len(date) == 10:    # 'YYYY-MM-DD'
-				dates.append(date)
+				dates.append( (date, event) )
 			elif len(date) == 7:   # 'YYYY-MM'
-				dates.append(date + '-99')
+				dates.append( (date + '-99', event) )
 			else:
-				dates.append(date + '-99-99')
+				dates.append( (date + '-99-99', event) )
 
-		dates.sort()
+		dates.sort(lambda x, y: cmp(x[0], y[0]))
 
 		if len(dates) > 0:
-			return dates[0]
+			return dates[0][1]
 		else:
 			return None
+
 
 	#def getReleaseEventsCount(self):
 	#	"""Returns the number of release events.
