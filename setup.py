@@ -69,8 +69,9 @@ if ver_major >= 2 and ver_minor >= 4:
 	}
 else:
 	data_files = glob.glob('src/musicbrainz2/data/*.csv')
+	base_dir = 'lib/python%d.%d/site-packages/' % (ver_major, ver_minor)
 	setup_args['data_files'] = [
-		('lib/python2.4/site-packages/musicbrainz2/data', data_files),
+		(base_dir + '/musicbrainz2/data', data_files),
 	]
 
 setup(**setup_args)

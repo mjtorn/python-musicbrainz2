@@ -34,6 +34,9 @@ Changes from 0.2.2:
 
   * Added TYPE_PERSON and TYPE_GROUP constans to model.Artist.
 
+  * Added functions to the utils module to map country, language, script
+    and release type IDs to printable strings.
+
   * Modules now have __all__, which makes 'import *' possible (but don't do it).
 
   * The country code in model.ReleaseEvent is now optional. This is due to

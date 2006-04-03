@@ -1,14 +1,18 @@
 Authors:
 
-   Matthias Friedrich <matt@mafr.de>
+   Matthias Friedrich <matt at mafr dot de>
     - Designed, implemented and documented this package.
 
 
 Contributors:
 
-   Lukáš Lalinský <lalinsky@gmail.com>
+   Lukáš Lalinský <lalinsky at gmail dot com>
     - Fixed several bugs.
     - Patch for changing TRMs to PUIDs.
+
+   Nikki <nikki at lmfao dot org dot uk>
+    - Tested compatibility with python-2.3 on Debian.
+    - Provided country/language/script lists.
 
 --
 $Id$
