@@ -2,3 +2,4 @@ include *.txt
 recursive-include examples *
 recursive-include test *.py
 recursive-include test-data *.xml
+recursive-include src/musicbrainz2/data *.csv
