@@ -1,3 +1,9 @@
+Changes from 0.3.0:
+
+  * Fixed webservice.WebService.post(), to make PUID submission work (Luks).
+  * Added and updated package metadata in setup.py.
+
+
 Changes from 0.2.2:
 
   * API changes in model.Query to support relevance scores (#1175):
@@ -63,7 +69,7 @@ Changes from 0.2.0:
 
 Changes from 0.1.0:
 
-  * API change: Switched from TRM to PUID (Luks)
+  * API change: Switched from TRM to PUID (Luks).
     All interfaces with 'Trm' or 'trm' in the name are affected.
   * python 2.3 compatibility fixes (#1160)
 

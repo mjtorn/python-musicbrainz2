@@ -47,17 +47,51 @@ class GenerateDocsCommand(Command):
 
 		spawn(cmd)
 
+
+long_description = """\
+===============================================
+An interface to the MusicBrainz XML web service
+===============================================
+
+python-musicbrainz2 provides simple, object oriented access to the
+MusicBrainz web service. It is useful for applications like CD rippers,
+taggers, media players, and other tools that need music metadata.
+
+The MusicBrainz Project (see http://musicbrainz.org) collects music
+metadata and is maintained by its large and constantly growing user
+community.
+
+Most of this package works on python-2.3 and later without further
+dependencies. If you want to generate DiscIDs from an audio CD in the
+drive, you need ctypes and libmusicbrainz.
+"""
+
+trove_classifiers = [
+	'Development Status :: 4 - Beta',
+	'Intended Audience :: Developers',
+	'License :: OSI Approved :: BSD License',
+	'Operating System :: OS Independent',
+	'Programming Language :: Python',
+	'Topic :: Database :: Front-Ends',
+	'Topic :: Multimedia :: Sound/Audio :: CD Audio :: CD Ripping',
+	'Topic :: Software Development :: Libraries :: Python Modules',
+	'Topic :: Text Processing :: Markup :: XML',
+]
+
 setup_args = {
 	'name':		'python-musicbrainz2',
 	'version':	musicbrainz2.__version__,
 	'description':	'An interface to the MusicBrainz XML web service',
+	'long_description': long_description,
 	'author':	'Matthias Friedrich',
 	'author_email':	'matt@mafr.de',
-	'url':		'http://www.musicbrainz.org',
+	'url':		'http://musicbrainz.org/products/python-musicbrainz2/',
+	'download_url':	'ftp://ftp.musicbrainz.org/pub/musicbrainz/python-musicbrainz2/',
+	'classifiers':	trove_classifiers,
 	'license':	'BSD',
 	'packages':	[ 'musicbrainz2' ],
 	'package_dir':	{ 'musicbrainz2': 'src/musicbrainz2' },
-	'cmdclass':	{ 'test': TestCommand, 'docs': GenerateDocsCommand }
+	'cmdclass':	{ 'test': TestCommand, 'docs': GenerateDocsCommand },
 }
 
 (ver_major, ver_minor) = sys.version_info[0:2]
