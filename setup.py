@@ -49,7 +49,6 @@ class GenerateDocsCommand(Command):
 
 
 long_description = """\
-===============================================
 An interface to the MusicBrainz XML web service
 ===============================================
 
