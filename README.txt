@@ -19,17 +19,18 @@ using epydoc (http://epydoc.sourceforge.net).
 
 Please report all bugs you find via the MusicBrainz bug tracker:
 
-	http://musicbrainz.org/bugs
+	http://bugs.musicbrainz.org/
 
 Questions about this package may be posted to the MusicBrainz
 development mailing list (mb-devel):
 
 	http://musicbrainz.org/list.html
 
-There is also a wiki page with an FAQ section which could be of help
-in case you run into problems:
+More information can be found at the package's official homepage. It
+also contains an FAQ section which could be of help in case you run into
+problems:
 
-	http://wiki.musicbrainz.org/PythonMusicBrainz2
+	http://musicbrainz.org/products/python-musicbrainz2/
 
 --
 $Id$
