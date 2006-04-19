@@ -54,7 +54,11 @@ def _openLibrary():
 	# no matter how it's called on this platform.
 	try:
 		if hasattr(ctypes.cdll, 'find'):
-			libMb = ctypes.cdll.find('musicbrainz')
+			if sys.platform == 'win32':
+				libName = 'libmusicbrainz'
+			else:
+				libName = 'musicbrainz'
+			libMb = ctypes.cdll.find(libName)
 			_setPrototypes(libMb)
 			return libMb
 	except OSError, e:
