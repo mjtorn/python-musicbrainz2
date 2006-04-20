@@ -24,6 +24,7 @@ from musicbrainz2.model import NS_MMD_1, NS_REL_1, NS_EXT_1
 __all__ = [
 	'DefaultFactory', 'Metadata', 'ParseError',
 	'MbXmlParser', 'MbXmlWriter',
+	'ArtistResult', 'ReleaseResult', 'TrackResult',
 ]
 
 
