@@ -1,3 +1,8 @@
+Changes from 0.3.1:
+
+  * Made the package work inside a zip file for py2exe (#1411, Luks).
+
+
 Changes from 0.3.0:
 
   * Fixed webservice.WebService.post(), to make PUID submission work (Luks).

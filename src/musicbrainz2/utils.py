@@ -8,14 +8,12 @@ __revision__ = '$Id$'
 
 import re
 import urlparse
-import csv
 import os.path
 
 __all__ = [
 	'extractUuid', 'extractFragment', 'getReleaseTypeName',
 	'getCountryName', 'getLanguageName', 'getScriptName',
 ]
-
 
 def extractUuid(uriStr, resType=None):
 	"""Extract the UUID part from a MusicBrainz identifier.
@@ -101,25 +99,6 @@ def extractFragment(uriStr, uriPrefix=None):
 
 
 
-_NAME_CACHE = { }
-
-def _getFromNameCache(name, id_):
-	if not _NAME_CACHE.has_key(name):
-		path = os.path.join(os.path.dirname(__file__), 'data', name)
-		reader = csv.reader(file(path, 'rb'))
-
-		d = { }
-		for (k, v) in reader:
-			d[k] = v
-
-		_NAME_CACHE[name] = d
-
-	try:
-		return unicode(_NAME_CACHE[name][id_], "UTF-8")
-	except KeyError:
-		return None
-
-
 def getReleaseTypeName(releaseType):
 	"""Returns the name of a release type URI.
 
@@ -129,7 +108,8 @@ def getReleaseTypeName(releaseType):
 
 	@see: L{musicbrainz2.model.Release}
 	"""
-	return _getFromNameCache('release_type_names.csv', releaseType)
+	from musicbrainz2.data.releasetypenames import releaseTypeNames
+	return releaseTypeNames.get(releaseType)
 
 
 def getCountryName(id_):
@@ -152,7 +132,8 @@ def getCountryName(id_):
 
 	@see: L{musicbrainz2.model}
 	"""
-	return _getFromNameCache('country_names.csv', id_)
+	from musicbrainz2.data.countrynames import countryNames
+	return countryNames.get(id_)
 
 
 def getLanguageName(id_):
@@ -167,7 +148,8 @@ def getLanguageName(id_):
 
 	@see: L{musicbrainz2.model}
 	"""
-	return _getFromNameCache('language_names.csv', id_)
+	from musicbrainz2.data.languagenames import languageNames
+	return languageNames.get(id_)
 
 
 def getScriptName(id_):
@@ -182,7 +164,8 @@ def getScriptName(id_):
 
 	@see: L{musicbrainz2.model}
 	"""
-	return _getFromNameCache('script_names.csv', id_)
+	from musicbrainz2.data.scriptnames import scriptNames
+	return scriptNames.get(id_)
 
 
 # EOF
