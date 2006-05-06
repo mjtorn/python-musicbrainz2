@@ -89,6 +89,7 @@ setup_args = {
 	'license':	'BSD',
 	'packages':	[ 'musicbrainz2', 'musicbrainz2.data' ],
 	'package_dir':	{ 'musicbrainz2': 'src/musicbrainz2' },
+	'scripts':	[ 'bin/mb-submit-disc' ],
 	'cmdclass':	{ 'test': TestCommand, 'docs': GenerateDocsCommand },
 }
 
