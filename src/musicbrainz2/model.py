@@ -18,6 +18,8 @@ L{Artist}, L{Release}, and L{Track}.
 
 @author: Matthias Friedrich <matt@mafr.de>
 """
+from sets import Set
+
 __revision__ = '$Id$'
 
 __all__ = [
@@ -84,7 +86,8 @@ class Entity(object):
 
 	id = property(getId, setId, doc='The MusicBrainz ID.')
 
-	def getRelations(self, targetType=None, relationType=None):
+	def getRelations(self, targetType=None, relationType=None,
+			requiredAttributes=(), direction=None):
 		"""Returns a list of relations.
 
 		If C{targetType} is given, only relations of that target
@@ -101,10 +104,18 @@ class Entity(object):
 
 		You may use the C{relationType} parameter to further restrict
 		the selection. If it is set, only relations with the given
-		relation type are returned.
+		relation type are returned. The C{requiredAttributes} sequence
+		lists attributes that have to be part of all returned relations.
+
+		If C{direction} is set, only relations with the given reading
+		direction are returned. You can use the L{Relation.DIR_FORWARD},
+		L{Relation.DIR_BACKWARD}, and L{Relation.DIR_BOTH} constants
+		for this.
 
 		@param targetType: a string containing an absolute URI, or None
 		@param relationType: a string containing an absolute URI, or None
+		@param requiredAttributes: a sequence containing absolute URIs
+		@param direction: one of L{Relations}'s direction constants
 		@return: a list of L{Relation} objects
 
 		@see: L{Entity}
@@ -117,10 +128,28 @@ class Entity(object):
 				for rel in relList:
 					allRels.append(rel)
 
+		# Filter for direction.
+		#
+		if direction is not None:
+			allRels = [r for r in allRels if r.getDirection() == direction]
+
+		# Filter for relation type.
+		#
 		if relationType is None:
 			return allRels
 		else:
-			return [r for r in allRels if r.getType() == relationType]
+			allRels = [r for r in allRels if r.getType() == relationType]
+
+		# Now filer for attribute type.
+		#
+		tmp = []
+		required = Set(iter(requiredAttributes))
+
+		for r in allRels:
+			attrs = Set(iter(r.getAttributes()))
+			if required.issubset(attrs):
+				tmp.append(r)
+		return tmp
 
 
 	def addRelation(self, relation):

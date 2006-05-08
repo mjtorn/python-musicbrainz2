@@ -1,6 +1,6 @@
 """Tests for various model classes."""
 import unittest
-from musicbrainz2.model import Artist, Release, Track, Relation
+from musicbrainz2.model import Artist, Release, Track, Relation, NS_REL_1
 
 class MiscModelTest(unittest.TestCase):
 	
@@ -8,7 +8,7 @@ class MiscModelTest(unittest.TestCase):
 		unittest.TestCase.__init__(self, name)
 
 	def testAddRelation(self):
-		rel = Relation('Producer', Relation.TO_RELEASE, 'al_id')
+		rel = Relation(NS_REL_1+'Producer', Relation.TO_RELEASE, 'a_id',			attributes=[NS_REL_1+'Co'])
 		artist = Artist('ar_id', 'Tori Amos', 'Person')
 		artist.addRelation(rel)
 
@@ -26,6 +26,27 @@ class MiscModelTest(unittest.TestCase):
 		# works because we only have one relation
 		self.assertEquals(artist.getRelations(),
 			artist.getRelations(Relation.TO_RELEASE))
+
+		rel3 = artist.getRelations(Relation.TO_RELEASE,
+			NS_REL_1 + 'Producer')
+		self.assertEquals(len(rel3), 1)
+
+		rel4 = artist.getRelations(Relation.TO_RELEASE,
+			NS_REL_1 + 'Producer', [NS_REL_1 + 'Co'])
+		self.assertEquals(len(rel4), 1)
+
+		rel5 = artist.getRelations(Relation.TO_RELEASE,
+			NS_REL_1 + 'Producer', [NS_REL_1 + 'NotThere'])
+		self.assertEquals(len(rel5), 0)
+
+		rel6 = artist.getRelations(Relation.TO_RELEASE,
+			NS_REL_1 + 'Producer', [NS_REL_1 + 'Co'], 'both')
+		self.assertEquals(len(rel6), 1)
+
+		rel6 = artist.getRelations(Relation.TO_RELEASE,
+			NS_REL_1 + 'Producer', [NS_REL_1 + 'Co'], 'forward')
+		self.assertEquals(len(rel6), 0)
+
 
 	def testTrackDuration(self):
 		t = Track()
