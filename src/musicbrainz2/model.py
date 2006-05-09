@@ -115,7 +115,7 @@ class Entity(object):
 		@param targetType: a string containing an absolute URI, or None
 		@param relationType: a string containing an absolute URI, or None
 		@param requiredAttributes: a sequence containing absolute URIs
-		@param direction: one of L{Relations}'s direction constants
+		@param direction: one of L{Relation}'s direction constants
 		@return: a list of L{Relation} objects
 
 		@see: L{Entity}
@@ -150,6 +150,39 @@ class Entity(object):
 			if required.issubset(attrs):
 				tmp.append(r)
 		return tmp
+
+
+	def getRelationTargets(self, targetType=None, relationType=None,
+			requiredAttributes=(), direction=None):
+		"""Returns a list of relation targets.
+
+		The arguments work exactly like in L{getRelations}, but
+		instead of L{Relation} objects, the matching relation
+		targets are returned. This can be L{Artist}, L{Release},
+		or L{Track} objects, depending on the relations.
+
+		As a special case, URL strings are returned if the target
+		is an URL.
+
+		@param targetType: a string containing an absolute URI, or None
+		@param relationType: a string containing an absolute URI, or None
+		@param requiredAttributes: a sequence containing absolute URIs
+		@param direction: one of L{Relation}'s direction constants
+		@return: a list of objects, depending on the relation
+
+		@see: L{getRelations}
+		"""
+		ret = [ ]
+		rels =  self.getRelations(targetType, relationType,
+			requiredAttributes, direction)
+
+		for r in rels:
+			if r.getTargetType() == Relation.TO_URL:
+				ret.append(r.getTargetId())
+			else:
+				ret.append(r.getTarget())
+
+		return ret
 
 
 	def addRelation(self, relation):

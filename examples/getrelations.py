@@ -32,7 +32,8 @@ try:
 	# The result should include all relations to other artists and also
 	# relations to URLs.
 	#
-	inc = ws.ArtistIncludes(artistRelations=True, urlRelations=True)
+	inc = ws.ArtistIncludes(artistRelations=True, releaseRelations=True,
+		urlRelations=True)
 	artist = q.getArtistById(sys.argv[1], inc)
 except ws.WebServiceError, e:
 	print 'Error:', e
@@ -49,9 +50,9 @@ print
 # type 'http://musicbrainz.org/ns/rel-1.0#Wikipedia'. Note that there could
 # be more than one relation per type. We just print the first one.
 #
-rels = artist.getRelations(m.Relation.TO_URL, m.NS_REL_1+'Wikipedia')
-if len(rels) > 0:
-	print 'Wikipedia:', rels[0].targetId
+urls = artist.getRelationTargets(m.Relation.TO_URL, m.NS_REL_1+'Wikipedia')
+if len(urls) > 0:
+	print 'Wikipedia:', urls[0]
 	print
 
 
@@ -84,5 +85,15 @@ if artist.type == m.Artist.TYPE_GROUP:
 	for rel in additionalMembers:
 		print '\t', rel.target.name
 
+
+#
+# List all releases for which this artist has acted as the producer.
+#
+releases = artist.getRelationTargets(m.Relation.TO_RELEASE,
+		m.NS_REL_1+'Producer')
+print
+print 'Credited as producer for:'
+for r in releases:
+	print '\t', r.title
 
 # EOF
