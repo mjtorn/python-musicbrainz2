@@ -187,7 +187,7 @@ def readDisc(deviceName=None):
 	return disc
 
 
-def getSubmissionUrl(disc, host='musicbrainz.org', port=80):
+def getSubmissionUrl(disc, host='mm.musicbrainz.org', port=80):
 	"""Returns a URL for adding a disc to the MusicBrainz database.
 
 	A fully initialized L{musicbrainz2.model.Disc} object is needed, as

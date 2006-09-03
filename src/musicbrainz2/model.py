@@ -249,6 +249,8 @@ class Artist(Entity):
 		self._endDate = None
 		self._aliases = [ ]
 		self._releases = [ ]
+		self._releasesCount = None
+		self._releasesOffset = None
 
 	def getType(self):
 		"""Returns the artist's type.
@@ -441,6 +443,57 @@ class Artist(Entity):
 		"""
 		self._release.append(release)
 
+	def getReleasesOffset(self):
+		"""Returns the offset of the release list.
+
+		This is used if the release list is incomplete (ie. the web
+		service only returned part of the release for this artist).
+		Note that the offset value is zero-based, which means release
+		C{0} is the first release.
+
+		@return: an integer containing the offset, or None
+
+		@see: L{getReleases}, L{getReleasesCount}
+		"""
+		return self._releasesOffset
+
+	def setReleasesOffset(self, offset):
+		"""Sets the offset of the release list.
+
+		@param offset: an integer containing the offset, or None
+
+		@see: L{getReleasesOffset}
+		"""
+		self._releasesOffset = offset
+
+	releasesOffset = property(getReleasesOffset, setReleasesOffset,
+		doc='The offset of the release list.')
+
+	def getReleasesCount(self):
+		"""Returns the number of existing releases.
+	
+		This may or may not match with the number of elements that
+		L{getReleases} returns. If the count is higher than
+		the list, it indicates that the list is incomplete.
+
+		@return: an integer containing the count, or None
+
+		@see: L{setReleasesCount}, L{getReleasesOffset}
+		"""
+		return self._releasesCount
+
+	def setReleasesCount(self, value):
+		"""Sets the number of existing releases.
+
+		@param value: an integer containing the count, or None
+
+		@see: L{getReleasesCount}, L{setReleasesOffset}
+		"""
+		self._releasesCount = value
+
+	releasesCount = property(getReleasesCount, setReleasesCount,
+		doc='The total number of releases')
+
 
 class Release(Entity):
 	"""Represents a Release.
@@ -491,6 +544,7 @@ class Release(Entity):
 		#self._discIdsCount = None
 		self._tracks = [ ]
 		self._tracksOffset = None
+		self._tracksCount = None
 
 
 	def getTypes(self):
@@ -652,7 +706,7 @@ class Release(Entity):
 
 		@return: a list containing L{Track} objects
 
-		@see: L{getTracksOffset}
+		@see: L{getTracksOffset}, L{getTracksCount}
 		"""
 		return self._tracks
 
@@ -677,7 +731,7 @@ class Release(Entity):
 
 		@return: an integer containing the offset, or None
 
-		@see: L{getTracks}
+		@see: L{getTracks}, L{getTracksCount}
 		"""
 		return self._tracksOffset
 
@@ -686,12 +740,38 @@ class Release(Entity):
 
 		@param offset: an integer containing the offset, or None
 
-		@see: L{getTracksOffset}
+		@see: L{getTracksOffset}, L{setTracksCount}
 		"""
 		self._tracksOffset = offset
 
 	tracksOffset = property(getTracksOffset, setTracksOffset,
 		doc='The offset of the track list.')
+
+	def getTracksCount(self):
+		"""Returns the number of tracks on this release.
+	
+		This may or may not match with the number of elements that
+		L{getTracks} returns. If the count is higher than
+		the list, it indicates that the list is incomplete.
+
+		@return: an integer containing the count, or None
+
+		@see: L{setTracksCount}, L{getTracks}, L{getTracksOffset}
+		"""
+		return self._tracksCount
+
+	def setTracksCount(self, value):
+		"""Sets the number of tracks on this release.
+
+		@param value: an integer containing the count, or None
+
+		@see: L{getTracksCount}, L{setTracksOffset}
+		"""
+		self._tracksCount = value
+
+	tracksCount = property(getTracksCount, setTracksCount,
+		doc='The total number of releases')
+
 
 	def getReleaseEvents(self):
 		"""Returns the list of release events.

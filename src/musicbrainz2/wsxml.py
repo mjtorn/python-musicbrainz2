@@ -396,6 +396,11 @@ class MbXmlParser(object):
 		for c in _getChildElements(listNode):
 			resultList.append(creator(c))
 
+	def _getListAttrs(self, listNode):
+		offset = _getIntAttr(listNode, 'offset')
+		count = _getIntAttr(listNode, 'count')
+		return (offset, count)
+
 	def _createArtist(self, artistNode):
 		artist = self._factory.newArtist()
 		artist.setId(_getIdAttr(artistNode, 'id', 'artist'))
@@ -414,6 +419,9 @@ class MbXmlParser(object):
 			elif _matches(node, 'alias-list'):
 				self._addArtistAliases(node, artist)
 			elif _matches(node, 'release-list'):
+				(offset, count) = self._getListAttrs(node)
+				artist.setReleasesOffset(offset)
+				artist.setReleasesCount(count)
 				self._addReleasesToList(node, artist.getReleases())
 			elif _matches(node, 'relation-list'):
 				self._addRelationsToEntity(node, artist)
@@ -444,8 +452,9 @@ class MbXmlParser(object):
 			elif _matches(node, 'disc-list'):
 				self._addDiscs(node, release)
 			elif _matches(node, 'track-list'):
-				offset = _getIntAttr(node, 'offset', 0)
+				(offset, count) = self._getListAttrs(node)
 				release.setTracksOffset(offset)
+				release.setTracksCount(count)
 				self._addTracksToList(node, release.getTracks())
 			elif _matches(node, 'relation-list'):
 				self._addRelationsToEntity(node, release)
