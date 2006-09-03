@@ -56,7 +56,7 @@ def _openLibrary():
 	elif sys.platform == 'darwin':
 		libName = 'libdiscid.0.dylib'
 	elif sys.platform == 'win32':
-		libName = 'libdiscid.dll'
+		libName = 'discid.dll'
 	else:
 		# This should at least work for Un*x-style operating systems
 		libName = 'libdiscid.so.0'
