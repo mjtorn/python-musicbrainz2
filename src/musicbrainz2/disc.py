@@ -20,19 +20,6 @@ from musicbrainz2.model import Disc
 __all__ = [ 'DiscError', 'readDisc', 'getSubmissionUrl' ]
 
 
-# Define some magic strings from libmusicbrainz' queries.h.
-#
-_MB_CDINDEX_ID_LEN = 28
-_MBQ_GetCDTOC = '@LOCALCDINFO@'
-_MBE_TOCGetCDIndexId = 'http://musicbrainz.org/mm/mm-2.1#cdindexid'
-_MBE_TOCGetFirstTrack = 'http://musicbrainz.org/mm/mm-2.1#firstTrack'
-_MBE_TOCGetLastTrack = 'http://musicbrainz.org/mm/mm-2.1#lastTrack'
-_MBE_MBE_TOCGetTrackSectorOffset = 'http://musicbrainz.org/mm/mm-2.1#toc [] ' \
-	+ 'http://musicbrainz.org/mm/mm-2.1#sectorOffset'
-_MBE_MBE_TOCGetTrackNumSectors = 'http://musicbrainz.org/mm/mm-2.1#toc [] ' \
-	+ 'http://musicbrainz.org/mm/mm-2.1#numSectors'
-
-
 class DiscError(IOError):
 	"""The Audio CD could not be read.
 
@@ -44,23 +31,19 @@ class DiscError(IOError):
 
 
 def _openLibrary():
-	"""Tries to open libmusicbrainz.
+	"""Tries to open libdiscid.
 
 	@return: a C{ctypes.CDLL} object, representing the opened library
 
 	@raise NotImplementedError: if the library can't be opened
 	"""
-	# This only works for ctypes >= 0.9.9.3. Any libmusicbrainz is found,
+	# This only works for ctypes >= 0.9.9.3. Any libdiscid is found,
 	# no matter how it's called on this platform.
 	try:
 		if hasattr(ctypes.cdll, 'find'):
-			if sys.platform == 'win32':
-				libName = 'libmusicbrainz'
-			else:
-				libName = 'musicbrainz'
-			libMb = ctypes.cdll.find(libName)
-			_setPrototypes(libMb)
-			return libMb
+			libDiscId = ctypes.cdll.find('discid')
+			_setPrototypes(libDiscId)
+			return libDiscId
 	except OSError, e:
 		raise NotImplementedError('Error opening library: ' + str(e))
 
@@ -69,122 +52,53 @@ def _openLibrary():
 	# which isn't available for ctypes == 0.9.9.3.
 	#
 	if sys.platform == 'linux2':
-		libName = 'libmusicbrainz.so.4'
+		libName = 'libdiscid.so.0'
 	elif sys.platform == 'darwin':
-		libName = 'libmusicbrainz.4.dylib'
+		libName = 'libdiscid.0.dylib'
 	elif sys.platform == 'win32':
-		libName = 'libmusicbrainz.dll'
+		libName = 'libdiscid.dll'
 	else:
 		# This should at least work for Un*x-style operating systems
-		libName = 'libmusicbrainz.so.4'
+		libName = 'libdiscid.so.0'
 
 	try:
-		libMb = ctypes.cdll.LoadLibrary(libName)
-		_setPrototypes(libMb)
-		return libMb
+		libDiscId = ctypes.cdll.LoadLibrary(libName)
+		_setPrototypes(libDiscId)
+		return libDiscId
 	except OSError, e:
 		raise NotImplementedError('Error opening library: ' + str(e))
 
 	assert False # not reached
 
 
-def _setPrototypes(libMb):
+def _setPrototypes(libDiscId):
 	ct = ctypes
-	libMb.mb_New.argtypes = ( )
-	libMb.mb_Delete.argtypes = (ct.c_int, )
-	libMb.mb_SetDevice.argtypes = (ct.c_int, ct.c_char_p)
-	libMb.mb_Query.argtypes = (ct.c_int, ct.c_char_p)
-	libMb.mb_GetQueryError.argtypes = (ct.c_int, ct.c_char_p, ct.c_int)
-	libMb.mb_GetResultData.argtypes = (ct.c_int, ct.c_char_p,
-		ct.c_char_p, ct.c_int)
-	libMb.mb_GetResultData1.argtypes = (ct.c_int, ct.c_char_p,
-		ct.c_char_p, ct.c_int, ct.c_int)
+	libDiscId.discid_new.argtypes = ( )
 
+	libDiscId.discid_free.argtypes = (ct.c_int, )
 
-def _getQueryError(libMb, mb):
-	maxLen = 256
-	buf = ctypes.c_buffer(maxLen)
-	libMb.mb_GetQueryError(mb, buf, maxLen)
-	return buf.value
+	libDiscId.discid_read.argtypes = (ct.c_int, ct.c_char_p)
 
+	libDiscId.discid_get_error_msg.argtypes = (ct.c_int, )
+	libDiscId.discid_get_error_msg.restype = ct.c_char_p
 
-def readDisc(deviceName=None):
-	"""Reads an Audio CD in the disc drive.
+	libDiscId.discid_get_id.argtypes = (ct.c_int, )
+	libDiscId.discid_get_id.restype = ct.c_char_p
 
-	This reads a CD's table of contents (TOC) and calculates the MusicBrainz
-	DiscID, which is a 28 character ASCII string. This DiscID can be used
-	to retrieve a list of matching releases from the web service (see
-	L{musicbrainz2.webservice.Query}).
+	libDiscId.discid_get_first_track_num.argtypes = (ct.c_int, )
+	libDiscId.discid_get_first_track_num.restype = ct.c_int
 
-	Note that an Audio CD has to be in drive for this to work. The
-	C{deviceName} argument may be used to set the device. The default
-	depends on the operating system (on linux, it's C{'/dev/cdrom'}).
-	No network connection is needed for this function.
+	libDiscId.discid_get_last_track_num.argtypes = (ct.c_int, )
+	libDiscId.discid_get_last_track_num.restype = ct.c_int
 
-	If the device doesn't exist or there's no valid Audio CD in the drive,
-	a L{DiscError} exception is raised.
+	libDiscId.discid_get_sectors.argtypes = (ct.c_int, )
+	libDiscId.discid_get_sectors.restype = ct.c_int
 
-	@param deviceName: a string containing the CD drive's device name
+	libDiscId.discid_get_track_offset.argtypes = (ct.c_int, ct.c_int)
+	libDiscId.discid_get_track_offset.restype = ct.c_int
 
-	@return: a L{musicbrainz2.model.Disc} object
-
-	@raise DiscError: if there was a problem reading the disc
-	@raise NotImplementedError: if DiscID generation isn't supported
-	"""
-	libMb = _openLibrary()
-
-	mb = libMb.mb_New()
-	assert mb != 0, "libmusicbrainz: mb_New() returned NULL"
-
-	if deviceName is not None:
-		res = libMb.mb_SetDevice(mb, deviceName)
-		assert res != 0, "libmusicbrainz: mb_SetDevice() returned false"
-
-	# Access the CD drive.
-	res = libMb.mb_Query(mb, _MBQ_GetCDTOC)
-	if res == 0:
-		raise DiscError(_getQueryError(libMb, mb))
-
-	# Now extract the data from the result.
-	disc = Disc()
-
-	# extract the DiscID
-	maxLen = 256
-	buf = ctypes.c_buffer(maxLen+1)
-	res = libMb.mb_GetResultData(mb, _MBE_TOCGetCDIndexId, buf, maxLen)
-	assert res != 0
-	disc.setId(buf.value)
-
-	res = libMb.mb_GetResultData(mb, _MBE_TOCGetFirstTrack, buf, maxLen)
-	assert res != 0
-	firstTrackNum = int(buf.value)
-
-	res = libMb.mb_GetResultData(mb, _MBE_TOCGetLastTrack, buf, maxLen)
-	assert res != 0
-	lastTrackNum = int(buf.value)
-
-	res = libMb.mb_GetResultData1(mb,
-		_MBE_MBE_TOCGetTrackSectorOffset, buf, maxLen, firstTrackNum)
-	assert res != 0
-	disc.setSectors(int(buf.value))
-
-	for i in range(firstTrackNum+1, lastTrackNum+2):
-		res = libMb.mb_GetResultData1(mb,
-			_MBE_MBE_TOCGetTrackSectorOffset, buf, maxLen, i)
-		trackOffset = int(buf.value)
-
-		res = libMb.mb_GetResultData1(mb,
-			_MBE_MBE_TOCGetTrackNumSectors, buf, maxLen, i)
-		trackSectors = int(buf.value)
-
-		disc.addTrack( (trackOffset, trackSectors) )
-
-	disc.setFirstTrackNum(firstTrackNum)
-	disc.setLastTrackNum(lastTrackNum)
-
-	libMb.mb_Delete(mb)
-
-	return disc
+	libDiscId.discid_get_track_length.argtypes = (ct.c_int, ct.c_int)
+	libDiscId.discid_get_track_length.restype = ct.c_int
 
 
 def getSubmissionUrl(disc, host='mm.musicbrainz.org', port=80):
@@ -228,5 +142,66 @@ def getSubmissionUrl(disc, host='mm.musicbrainz.org', port=80):
 	url = ('http', netloc, '/bare/cdlookup.html', '', query, '')
 		
 	return urlparse.urlunparse(url)
+
+
+def readDisc(deviceName=None):
+	"""Reads an Audio CD in the disc drive.
+
+	This reads a CD's table of contents (TOC) and calculates the MusicBrainz
+	DiscID, which is a 28 character ASCII string. This DiscID can be used
+	to retrieve a list of matching releases from the web service (see
+	L{musicbrainz2.webservice.Query}).
+
+	Note that an Audio CD has to be in drive for this to work. The
+	C{deviceName} argument may be used to set the device. The default
+	depends on the operating system (on linux, it's C{'/dev/cdrom'}).
+	No network connection is needed for this function.
+
+	If the device doesn't exist or there's no valid Audio CD in the drive,
+	a L{DiscError} exception is raised.
+
+	@param deviceName: a string containing the CD drive's device name
+
+	@return: a L{musicbrainz2.model.Disc} object
+
+	@raise DiscError: if there was a problem reading the disc
+	@raise NotImplementedError: if DiscID generation isn't supported
+	"""
+	libDiscId = _openLibrary()
+
+	handle = libDiscId.discid_new()
+	assert handle != 0, "libdiscid: discid_new() returned NULL"
+
+	# Access the CD drive. This also works if deviceName is None because
+	# ctypes passes a NULL pointer in this case.
+	#
+	res = libDiscId.discid_read(handle, None)
+	if res == 0:
+		raise DiscError(libDiscId.discid_get_error_msg(handle))
+
+
+	# Now extract the data from the result.
+	#
+	disc = Disc()
+
+	disc.setId( libDiscId.discid_get_id(handle) )
+
+	firstTrackNum = libDiscId.discid_get_first_track_num(handle)
+	lastTrackNum = libDiscId.discid_get_last_track_num(handle)
+
+	disc.setSectors(libDiscId.discid_get_sectors(handle))
+
+	for i in range(firstTrackNum, lastTrackNum+1):
+		trackOffset = libDiscId.discid_get_track_offset(handle, i)
+		trackSectors = libDiscId.discid_get_track_length(handle, i)
+
+		disc.addTrack( (trackOffset, trackSectors) )
+
+	disc.setFirstTrackNum(firstTrackNum)
+	disc.setLastTrackNum(lastTrackNum)
+
+	libDiscId.discid_free(handle)
+
+	return disc
 
 # EOF
