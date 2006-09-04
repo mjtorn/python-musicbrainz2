@@ -7,7 +7,7 @@ Authors:
 Contributors:
 
    Lukáš Lalinský <lalinsky at gmail dot com>
-    - Fixed several bugs.
+    - Fixed several bugs and tested windows/ctypes compatibility.
     - Patch for changing TRMs to PUIDs.
 
    Nikki <nikki at lmfao dot org dot uk>

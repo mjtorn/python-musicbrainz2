@@ -61,7 +61,7 @@ community.
 
 Most of this package works on python-2.3 and later without further
 dependencies. If you want to generate DiscIDs from an audio CD in the
-drive, you need ctypes and libmusicbrainz.
+drive, you need ctypes (already included in python-2.5) and libdiscid.
 """
 
 trove_classifiers = [

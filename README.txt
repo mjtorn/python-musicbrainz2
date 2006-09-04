@@ -9,9 +9,8 @@ web service, as well as parsing the MusicBrainz Metadata XML (MMD), or
 calculating DiscIDs from Audio CDs.
 
 Except for the DiscID generation, everything should work with standard
-python 2.3 or later. However, for DiscID calculation, the MusicBrainz client
-library (libmusicbrainz) and the ctypes package are required. See the
-installation instructions for details.
+python 2.3 or later. However, for DiscID calculation, libdiscid and the
+ctypes package are required. See the installation instructions for details.
 
 To get started quickly have a look at the examples directory which
 contains various sample scripts. API documentation can be generated

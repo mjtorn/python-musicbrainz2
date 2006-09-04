@@ -8,15 +8,15 @@ First of all, install the following dependencies:
      
      -> http://www.python.org/
 
-  2. libmusicbrainz (tested with 2.1.1)
-     Any version above 2.0 should do, so the packages shipped with most
-     linux distributions should work. Required for DiscID calculation.
+  2. libdiscid (tested with 0.1.0)
+     Any version above 0.1.0 should do.
 
-     -> http://musicbrainz.org/products/client/download.html
+     -> http://musicbrainz.org/doc/libdiscid
 
   3. ctypes (tested with 0.9.6 and 0.9.9.3)
      Version 0.9.0 or later should work, which is included in recent
      linux distributions. This is required for DiscID calculation.
+     Note that python 2.5 already comes with ctypes.
 
      -> http://starship.python.net/crew/theller/ctypes/
 

@@ -2,10 +2,11 @@
 
 This module contains utilities for working with Audio CDs.
 
-The functions in this module need both an installed libmusicbrainz and a
-working ctypes package. If you don't have libmusicbrainz, it can't be
-loaded, or your platform isn't supported by either ctypes or this module,
-a C{NotImplementedError} is raised.
+The functions in this module need both a working ctypes package (already
+included in python-2.5) and an installed libdiscid. If you don't have
+libdiscid, it can't be loaded, or your platform isn't supported by either
+ctypes or this module, a C{NotImplementedError} is raised when using the
+L{readDisc()} function.
 
 @author: Matthias Friedrich <matt@mafr.de>
 """
