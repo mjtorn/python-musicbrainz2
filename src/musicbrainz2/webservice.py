@@ -324,7 +324,15 @@ class WebService(IWebService):
 class IFilter(object):
 	"""A filter for collections.
 
-	This is the interface all filters have to implement.
+	This is the interface all filters have to implement. Filter classes
+	are initialized with a set of criteria and are then applied to
+	collections of items. The criteria are usually strings or integer
+	values, depending on the filter.
+
+	Note that all strings passed to filters should be unicode strings
+	(python type C{unicode}). Standard strings are converted to unicode
+	internally, but have a limitation: Only 7 Bit pure ASCII characters
+	may be used, otherwise a C{UnicodeDecodeError} is raised.
 	"""
 	def createParameters(self):
 		"""Create a list of query parameters.
@@ -346,7 +354,7 @@ class ArtistFilter(IFilter):
 	def __init__(self, name=None, limit=None):
 		"""Constructor.
 
-		@param name: a string containing the artist's name
+		@param name: a unicode string containing the artist's name
 		@param limit: the maximum number of artists to return
 		"""
 		self._params = [
@@ -355,7 +363,7 @@ class ArtistFilter(IFilter):
 		]
 
 	def createParameters(self):
-		return filter(lambda x: x[1] is not None, self._params)
+		return _createParameters(self._params)
 
 
 class ReleaseFilter(IFilter):
@@ -380,11 +388,11 @@ class ReleaseFilter(IFilter):
 		If both the C{artistName} and the C{artistId} parameter are
 		given, the server will ignore C{artistName}.
 
-		@param title: a string containing the release's title
-		@param discId: a string containing the DiscID
+		@param title: a unicode string containing the release's title
+		@param discId: a unicode string containing the DiscID
 		@param releaseTypes: a sequence of release type URIs
-		@param artistName: a string containing the artist's name
-		@param artistId: a string containing the artist's ID
+		@param artistName: a unicode string containing the artist's name
+		@param artistId: a unicode string containing the artist's ID
 		@param limit: the maximum number of releases to return
 
 		@see: the constants in L{musicbrainz2.model.Release}
@@ -405,7 +413,7 @@ class ReleaseFilter(IFilter):
 		]
 
 	def createParameters(self):
-		return filter(lambda x: x[1] is not None, self._params)
+		return _createParameters(self._params)
 
 
 class TrackFilter(IFilter):
@@ -422,10 +430,10 @@ class TrackFilter(IFilter):
 		The server will ignore C{artistName} and C{releaseTitle} if
 		C{artistId} or ${releaseId} are set respectively.
 
-		@param title: a string containing the track's title
-		@param artistName: a string containing the artist's name
+		@param title: a unicode string containing the track's title
+		@param artistName: a unicode string containing the artist's name
 		@param artistId: a string containing the artist's ID
-		@param releaseTitle: a string containing the release's title
+		@param releaseTitle: a unicode string containing the release's title
 		@param releaseId: a string containing the release's title
 		@param duration: the track's length in milliseconds
 		@param puid: a string containing a PUID
@@ -443,7 +451,7 @@ class TrackFilter(IFilter):
 		]
 
 	def createParameters(self):
-		return filter(lambda x: x[1] is not None, self._params)
+		return _createParameters(self._params)
 
 
 class UserFilter(IFilter):
@@ -452,13 +460,13 @@ class UserFilter(IFilter):
 	def __init__(self, name=None):
 		"""Constructor.
 
-		@param name: a string containing a MusicBrainz user name
+		@param name: a unicode string containing a MusicBrainz user name
 		"""
 		self._name = name
 
 	def createParameters(self):
 		if self._name is not None:
-			return [ ('name', self._name) ]
+			return [ ('name', self._name.encode('utf-8')) ]
 		else:
 			return [ ]
 
@@ -728,7 +736,7 @@ class Query(object):
 
 		@param ws: a subclass instance of L{IWebService}, or None
 		@param wsFactory: a callable object which creates an object
-		@param clientId: a string containing the application's ID
+		@param clientId: a unicode string containing the application's ID
 		"""
 		if ws is None:
 			self._ws = wsFactory()
@@ -872,7 +880,7 @@ class Query(object):
 		See the example in L{Query} on how to supply user name and
 		password.
 
-		@param name: a string containing the user's name
+		@param name: a unicode string containing the user's name
 
 		@return: a L{User <musicbrainz2.model.User>} object
 
@@ -930,7 +938,7 @@ class Query(object):
 		"""
 		assert self._clientId is not None, 'Please supply a client ID'
 		params = [ ]
-		params.append( ('client', self._clientId) )
+		params.append( ('client', self._clientId.encode('utf-8')) )
 
 		for (trackId, puid) in tracks2puids.iteritems():
 			trackId = mbutils.extractUuid(trackId, 'track')
@@ -945,6 +953,16 @@ def _createIncludes(tagMap):
 	selected = filter(lambda x: x[1] == True, tagMap.items())
 	return map(lambda x: x[0], selected)
 
+def _createParameters(params):
+	"""Remove (x, None) tuples and encode (x, str/unicode) to utf-8."""
+	ret = [ ]
+	for p in params:
+		if isinstance(p[1], (str, unicode)):
+			ret.append( (p[0], p[1].encode('utf-8')) )
+		elif p[1] is not None:
+			ret.append(p)
+
+	return ret
 
 if __name__ == '__main__':
 	import doctest
