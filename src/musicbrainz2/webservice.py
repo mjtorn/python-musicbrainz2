@@ -625,7 +625,7 @@ class Query(object):
 	>>> import musicbrainz2.webservice as ws
 	>>> q = ws.Query()
 	>>> artist = q.getArtistById('c0b2500e-0cef-4130-869d-732b23ed9df5')
-	>>> artist.getName()
+	>>> artist.name
 	u'Tori Amos'
 	>>> artist.sortName
 	u'Amos, Tori'
@@ -646,12 +646,12 @@ class Query(object):
 	>>> releaseId = '33dbcf02-25b9-4a35-bdb7-729455f33ad7'
 	>>> include = ws.ReleaseIncludes(artist=True, tracks=True)
 	>>> release = q.getReleaseById(releaseId, include)
-	>>> print release.title
-	Tales of a Librarian
-	>>> print release.artist.name
-	Tori Amos
-	>>> print release.tracks[0].title
-	Precious Things
+	>>> release.title
+	u'Tales of a Librarian'
+	>>> release.artist.name
+	u'Tori Amos'
+	>>> release.tracks[0].title
+	u'Precious Things'
 	>>>
 
 	Note that the query gets more expensive for the server the more
@@ -676,10 +676,10 @@ class Query(object):
 	>>> q = ws.Query()
 	>>> filter = ws.ReleaseFilter(discId='8jJklE258v6GofIqDIrE.c5ejBE-')
 	>>> results = q.getReleases(filter=filter)
-	>>> print results[0].score
+	>>> results[0].score
 	100
-	>>> print results[0].release.title
-	Under the Pink
+	>>> results[0].release.title
+	u'Under the Pink'
 	>>>
 
 	The query returns a list of results (L{wsxml.ReleaseResult} objects
