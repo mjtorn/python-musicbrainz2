@@ -1,3 +1,13 @@
+Changes from 0.3.2:
+
+  * DiscID calculation now uses libdiscid instead of libmusicbrainz2.
+  * Fixed the IFilter subclasses to properly encode strings (#2148)
+  * Added several count and offset related methods in the model package.
+  * Added Entity.getRelationTargets() for easier relation handling.
+  * Added two (optional) parameters for Entity.getRelations().
+  * Added mb-submit-disc, a tool for submitting DiscIDs to MusicBrainz.
+
+
 Changes from 0.3.1:
 
   * Made the package work inside a zip file for py2exe (#1411, Luks).

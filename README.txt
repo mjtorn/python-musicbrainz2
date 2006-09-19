@@ -1,9 +1,6 @@
 Python Bindings for the MusicBrainz XML Web Service
 ---------------------------------------------------
 
-NOTE: This is a beta release. Interfaces may change in case serious
-      issues are found.
-
 This python package contains various modules for accessing the MusicBrainz
 web service, as well as parsing the MusicBrainz Metadata XML (MMD), or
 calculating DiscIDs from Audio CDs.
