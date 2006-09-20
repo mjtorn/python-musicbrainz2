@@ -1,5 +1,9 @@
 """A collection of classes for MusicBrainz.
 
+To get started quickly, have a look at L{webservice.Query} and the examples
+there. The source distribution also contains example code you might find
+interesting.
+
 This package contains the following modules:
 
  1. L{model}: The MusicBrainz domain model, containing classes like
@@ -8,19 +12,15 @@ This package contains the following modules:
 
  2. L{webservice}: An interface to the MusicBrainz XML web service.
 
- 3. L{wsxml}: A parser for the web service XML format.
+ 3. L{wsxml}: A parser for the web service XML format (MMD).
 
  4. L{disc}: Functions for creating and submitting DiscIDs.
 
  5. L{utils}: Utilities for working with URIs and other commonly needed tools.
 
-To get started quickly, have a look at L{webservice.Query} and the examples
-there. The source distribution also contains example code you might find
-interesting.
-
 @author: Matthias Friedrich <matt@mafr.de>
 """
 __revision__ = '$Id$'
-__version__ = '0.3.2'
+__version__ = '0.4.0'
 
 # EOF

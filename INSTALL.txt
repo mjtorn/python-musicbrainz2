@@ -11,7 +11,7 @@ First of all, install the following dependencies:
   2. libdiscid (tested with 0.1.0)
      Any version above 0.1.0 should do.
 
-     -> http://musicbrainz.org/doc/libdiscid
+     -> http://musicbrainz.org/products/libdiscid/
 
   3. ctypes (tested with 0.9.6 and 0.9.9.3)
      Version 0.9.0 or later should work, which is included in recent
