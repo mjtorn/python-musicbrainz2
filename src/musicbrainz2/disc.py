@@ -176,7 +176,7 @@ def readDisc(deviceName=None):
 	# Access the CD drive. This also works if deviceName is None because
 	# ctypes passes a NULL pointer in this case.
 	#
-	res = libDiscId.discid_read(handle, None)
+	res = libDiscId.discid_read(handle, deviceName)
 	if res == 0:
 		raise DiscError(libDiscId.discid_get_error_msg(handle))
 
