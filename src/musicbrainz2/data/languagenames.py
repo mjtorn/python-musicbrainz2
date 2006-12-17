@@ -3,6 +3,7 @@
 __revision__ = '$Id$'
 
 languageNames = {
+	u'ART': u'Artificial (Other)',
 	u'ROH': u'Raeto-Romance',
 	u'SCO': u'Scots',
 	u'SCN': u'Sicilian',

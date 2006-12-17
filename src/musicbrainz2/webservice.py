@@ -77,6 +77,8 @@ class IWebService(object):
 		@param data: A string containing the data to post
 		@param version: a string containing the web service version to use
 
+		@return: a file-like object
+
 		@raise WebServiceError: in case of errors
 		"""
 		raise NotImplementedError()
@@ -226,6 +228,13 @@ class WebService(IWebService):
 		return url
 
 
+	def _openUrl(self, url, data=None):
+		userAgent = 'python-musicbrainz/' + musicbrainz2.__version__
+		req = urllib2.Request(url)
+		req.add_header('User-Agent', userAgent)
+		return self._opener.open(req, data)
+
+
 	def get(self, entity, id_, include=( ), filter={ }, version='1'):
 		"""Query the web service via HTTP-GET.
 
@@ -246,7 +255,7 @@ class WebService(IWebService):
 		self._log.debug('GET ' + url)
 
 		try:
-			return self._opener.open(url)
+			return self._openUrl(url)
 		except urllib2.HTTPError, e:
 			self._log.debug("GET failed: " + str(e))
 			if e.code == 400:   # in python 2.4: httplib.BAD_REQUEST
@@ -277,15 +286,11 @@ class WebService(IWebService):
 		"""
 		url = self._makeUrl(entity, id_, version=version, type_=None)
 
-		userAgent = 'python-musicbrainz/' + musicbrainz2.__version__
+		self._log.debug('POST ' + url)
+		self._log.debug('POST-BODY: ' + data)
 
 		try:
-			req = urllib2.Request(url)
-			req.add_header('User-Agent', userAgent)
-
-			self._log.debug('POST ' + url)
-			self._log.debug('POST-BODY: ' + data)
-			self._opener.open(req, data)
+			return self._openUrl(url, data)
 		except urllib2.HTTPError, e:
 			self._log.debug("POST failed: " + str(e))
 			if e.code == 400:   # in python 2.4: httplib.BAD_REQUEST
