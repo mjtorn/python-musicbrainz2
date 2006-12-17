@@ -18,6 +18,7 @@ releaseTypeNames = {
 	u'http://musicbrainz.org/ns/mmd-1.0#Official': u'Official',
 	u'http://musicbrainz.org/ns/mmd-1.0#Promotion': u'Promotion',
 	u'http://musicbrainz.org/ns/mmd-1.0#Bootleg': u'Bootleg',
+	u'http://musicbrainz.org/ns/mmd-1.0#Pseudo-Release': u'Pseudo-Release',
 }
 
 # EOF

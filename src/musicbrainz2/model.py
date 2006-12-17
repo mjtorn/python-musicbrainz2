@@ -524,6 +524,7 @@ class Release(Entity):
 	TYPE_OFFICIAL = NS_MMD_1 + 'Official'
 	TYPE_PROMOTION = NS_MMD_1 + 'Promotion'
 	TYPE_BOOTLEG = NS_MMD_1 + 'Bootleg'
+	TYPE_PSEUDO_RELEASE = NN_MMD_1 + 'Pseudo-Release'
 
 	def __init__(self, id_=None, title=None):
 		"""Constructor.
