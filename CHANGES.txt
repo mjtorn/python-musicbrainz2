@@ -1,3 +1,10 @@
+Changes from 0.4.0:
+
+  * Access to a CD drive other than the default drive works again (Luks).
+  * IWebService.post() now returns a file-like object instead of None (Luks).
+  * Added the "Artificial" language and the "Pseudo-Release" type (Luks).
+
+
 Changes from 0.3.2:
 
   * DiscID calculation now uses libdiscid instead of libmusicbrainz2.
