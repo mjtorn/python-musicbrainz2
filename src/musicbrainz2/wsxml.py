@@ -75,8 +75,14 @@ class Metadata(object):
 		self._release = None
 		self._track = None
 		self._artistResults = [ ]
+		self._artistResultsOffset = None
+		self._artistResultsCount = None
 		self._releaseResults = [ ]
+		self._releaseResultsOffset = None
+		self._releaseResultsCount = None
 		self._trackResults = [ ]
+		self._trackResultsOffset = None
+		self._trackResultsCount = None
 		self._userList = [ ]
 
 	def getArtist(self):
@@ -113,6 +119,57 @@ class Metadata(object):
 	artistResults = property(getArtistResults,
 		doc='A list of ArtistResult objects.')
 
+	def getArtistResultsOffset(self):
+		"""Returns the offset of the artist result list.
+
+		The offset is used for paging through the result list. It
+		is zero-based.
+
+		@return: an integer containing the offset, or None
+
+		@see: L{getArtistResults}, L{getArtistResultsCount}
+		"""
+		return self._artistResultsOffset
+
+	def setArtistResultsOffset(self, value):
+		"""Sets the offset of the artist result list.
+
+		@param value: an integer containing the offset, or None
+
+		@see: L{getArtistResultsOffset}
+		"""
+		self._artistResultsOffset = value
+
+	artistResultsOffset = property(
+		getArtistResultsOffset, setArtistResultsOffset,
+		doc='The offset of the artist results.')
+
+	def getArtistResultsCount(self):
+		"""Returns the total number of results available.
+	
+		This may or may not match with the number of elements that
+		L{getArtistResults} returns. If the count is higher than
+		the list, it indicates that the list is incomplete.
+
+		@return: an integer containing the count, or None
+
+		@see: L{setArtistResultsCount}, L{getArtistResultsOffset}
+		"""
+		return self._artistResultsCount
+
+	def setArtistResultsCount(self, value):
+		"""Sets the total number of available results.
+
+		@param value: an integer containing the count, or None
+
+		@see: L{getArtistResults}, L{setArtistResultsOffset}
+		"""
+		self._artistResultsCount = value
+
+	artistResultsCount = property(
+		getArtistResultsCount, setArtistResultsCount,
+		doc='The total number of artists results.')
+
 	def getReleaseResults(self):
 		"""Returns a release result list. 
 
@@ -123,6 +180,57 @@ class Metadata(object):
 	releaseResults = property(getReleaseResults,
 		doc='A list of ReleaseResult objects.')
 
+	def getReleaseResultsOffset(self):
+		"""Returns the offset of the release result list.
+
+		The offset is used for paging through the result list. It
+		is zero-based.
+
+		@return: an integer containing the offset, or None
+
+		@see: L{getReleaseResults}, L{getReleaseResultsCount}
+		"""
+		return self._releaseResultsOffset
+
+	def setReleaseResultsOffset(self, value):
+		"""Sets the offset of the release result list.
+
+		@param value: an integer containing the offset, or None
+
+		@see: L{getReleaseResultsOffset}
+		"""
+		self._releaseResultsOffset = value
+
+	releaseResultsOffset = property(
+		getReleaseResultsOffset, setReleaseResultsOffset,
+		doc='The offset of the release results.')
+
+	def getReleaseResultsCount(self):
+		"""Returns the total number of results available.
+	
+		This may or may not match with the number of elements that
+		L{getReleaseResults} returns. If the count is higher than
+		the list, it indicates that the list is incomplete.
+
+		@return: an integer containing the count, or None
+
+		@see: L{setReleaseResultsCount}, L{getReleaseResultsOffset}
+		"""
+		return self._releaseResultsCount
+
+	def setReleaseResultsCount(self, value):
+		"""Sets the total number of available results.
+
+		@param value: an integer containing the count, or None
+
+		@see: L{getReleaseResults}, L{setReleaseResultsOffset}
+		"""
+		self._releaseResultsCount = value
+
+	releaseResultsCount = property(
+		getReleaseResultsCount, setReleaseResultsCount,
+		doc='The total number of release results.')
+
 	def getTrackResults(self):
 		"""Returns a track result list. 
 
@@ -132,6 +240,58 @@ class Metadata(object):
 
 	trackResults = property(getTrackResults,
 		doc='A list of TrackResult objects.')
+
+	def getTrackResultsOffset(self):
+		"""Returns the offset of the track result list.
+
+		The offset is used for paging through the result list. It
+		is zero-based.
+
+		@return: an integer containing the offset, or None
+
+		@see: L{getTrackResults}, L{getTrackResultsCount}
+		"""
+		return self._trackResultsOffset
+
+	def setTrackResultsOffset(self, value):
+		"""Sets the offset of the track result list.
+
+		@param value: an integer containing the offset, or None
+
+		@see: L{getTrackResultsOffset}
+		"""
+		self._trackResultsOffset = value
+
+	trackResultsOffset = property(
+		getTrackResultsOffset, setTrackResultsOffset,
+		doc='The offset of the track results.')
+
+	def getTrackResultsCount(self):
+		"""Returns the total number of results available.
+	
+		This may or may not match with the number of elements that
+		L{getTrackResults} returns. If the count is higher than
+		the list, it indicates that the list is incomplete.
+
+		@return: an integer containing the count, or None
+
+		@see: L{setTrackResultsCount}, L{getTrackResultsOffset}
+		"""
+		return self._trackResultsCount
+
+	def setTrackResultsCount(self, value):
+		"""Sets the total number of available results.
+
+		@param value: an integer containing the count, or None
+
+		@see: L{getTrackResults}, L{setTrackResultsOffset}
+		"""
+		self._trackResultsCount = value
+
+	trackResultsCount = property(
+		getTrackResultsCount, setTrackResultsCount,
+		doc='The total number of track results.')
+
 
 	# MusicBrainz extension to the schema
 	def getUserList(self):
@@ -344,16 +504,25 @@ class MbXmlParser(object):
 
 		for node in _getChildElements(metadata):
 			if _matches(node, 'artist'):
-				md.setArtist(self._createArtist(node))
+				md.artist = self._createArtist(node)
 			elif _matches(node, 'release'):
-				md.setRelease(self._createRelease(node))
+				md.release = self._createRelease(node)
 			elif _matches(node, 'track'):
-				md.setTrack(self._createTrack(node))
+				md.track = self._createTrack(node)
 			elif _matches(node, 'artist-list'):
+				(offset, count) = self._getListAttrs(node)
+				md.artistResultsOffset = offset
+				md.artistResultsCount = count
 				self._addArtistResults(node, md.getArtistResults())
 			elif _matches(node, 'release-list'):
+				(offset, count) = self._getListAttrs(node)
+				md.releaseResultsOffset = offset
+				md.releaseResultsCount = count
 				self._addReleaseResults(node, md.getReleaseResults())
 			elif _matches(node, 'track-list'):
+				(offset, count) = self._getListAttrs(node)
+				md.trackResultsOffset = offset
+				md.trackResultsCount = count
 				self._addTrackResults(node, md.getTrackResults())
 			elif _matches(node, 'user-list', NS_EXT_1):
 				self._addUsersToList(node, md.getUserList())
@@ -675,21 +844,30 @@ class MbXmlWriter(object):
 
 		# TODO: count and offset
 		if len(metadata.getArtistResults()) > 0:
-			xml.start('artist-list')
+			xml.start('artist-list', {
+				'offset': metadata.artistResultsOffset,
+				'count': metadata.artistResultsCount,
+			})
 			for result in metadata.getArtistResults():
 				self._writeArtist(xml, result.getArtist(),
 					result.getScore())
 			xml.end()
 
 		if len(metadata.getReleaseResults()) > 0:
-			xml.start('release-list')
+			xml.start('release-list', {
+				'offset': metadata.releaseResultsOffset,
+				'count': metadata.releaseResultsCount,
+			})
 			for result in metadata.getReleaseResults():
 				self._writeRelease(xml, result.getRelease(),
 					result.getScore())
 			xml.end()
 
 		if len(metadata.getTrackResults()) > 0:
-			xml.start('track-list')
+			xml.start('track-list', {
+				'offset': metadata.trackResultsOffset,
+				'count': metadata.trackResultsCount,
+			})
 			for result in metadata.getTrackResults():
 				self._writeTrack(xml, result.getTrack(),
 					result.getScore())

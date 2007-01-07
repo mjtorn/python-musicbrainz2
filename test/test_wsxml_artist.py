@@ -98,13 +98,14 @@ class ParseArtistTest(unittest.TestCase):
 		f = os.path.join(VALID_ARTIST_DIR, 'search_result_1.xml')
 		md = MbXmlParser().parse(f)
 
-		results = md.getArtistResults()
+		self.assertEquals(md.artistResultsOffset, 0)
+		self.assertEquals(md.artistResultsCount, 47)
+
+		results = md.artistResults
 		self.assertEquals(len(results), 3)
 
-		self.assertEquals(results[0].getScore(), 100)
-		artist1 = results[0].getArtist()
-		self.assertEquals(artist1.getName(), 'Tori Amos')
-
-
+		self.assertEquals(results[0].score, 100)
+		artist1 = results[0].artist
+		self.assertEquals(artist1.name, 'Tori Amos')
 
 # EOF

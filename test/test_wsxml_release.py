@@ -120,4 +120,11 @@ class ParseReleaseTest(unittest.TestCase):
 		self.assertEquals(events[0].getDate(), '1994-01-28')
 		
 
+	def testResultAttributes(self):
+		f = os.path.join(VALID_RELEASE_DIR, 'search_result_1.xml')
+		md = MbXmlParser().parse(f)
+
+		self.assertEquals(md.releaseResultsOffset, 0)
+		self.assertEquals(md.releaseResultsCount, 234)
+
 # EOF
