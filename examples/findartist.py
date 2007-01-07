@@ -24,7 +24,8 @@ q = Query()
 
 try:
 	# Search for all artists matching the given name. Limit the results
-	# to the 5 best matches.
+	# to the 5 best matches. The offset parameter could be used to page
+	# through the results.
 	#
 	f = ArtistFilter(name=sys.argv[1], limit=5)
 	artistResults = q.getArtists(f)

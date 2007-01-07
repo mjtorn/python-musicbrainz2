@@ -356,16 +356,27 @@ class IFilter(object):
 class ArtistFilter(IFilter):
 	"""A filter for the artist collection."""
 
-	def __init__(self, name=None, limit=None):
+	def __init__(self, name=None, limit=None, offset=None, query=None):
 		"""Constructor.
+
+		The C{query} parameter may contain a query in U{Lucene syntax
+		<http://lucene.apache.org/java/docs/queryparsersyntax.html>}.
+		Note that the C{name} and C{query} may not be used together.
 
 		@param name: a unicode string containing the artist's name
 		@param limit: the maximum number of artists to return
+		@param offset: start results at this zero-based offset
+		@param query: a string containing a query in Lucene syntax
 		"""
 		self._params = [
 			('name', name),
 			('limit', limit),
+			('offset', offset),
+			('query', query),
 		]
+
+		if not _paramsValid(self._params):
+			raise ValueError('invalid combination of parameters')
 
 	def createParameters(self):
 		return _createParameters(self._params)
@@ -375,7 +386,8 @@ class ReleaseFilter(IFilter):
 	"""A filter for the release collection."""
 
 	def __init__(self, title=None, discId=None, releaseTypes=None,
-			artistName=None, artistId=None, limit=None):
+			artistName=None, artistId=None, limit=None,
+			offset=None, query=None):
 		"""Constructor.
 
 		If C{discId} or C{artistId} are set, only releases matching
@@ -393,12 +405,19 @@ class ReleaseFilter(IFilter):
 		If both the C{artistName} and the C{artistId} parameter are
 		given, the server will ignore C{artistName}.
 
+		The C{query} parameter may contain a query in U{Lucene syntax
+		<http://lucene.apache.org/java/docs/queryparsersyntax.html>}.
+		Note that C{query} may not be used together with the other
+		parameters except for C{limit} and C{offset}.
+
 		@param title: a unicode string containing the release's title
 		@param discId: a unicode string containing the DiscID
 		@param releaseTypes: a sequence of release type URIs
 		@param artistName: a unicode string containing the artist's name
 		@param artistId: a unicode string containing the artist's ID
 		@param limit: the maximum number of releases to return
+		@param offset: start results at this zero-based offset
+		@param query: a string containing a query in Lucene syntax
 
 		@see: the constants in L{musicbrainz2.model.Release}
 		"""
@@ -415,7 +434,12 @@ class ReleaseFilter(IFilter):
 			('artist', artistName),
 			('artistid', artistId),
 			('limit', limit),
+			('offset', offset),
+			('query', query),
 		]
+
+		if not _paramsValid(self._params):
+			raise ValueError('invalid combination of parameters')
 
 	def createParameters(self):
 		return _createParameters(self._params)
@@ -426,7 +450,8 @@ class TrackFilter(IFilter):
 
 	def __init__(self, title=None, artistName=None, artistId=None,
 			releaseTitle=None, releaseId=None,
-			duration=None, puid=None, limit=None):
+			duration=None, puid=None, limit=None, offset=None,
+			query=None):
 		"""Constructor.
 
 		If C{artistId}, C{releaseId} or C{puid} are set, only tracks
@@ -434,6 +459,11 @@ class TrackFilter(IFilter):
 
 		The server will ignore C{artistName} and C{releaseTitle} if
 		C{artistId} or ${releaseId} are set respectively.
+
+		The C{query} parameter may contain a query in U{Lucene syntax
+		<http://lucene.apache.org/java/docs/queryparsersyntax.html>}.
+		Note that C{query} may not be used together with the other
+		parameters except for C{limit} and C{offset}.
 
 		@param title: a unicode string containing the track's title
 		@param artistName: a unicode string containing the artist's name
@@ -443,6 +473,8 @@ class TrackFilter(IFilter):
 		@param duration: the track's length in milliseconds
 		@param puid: a string containing a PUID
 		@param limit: the maximum number of releases to return
+		@param offset: start results at this zero-based offset
+		@param query: a string containing a query in Lucene syntax
 		"""
 		self._params = [
 			('title', title),
@@ -453,7 +485,12 @@ class TrackFilter(IFilter):
 			('duration', duration),
 			('puid', puid),
 			('limit', limit),
+			('offset', offset),
+			('query', query),
 		]
+
+		if not _paramsValid(self._params):
+			raise ValueError('invalid combination of parameters')
 
 	def createParameters(self):
 		return _createParameters(self._params)
@@ -696,7 +733,9 @@ class Query(object):
 
 	All filters support the C{limit} argument to limit the number of
 	results returned. This defaults to 25, but the server won't send
-	more than 100 results to save bandwidth and processing power.
+	more than 100 results to save bandwidth and processing power. Using
+	C{limit} and the C{offset} parameter, you can page through the
+	results.
 
 
 	Error Handling
@@ -968,6 +1007,18 @@ def _createParameters(params):
 			ret.append(p)
 
 	return ret
+
+def _paramsValid(params):
+	"""Check if the query parameter collides with other parameters."""
+	tmp = [ ]
+	for name, value in params:
+		if value is not None and name not in ('offset', 'limit'):
+			tmp.append(name)
+
+	if 'query' in tmp and len(tmp) > 1:
+		return False
+	else:
+		return True
 
 if __name__ == '__main__':
 	import doctest
