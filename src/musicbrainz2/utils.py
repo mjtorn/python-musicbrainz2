@@ -55,7 +55,7 @@ def extractUuid(uriStr, resType=None):
 	if scheme != 'http' or netloc != 'musicbrainz.org':
 		raise ValueError('%s is no MB ID.' % uriStr)
 
-	m = re.match('^/(artist|release|track)/([^/]*)$', path)
+	m = re.match('^/(artist|release|track|label)/([^/]*)$', path)
 
 	if m:
 		if resType is None:

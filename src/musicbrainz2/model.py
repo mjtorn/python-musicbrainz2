@@ -383,7 +383,7 @@ class Artist(Entity):
 		doc="The begin/foundation date.")
 
 	def getEndDate(self):
-		"""Get the death/dissolving date.
+		"""Returns the death/dissolving date.
 
 		The definition of the I{end date} depends on the artist's
 		type. For persons, this is the day of death, for groups it
@@ -494,6 +494,108 @@ class Artist(Entity):
 	releasesCount = property(getReleasesCount, setReleasesCount,
 		doc='The total number of releases')
 
+
+class Label(Entity):
+	"""Represents a record label.
+	
+	A label within MusicBrainz is an L{Entity}. It contains information about
+	the label like when it was established, its name, label code and other
+	relationships. All release events may be assigned a label and catalog
+	number.
+	"""
+	TYPE_UNKNOWN = NS_MMD_1 + 'Unknown'
+	
+	TYPE_DISTRIBUTOR = NS_MMD_1 + 'Distributor'
+	TYPE_HOLDING = NS_MMD_1 + 'Holding'
+	TYPE_PRODUCTION = NS_MMD_1 + 'Production'
+	
+	TYPE_ORIGINAL = NS_MMD_1 + 'OriginalProduction'
+	TYPE_BOOTLEG = NS_MMD_1 + 'BootlegProduction'
+	TYPE_REISSUE = NS_MMD_1 + 'ReissueProduction'
+	
+	def __init__(self, id_=None):
+		"""Constructor.
+
+		@param id_: a string containing an absolute URI
+		"""
+		Entity.__init__(self, id_)
+		self._type = None
+		self._name = None
+		self._beginDate = None
+		self._endDate = None
+	
+	def getType(self):
+		"""Returns the type of this label.
+
+		@param type_: a string containing an absolute URI
+		"""
+		return self._type
+	
+	def setType(self, type_):
+		"""Sets the type of this label.
+		
+		@param type: A string containing the absolute URI of the type of label.
+		"""
+		self._type = type_
+	
+	type = property(getType, setType, doc='The type of label')
+	
+	def getName(self):
+		"""Returns a string with the name of the label.
+
+		@return: a string containing the label's name, or None
+		"""
+		return self._name
+	
+	def setName(self, name):
+		"""Sets the name of this label.
+		
+		@param name: A string containing the name of the label
+		"""
+		self._name = name
+		
+	name = property(getName, setName, doc='The name of the label.')
+	
+	def getBeginDate(self):
+		"""Returns the date this label was established.
+		
+		@return: A string contained the start date, or None
+		"""
+		return self._beginDate
+	
+	def setBeginDate(self, date):
+		"""Set the date this label was established.
+		
+		@param date: A string in the format of YYYY-MM-DD
+		"""
+		self._beginDate = date
+	
+	beginDate = property(getBeginDate, setBeginDate,
+		doc='The date this label was established.')
+
+	def getEndDate(self):
+		"""Returns the date this label closed.
+
+		The returned date has the format 'YYYY', 'YYYY-MM', or 
+		'YYYY-MM-DD', depending on how much detail is known.
+		
+		@return: A string containing the date, or None
+		"""
+		return self._endDate
+	
+	def setEndDate(self, date):
+		"""Set the date this label closed.
+
+		The date may have the format 'YYYY', 'YYYY-MM', or 
+		'YYYY-MM-DD', depending on how much detail is known.
+		
+		@param date: A string containing the date, or None
+		"""
+		self._endDate = date
+	
+	endDate = property(getEndDate, setEndDate,
+		doc='The date this label closed.')
+		
 
 class Release(Entity):
 	"""Represents a Release.
@@ -1295,6 +1397,8 @@ class ReleaseEvent(object):
 		"""
 		self._countryId = country
 		self._dateStr = dateStr
+		self._catalogNumber = None
+		self._label = None
 
 	def getCountry(self):
 		"""Returns the country a release took place.
@@ -1318,6 +1422,38 @@ class ReleaseEvent(object):
 
 	country = property(getCountry, setCountry,
 		doc='The country a release took place.')
+
+	def getCatalogNumber(self):
+		"""Returns the catalog number of this release event.
+
+		@return: A string containing the catalog number, or None
+		"""
+		return self._catalogNumber
+	
+	def setCatalogNumber(self, catalogNumber):
+		"""Sets the catalog number of this release.
+		
+		@param catalogNumber: A string containing the catalog number
+		self._catalogNumber = catalogNumber
+	
+	catalogNumber = property(getCatalogNumber, setCatalogNumber,
+		doc='The catalog number of the release')
+		
+	def getLabel(self):
+		"""Returns a L{Label} object for the label associated with this release.
+		
+		@return: a L{Label} object, or None
+		"""
+		return self._label
+
+	def setLabel(self, label):
+		"""Sets the label of this release event.
+		
+		@param label: A L{Label} object
+		"""
+		self._label = label
+
+	label = property(getLabel, setLabel, doc='The label of the release')
 
 	def getDate(self):
 		"""Returns the date a release took place.

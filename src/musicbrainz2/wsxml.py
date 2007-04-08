@@ -41,6 +41,7 @@ class DefaultFactory(object):
 	def newDisc(self): return model.Disc()
 	def newArtistAlias(self): return model.ArtistAlias()
 	def newUser(self): return model.User()
+	def newLabel(self): return model.Label()
 
 
 class ParseError(Exception):
@@ -74,6 +75,7 @@ class Metadata(object):
 		self._artist = None
 		self._release = None
 		self._track = None
+		self._label = None
 		self._artistResults = [ ]
 		self._artistResultsOffset = None
 		self._artistResultsCount = None
@@ -92,6 +94,14 @@ class Metadata(object):
 		self._artist = artist
 
 	artist = property(getArtist, setArtist, doc='An Artist object.')
+	
+	def getLabel(self):
+		return self._label
+	
+	def setLabel(self, label):
+		self._label = label
+	
+	label = property(getLabel, setLabel, doc='A Label object.')
 
 	def getRelease(self):
 		return self._release
@@ -169,6 +179,15 @@ class Metadata(object):
 	artistResultsCount = property(
 		getArtistResultsCount, setArtistResultsCount,
 		doc='The total number of artists results.')
+
+	def getLabelResults(self):
+		"""Returns a label result list.
+		
+		@return: a list of L{Label} objects.
+		"""
+		return self._labelResults
+	
+	labelResults = property(getLabelResults, doc='A list of LabelResult objects')
 
 	def getReleaseResults(self):
 		"""Returns a release result list. 
@@ -509,6 +528,8 @@ class MbXmlParser(object):
 				md.release = self._createRelease(node)
 			elif _matches(node, 'track'):
 				md.track = self._createTrack(node)
+			elif _matches(node, 'label'):
+				md.label = self._createLabel(node)
 			elif _matches(node, 'artist-list'):
 				(offset, count) = self._getListAttrs(node)
 				md.artistResultsOffset = offset
@@ -597,6 +618,19 @@ class MbXmlParser(object):
 
 		return artist
 
+	def _createLabel(self, labelNode):
+		label = self._factory.newLabel()
+		label.setId(_getIdAttr(labelNode, 'id', 'label'))
+		label.setType(_getUriAttr(labelNode, 'type'))
+		
+		for node in _getChildElements(labelNode):
+			if _matches(node, 'name'):
+				label.setName(_getText(node))
+			elif _matches(node, 'life-span'):
+				label.setBeginDate(_getDateAttr(node, 'begin'))
+				label.setEndDate(_getDateAttr(node, 'end'))
+			
+		return label
 
 	def _createRelease(self, releaseNode):
 		release = self._factory.newRelease()
@@ -636,10 +670,20 @@ class MbXmlParser(object):
 			if _matches(node, 'event'):
 				country = _getAttr(node, 'country', '^[A-Z]{2}$')
 				date = _getDateAttr(node, 'date')
+				catalog = _getAttr(node, 'catalog-number')
+
+				# The date attribute is mandatory. If it isn't present,
+				# we don't add anything from this release event.
 				if date is not None:
 					event = self._factory.newReleaseEvent()
 					event.setCountry(country)
 					event.setDate(date)
+					event.setCatalogNumber(catalog)
+					
+					for subNode in _getChildElements(node):
+						if _matches(subNode, 'label'):
+							event.setLabel(self._createLabel(subNode))
+					
 					release.addReleaseEvent(event)
 
 

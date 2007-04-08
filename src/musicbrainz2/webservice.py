@@ -567,12 +567,13 @@ class ArtistIncludes(IIncludes):
 class ReleaseIncludes(IIncludes):
 	"""A specification on how much data to return with a release."""
 	def __init__(self, artist=False, counts=False, releaseEvents=False,
-			discs=False, tracks=False,
+			discs=False, tracks=False, label=False,
 			artistRelations=False, releaseRelations=False,
 			trackRelations=False, urlRelations=False):
 		self._includes = {
 			'artist':		artist,
 			'counts':		counts,
+			'labels':		label,
 			'release-events':	releaseEvents,
 			'discs':		discs,
 			'tracks':		tracks,
@@ -831,6 +832,30 @@ class Query(object):
 		result = self._getFromWebService('artist', '', filter=filter)
 		return result.getArtistResults()
 
+	def getLabelById(self, id, include=None):
+		"""Returns a L{Label}
+		
+		If no label with that ID can be found, or there is a server problem,
+		an exception is raised.
+		
+		@param id_: a string containing the label's ID.
+
+		@raise ConnectionError: couldn't connect to server
+		@raise RequestError: invalid ID or include tags
+		@raise ResourceNotFoundError: release doesn't exist
+		@raise ResponseError: server returned invalid data
+		"""
+		uuid = mbutils.extractUuid(id_, 'label')
+		result = self._getFromWebService('label', uuid, include)
+		label = result.getLabel()
+		if label is not None:
+			return label
+		else:
+			raise ResponseError("server didn't return a label")
+	
+	def getLabels(self, filter):
+		result = self._getFromWebService('label', '', filter=filter)
+		return result.getLabelResults()
 
 	def getReleaseById(self, id_, include=None):
 		"""Returns a release.
