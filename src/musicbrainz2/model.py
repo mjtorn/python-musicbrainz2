@@ -1434,6 +1434,7 @@ class ReleaseEvent(object):
 		"""Sets the catalog number of this release.
 		
 		@param catalogNumber: A string containing the catalog number
+		"""
 		self._catalogNumber = catalogNumber
 	
 	catalogNumber = property(getCatalogNumber, setCatalogNumber,
