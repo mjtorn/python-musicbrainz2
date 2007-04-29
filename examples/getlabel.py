@@ -36,13 +36,13 @@ except ws.WebServiceError, e:
 
 print "Id         :", label.id
 print "Name       :", label.name
-print "SortName   :", '(UNIMPLEMENTED)' #label.sortName
-print "UniqueName :", '(UNIMPLEMENTED)' #label.getUniqueName()
+print "SortName   :", label.sortName
+print "UniqueName :", label.getUniqueName()
 print "Type       :", label.type
 print "BeginDate  :", label.beginDate
 print "EndDate    :", label.endDate
-print "Country    :", '(UNIMPLEMENTED)' #label.country
-print "Label-Code :", '(UNIMPLEMENTED)' #label.labelCode
+print "Country    :", label.country
+print "Label-Code :", label.code
 print
 
 # EOF

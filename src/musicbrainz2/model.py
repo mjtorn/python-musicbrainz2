@@ -500,8 +500,7 @@ class Label(Entity):
 	
 	A label within MusicBrainz is an L{Entity}. It contains information
 	about the label like when it was established, its name, label code and
-	other relationships. All release events may be assigned a label and
-	catalog number.
+	other relationships. All release events may be assigned a label.
 	"""
 	TYPE_UNKNOWN = NS_MMD_1 + 'Unknown'
 	
@@ -521,6 +520,10 @@ class Label(Entity):
 		Entity.__init__(self, id_)
 		self._type = None
 		self._name = None
+		self._sortName = None
+		self._disambiguation = None
+		self._countryId = None
+		self._labelCode = None
 		self._beginDate = None
 		self._endDate = None
 	
@@ -556,6 +559,71 @@ class Label(Entity):
 		
 	name = property(getName, setName, doc='The name of the label.')
 	
+	def getSortName(self):
+		"""Returns the label's sort name.
+
+		The sort name is the label's name in a special format which
+		is better suited for lexicographic sorting. The MusicBrainz
+		style guide specifies this format.
+
+		@see: U{The MusicBrainz Style Guidelines
+			<http://musicbrainz.org/style.html>}
+		"""
+		return self._sortName
+
+	def setSortName(self, sortName):
+		"""Sets the label's sort name.
+
+		@param sortName: a string containing the label's sort name
+
+		@see: L{getSortName}
+		"""
+		self._sortName = sortName
+
+	sortName = property(getSortName, setSortName,
+		doc="The label's sort name.")
+
+	def getDisambiguation(self):
+		"""Returns the disambiguation attribute.
+
+		This attribute may be used if there is more than one label
+		with the same name. In this case, disambiguation attributes
+		are added to the labels' names to keep them apart.
+
+		@return: a disambiguation string, or None
+
+		@see: L{getUniqueName}
+		"""
+		return self._disambiguation
+
+	def setDisambiguation(self, disambiguation):
+		"""Sets the disambiguation attribute.
+
+		@param disambiguation: a disambiguation string
+
+		@see: L{getDisambiguation}, L{getUniqueName}
+		"""
+		self._disambiguation = disambiguation
+
+	disambiguation = property(getDisambiguation, setDisambiguation,
+		doc="The disambiguation comment.")
+
+	def getUniqueName(self):
+		"""Returns a unique label name (using disambiguation).
+
+		This method returns the label's name together with the
+		disambiguation attribute in parenthesis if it exists.
+
+		@return: a string containing the unique name
+
+		@see: L{getDisambiguation}
+		"""
+		d = self.getDisambiguation() 
+		if d is not None and d.strip() != '':
+			return '%s (%s)' % (self.getName(), d)
+		else: 
+			return self.getName()
+
 	def getBeginDate(self):
 		"""Returns the date this label was established.
 		
@@ -596,6 +664,47 @@ class Label(Entity):
 	endDate = property(getEndDate, setEndDate,
 		doc='The date this label closed.')
 		
+	def getCountry(self):
+		"""Returns the country the label is located.
+
+		@return: a string containing an ISO-3166 country code, or None
+
+		@see: L{musicbrainz2.utils.getCountryName}
+		"""
+		return self._countryId
+
+	def setCountry(self, country):
+		"""Sets the country the label is located.
+
+		@param country: a string containing an ISO-3166 country code
+		"""
+		self._countryId = country
+
+	country = property(getCountry, setCountry,
+		doc='The country the label is located.')
+
+	def getCode(self):
+		"""Returns the label code.
+
+		Label codes have been introduced by the IFPI (International
+		Federation of Phonogram and Videogram Industries) to uniquely
+		identify record labels. The label code consists of 'LC-' and 4
+		figures (currently being extended to 5 figures).
+
+		@return: a string containing the label code, or None
+		"""
+		return self._code
+
+	def setCode(self, code):
+		"""Sets the label code.
+
+		@param code: a string containing the label code
+		"""
+		self._code = code
+
+	code = property(getCode, setCode,
+		doc='The label code.')
+
 
 class Release(Entity):
 	"""Represents a Release.

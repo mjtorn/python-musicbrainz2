@@ -698,6 +698,15 @@ class MbXmlParser(object):
 		for node in _getChildElements(labelNode):
 			if _matches(node, 'name'):
 				label.setName(_getText(node))
+			if _matches(node, 'sort-name'):
+				label.setSortName(_getText(node))
+			elif _matches(node, 'disambiguation'):
+				label.setDisambiguation(_getText(node))
+			elif _matches(node, 'label-code'):
+				label.setCode(_getText(node))
+			elif _matches(node, 'country'):
+				country = _getText(node, '^[A-Z]{2}$')
+				label.setCountry(country)
 			elif _matches(node, 'life-span'):
 				label.setBeginDate(_getDateAttr(node, 'begin'))
 				label.setEndDate(_getDateAttr(node, 'end'))
@@ -1182,7 +1191,7 @@ def _getChildElements(parentNode):
 	return children
 
 
-def _getText(element):
+def _getText(element, regex=None, default=None):
 	"""Returns the text content of the given xml.dom.Element.
 
 	This function simply fetches all contained text nodes, so the element
@@ -1193,7 +1202,10 @@ def _getText(element):
 		if node.nodeType == node.TEXT_NODE:
 			res += node.data
 
-	return res
+	if regex is None or re.match(regex, res):
+		return res
+	else:
+		return default
 
 
 def _getPositiveIntText(element):

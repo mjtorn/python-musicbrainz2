@@ -28,11 +28,31 @@ class ParseLabelTest(unittest.TestCase):
 		self.failIf( label is None )
 		self.assertEquals(label.id,
 			makeId('50c384a2-0b44-401b-b893-8181173339c7'))
+		self.assertEquals(label.type, NS_MMD_1 + 'OriginalProduction')
 		self.assertEquals(label.name, 'Atlantic Records')
 		self.assertEquals(label.beginDate, '1947')
 		self.assertEquals(label.endDate, None)
+		self.assertEquals(label.country, 'US')
+		self.assertEquals(label.code, '121')
 
-		# TODO: label type, code, country
+
+	def testLabelSubElements(self):
+		f = os.path.join(VALID_LABEL_DIR, 'Atlantic_Records_2.xml')
+		md = MbXmlParser().parse(f)
+		label = md.getLabel()
+
+		self.failIf( label is None )
+		self.assertEquals(label.type, NS_MMD_1 + 'Distributor')
+		self.assertEquals(label.name, 'Atlantic Records')
+		self.assertEquals(label.sortName, 'AR SortName')
+		self.assertEquals(label.disambiguation, 'fake')
+		self.assertEquals(label.beginDate, '1947')
+		self.assertEquals(label.endDate, '2047')
+		self.assertEquals(label.country, 'US')
+		self.assertEquals(label.code, '121')
+
+		self.assertEquals(label.getUniqueName(),
+			'Atlantic Records (fake)')
 
 
 	def testSearchResults(self):
