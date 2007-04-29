@@ -30,7 +30,8 @@ __all__ = [
 	'WebServiceError', 'AuthenticationError', 'ConnectionError',
 	'RequestError', 'ResourceNotFoundError', 'ResponseError', 
 	'IIncludes', 'ArtistIncludes', 'ReleaseIncludes', 'TrackIncludes',
-	'IFilter', 'ArtistFilter', 'ReleaseFilter', 'TrackFilter', 'UserFilter',
+	'IFilter', 'ArtistFilter', 'ReleaseFilter', 'TrackFilter',
+	'UserFilter', 'LabelFilter',
 	'IWebService', 'WebService', 'Query',
 ]
 
@@ -365,6 +366,35 @@ class ArtistFilter(IFilter):
 
 		@param name: a unicode string containing the artist's name
 		@param limit: the maximum number of artists to return
+		@param offset: start results at this zero-based offset
+		@param query: a string containing a query in Lucene syntax
+		"""
+		self._params = [
+			('name', name),
+			('limit', limit),
+			('offset', offset),
+			('query', query),
+		]
+
+		if not _paramsValid(self._params):
+			raise ValueError('invalid combination of parameters')
+
+	def createParameters(self):
+		return _createParameters(self._params)
+
+
+class LabelFilter(IFilter):
+	"""A filter for the label collection."""
+
+	def __init__(self, name=None, limit=None, offset=None, query=None):
+		"""Constructor.
+
+		The C{query} parameter may contain a query in U{Lucene syntax
+		<http://lucene.apache.org/java/docs/queryparsersyntax.html>}.
+		Note that the C{name} and C{query} may not be used together.
+
+		@param name: a unicode string containing the label's name
+		@param limit: the maximum number of labels to return
 		@param offset: start results at this zero-based offset
 		@param query: a string containing a query in Lucene syntax
 		"""
@@ -832,8 +862,8 @@ class Query(object):
 		result = self._getFromWebService('artist', '', filter=filter)
 		return result.getArtistResults()
 
-	def getLabelById(self, id, include=None):
-		"""Returns a L{Label}
+	def getLabelById(self, id_, include=None):
+		"""Returns a L{model.Label}
 		
 		If no label with that ID can be found, or there is a server problem,
 		an exception is raised.

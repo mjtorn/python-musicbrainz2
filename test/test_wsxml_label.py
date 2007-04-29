@@ -39,14 +39,20 @@ class ParseLabelTest(unittest.TestCase):
 		f = os.path.join(VALID_LABEL_DIR, 'search_result_1.xml')
 		md = MbXmlParser().parse(f)
 
-		#self.assertEquals(md.artistResultsOffset, 0)
-		#self.assertEquals(md.artistResultsCount, 47)
+		self.assertEquals(md.labelResultsOffset, 0)
+		self.assertEquals(md.labelResultsCount, 2)
+		self.assertEquals(md.getLabelResultsOffset(), 0)
+		self.assertEquals(md.getLabelResultsCount(), 2)
 
-		#results = md.artistResults
-		#self.assertEquals(len(results), 3)
+		results = md.labelResults
+		self.assertEquals(len(results), 2)
 
-		#self.assertEquals(results[0].score, 100)
-		#artist1 = results[0].artist
-		#self.assertEquals(artist1.name, 'Tori Amos')
+		self.assertEquals(results[0].score, 100)
+		label1 = results[0].label
+		self.assertEquals(label1.name, 'Atlantic Records')
+
+		self.assertEquals(results[1].score, 46)
+		label2 = results[1].label
+		self.assertEquals(label2.name, 'DRO Atlantic')
 
 # EOF

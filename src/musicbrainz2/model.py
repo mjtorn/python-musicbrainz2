@@ -527,14 +527,14 @@ class Label(Entity):
 	def getType(self):
 		"""Returns the type of this label.
 
-		@param type_: a string containing an absolute URI
+		@return: a string containing an absolute URI
 		"""
 		return self._type
 	
 	def setType(self, type_):
 		"""Sets the type of this label.
 		
-		@param type: A string containing the absolute URI of the type of label.
+		@param type_: A string containing the absolute URI of the type of label.
 		"""
 		self._type = type_
 	

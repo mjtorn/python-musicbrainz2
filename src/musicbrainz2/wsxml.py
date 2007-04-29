@@ -24,7 +24,8 @@ from musicbrainz2.model import NS_MMD_1, NS_REL_1, NS_EXT_1
 __all__ = [
 	'DefaultFactory', 'Metadata', 'ParseError',
 	'MbXmlParser', 'MbXmlWriter',
-	'ArtistResult', 'ReleaseResult', 'TrackResult',
+	'AbstractResult',
+	'ArtistResult', 'ReleaseResult', 'TrackResult', 'LabelResult'
 ]
 
 
@@ -85,6 +86,9 @@ class Metadata(object):
 		self._trackResults = [ ]
 		self._trackResultsOffset = None
 		self._trackResultsCount = None
+		self._labelResults = [ ]
+		self._labelResultsOffset = None
+		self._labelResultsCount = None
 		self._userList = [ ]
 
 	def getArtist(self):
@@ -183,11 +187,63 @@ class Metadata(object):
 	def getLabelResults(self):
 		"""Returns a label result list.
 		
-		@return: a list of L{Label} objects.
+		@return: a list of L{LabelResult} objects.
 		"""
 		return self._labelResults
 	
-	labelResults = property(getLabelResults, doc='A list of LabelResult objects')
+	labelResults = property(getLabelResults,
+		doc='A list of LabelResult objects')
+
+	def getLabelResultsOffset(self):
+		"""Returns the offset of the label result list.
+
+		The offset is used for paging through the result list. It
+		is zero-based.
+
+		@return: an integer containing the offset, or None
+
+		@see: L{getLabelResults}, L{getLabelResultsCount}
+		"""
+		return self._labelResultsOffset
+
+	def setLabelResultsOffset(self, value):
+		"""Sets the offset of the label result list.
+
+		@param value: an integer containing the offset, or None
+
+		@see: L{getLabelResultsOffset}
+		"""
+		self._labelResultsOffset = value
+
+	labelResultsOffset = property(
+		getLabelResultsOffset, setLabelResultsOffset,
+		doc='The offset of the label results.')
+
+	def getLabelResultsCount(self):
+		"""Returns the total number of results available.
+	
+		This may or may not match with the number of elements that
+		L{getLabelResults} returns. If the count is higher than
+		the list, it indicates that the list is incomplete.
+
+		@return: an integer containing the count, or None
+
+		@see: L{setLabelResultsCount}, L{getLabelResultsOffset}
+		"""
+		return self._labelResultsCount
+
+	def setLabelResultsCount(self, value):
+		"""Sets the total number of available results.
+
+		@param value: an integer containing the count, or None
+
+		@see: L{getLabelResults}, L{setLabelResultsOffset}
+		"""
+		self._labelResultsCount = value
+
+	labelResultsCount = property(
+		getLabelResultsCount, setLabelResultsCount,
+		doc='The total number of label results.')
 
 	def getReleaseResults(self):
 		"""Returns a release result list. 
@@ -326,7 +382,33 @@ class Metadata(object):
 		doc='A list of User objects.')
 
 
-class ArtistResult(object):
+class AbstractResult(object):
+	"""The abstract representation of a result.
+
+	A result is an instance of some kind (Artist, Release, ...)
+	associated with a score.
+	"""
+
+	def __init__(self, score):
+		self._score = score
+
+	def getScore(self):
+		"""Returns the result score.
+
+		The score indicates how good this result matches the search
+		parameters. The higher the value, the better the match.
+
+		@return: an int between 0 and 100 (both inclusive), or None
+		"""
+		return self._score
+
+	def setScore(self, score):
+		self._score = score
+
+	score = property(getScore, setScore, doc='The relevance score.')
+
+
+class ArtistResult(AbstractResult):
 	"""Represents an artist result.
 
 	An ArtistResult consists of a I{score} and an artist. The score is a
@@ -334,8 +416,8 @@ class ArtistResult(object):
 	match.
 	"""
 	def __init__(self, artist, score):
+		super(ArtistResult, self).__init__(score)
 		self._artist = artist
-		self._score = score
 
 	def getArtist(self):
 		"""Returns an Artist object.
@@ -349,23 +431,8 @@ class ArtistResult(object):
 
 	artist = property(getArtist, setArtist, doc='An Artist object.')
 
-	def getScore(self):
-		"""Returns the result score.
 
-		The score indicates how good this result matches the search
-		parameters. The higher the value, the better the match.
-
-		@return: an int between 0 and 100 (both inclusive), or None
-		"""
-		return self._score
-
-	def setScore(self, score):
-		self._score = score
-
-	score = property(getScore, setScore, doc='The relevance score.')
-
-
-class ReleaseResult(object):
+class ReleaseResult(AbstractResult):
 	"""Represents a release result.
 
 	A ReleaseResult consists of a I{score} and a release. The score is a
@@ -373,8 +440,8 @@ class ReleaseResult(object):
 	match.
 	"""
 	def __init__(self, release, score):
+		super(ReleaseResult, self).__init__(score)
 		self._release = release
-		self._score = score
 
 	def getRelease(self):
 		"""Returns a Release object.
@@ -388,23 +455,8 @@ class ReleaseResult(object):
 
 	release = property(getRelease, setRelease, doc='A Release object.')
 
-	def getScore(self):
-		"""Returns the result score.
 
-		The score indicates how good this result matches the search
-		parameters. The higher the value, the better the match.
-
-		@return: an int between 0 and 100 (both inclusive), or None
-		"""
-		return self._score
-
-	def setScore(self, score):
-		self._score = score
-
-	score = property(getScore, setScore, doc='The relevance score.')
-
-
-class TrackResult(object):
+class TrackResult(AbstractResult):
 	"""Represents a track result.
 
 	A TrackResult consists of a I{score} and a track. The score is a
@@ -412,8 +464,8 @@ class TrackResult(object):
 	match.
 	"""
 	def __init__(self, track, score):
+		super(TrackResult, self).__init__(score)
 		self._track = track
-		self._score = score
 
 	def getTrack(self):
 		"""Returns a Track object.
@@ -427,20 +479,29 @@ class TrackResult(object):
 
 	track = property(getTrack, setTrack, doc='A Track object.')
 
-	def getScore(self):
-		"""Returns the result score.
 
-		The score indicates how good this result matches the search
-		parameters. The higher the value, the better the match.
+class LabelResult(AbstractResult):
+	"""Represents a label result.
 
-		@return: an int between 0 and 100 (both inclusive), or None
+	An LabelResult consists of a I{score} and a label. The score is a
+	number between 0 and 100, where a higher number indicates a better
+	match.
+	"""
+	def __init__(self, label, score):
+		super(LabelResult, self).__init__(score)
+		self._label = label
+
+	def getLabel(self):
+		"""Returns a Label object.
+
+		@return: a L{musicbrainz2.model.Label} object
 		"""
-		return self._score
+		return self._label
 
-	def setScore(self, score):
-		self._score = score
+	def setLabel(self, label):
+		self._label = label
 
-	score = property(getScore, setScore, doc='The relevance score.')
+	label = property(getLabel, setLabel, doc='A Label object.')
 
 
 class MbXmlParser(object):
@@ -545,6 +606,11 @@ class MbXmlParser(object):
 				md.trackResultsOffset = offset
 				md.trackResultsCount = count
 				self._addTrackResults(node, md.getTrackResults())
+			elif _matches(node, 'label-list'):
+				(offset, count) = self._getListAttrs(node)
+				md.labelResultsOffset = offset
+				md.labelResultsCount = count
+				self._addLabelResults(node, md.getLabelResults())
 			elif _matches(node, 'user-list', NS_EXT_1):
 				self._addUsersToList(node, md.getUserList())
 
@@ -572,6 +638,12 @@ class MbXmlParser(object):
 			if track is not None:
 				resultList.append(TrackResult(track, score))
 
+	def _addLabelResults(self, listNode, resultList):
+		for c in _getChildElements(listNode):
+			label = self._createLabel(c)
+			score = _getIntAttr(c, 'score', 0, 100, ns=NS_EXT_1)
+			if label is not None:
+				resultList.append(LabelResult(label, score))
 
 	def _addReleasesToList(self, listNode, resultList):
 		self._addToList(listNode, resultList, self._createRelease)
