@@ -118,6 +118,26 @@ class ParseReleaseTest(unittest.TestCase):
 		events = release.getReleaseEvents()
 		self.assertEquals(len(events), 1)
 		self.assertEquals(events[0].getDate(), '1994-01-28')
+
+
+	def testReleaseEvents(self):
+		f = os.path.join(VALID_RELEASE_DIR, 'Under_the_Pink_3.xml')
+		md = MbXmlParser().parse(f)
+		release = md.getRelease()
+
+		self.failIf( release is None )
+		self.assertEquals(release.getTitle(), 'Under the Pink')
+
+		events = release.getReleaseEvents()
+		self.assertEquals(len(events), 1)
+		e1 = events[0]
+		self.assertEquals(e1.date, '1994-01-31')
+		self.assertEquals(e1.catalogNumber, '82567-2')
+		self.assertEquals(e1.barcode, '07567825672')
+		self.assertEquals(e1.barcode, '07567825672')
+
+		self.failIf( e1.label is None )
+		self.assertEquals(e1.label.name, 'Atlantic Records')
 		
 
 	def testResultAttributes(self):

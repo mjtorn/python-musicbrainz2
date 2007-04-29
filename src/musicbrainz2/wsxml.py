@@ -742,7 +742,8 @@ class MbXmlParser(object):
 			if _matches(node, 'event'):
 				country = _getAttr(node, 'country', '^[A-Z]{2}$')
 				date = _getDateAttr(node, 'date')
-				catalog = _getAttr(node, 'catalog-number')
+				catalogNumber = _getAttr(node, 'catalog-number')
+				barcode = _getAttr(node, 'barcode')
 
 				# The date attribute is mandatory. If it isn't present,
 				# we don't add anything from this release event.
@@ -750,7 +751,8 @@ class MbXmlParser(object):
 					event = self._factory.newReleaseEvent()
 					event.setCountry(country)
 					event.setDate(date)
-					event.setCatalogNumber(catalog)
+					event.setCatalogNumber(catalogNumber)
+					event.setBarcode(barcode)
 					
 					for subNode in _getChildElements(node):
 						if _matches(subNode, 'label'):

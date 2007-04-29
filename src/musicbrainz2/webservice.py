@@ -597,13 +597,14 @@ class ArtistIncludes(IIncludes):
 class ReleaseIncludes(IIncludes):
 	"""A specification on how much data to return with a release."""
 	def __init__(self, artist=False, counts=False, releaseEvents=False,
-			discs=False, tracks=False, label=False,
+			discs=False, tracks=False,
 			artistRelations=False, releaseRelations=False,
-			trackRelations=False, urlRelations=False):
+			trackRelations=False, urlRelations=False,
+			labels=False):
 		self._includes = {
 			'artist':		artist,
 			'counts':		counts,
-			'labels':		label,
+			'labels':		labels,
 			'release-events':	releaseEvents,
 			'discs':		discs,
 			'tracks':		tracks,
@@ -612,6 +613,11 @@ class ReleaseIncludes(IIncludes):
 			'track-rels':		trackRelations,
 			'url-rels':		urlRelations,
 		}
+
+		# Requesting labels without releaseEvents makes no sense,
+		# so we pull in releaseEvents, if necessary.
+		if labels and not releaseEvents:
+			self._includes['release-events'] = True
 
 	def createIncludeTags(self):
 		return _createIncludes(self._includes)

@@ -498,10 +498,10 @@ class Artist(Entity):
 class Label(Entity):
 	"""Represents a record label.
 	
-	A label within MusicBrainz is an L{Entity}. It contains information about
-	the label like when it was established, its name, label code and other
-	relationships. All release events may be assigned a label and catalog
-	number.
+	A label within MusicBrainz is an L{Entity}. It contains information
+	about the label like when it was established, its name, label code and
+	other relationships. All release events may be assigned a label and
+	catalog number.
 	"""
 	TYPE_UNKNOWN = NS_MMD_1 + 'Unknown'
 	
@@ -1398,6 +1398,7 @@ class ReleaseEvent(object):
 		self._countryId = country
 		self._dateStr = dateStr
 		self._catalogNumber = None
+		self._barcode = None
 		self._label = None
 
 	def getCountry(self):
@@ -1431,14 +1432,31 @@ class ReleaseEvent(object):
 		return self._catalogNumber
 	
 	def setCatalogNumber(self, catalogNumber):
-		"""Sets the catalog number of this release.
+		"""Sets the catalog number of this release event.
 		
 		@param catalogNumber: A string containing the catalog number
 		"""
 		self._catalogNumber = catalogNumber
 	
 	catalogNumber = property(getCatalogNumber, setCatalogNumber,
-		doc='The catalog number of the release')
+		doc='The catalog number of the release event')
+		
+	def getBarcode(self):
+		"""Returns the barcode of this release event.
+
+		@return: A string containing the barcode, or None
+		"""
+		return self._barcode
+	
+	def setBarcode(self, barcode):
+		"""Sets the barcode of this release event.
+		
+		@param barcode: A string containing the barcode
+		"""
+		self._barcode = barcode
+	
+	barcode = property(getBarcode, setBarcode,
+		doc='The barcode of the release event')
 		
 	def getLabel(self):
 		"""Returns a L{Label} object for the label associated with this release.

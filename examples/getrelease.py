@@ -32,7 +32,7 @@ try:
 	# the release's artist, all release events, associated discs and
 	# the track list.
 	#
-	inc = ws.ReleaseIncludes(artist=True, releaseEvents=True,
+	inc = ws.ReleaseIncludes(artist=True, releaseEvents=True, labels=True,
 			discs=True, tracks=True)
 	release = q.getReleaseById(sys.argv[1], inc)
 except ws.WebServiceError, e:
@@ -57,13 +57,26 @@ if release.artist:
 
 
 # Release events are the dates and times when a release took place.
+# We also have the catalog numbers and barcodes for some releases.
 #
 if len(release.releaseEvents) > 0:
 	print
 	print "Released (earliest: %s):" % release.getEarliestReleaseDate()
 
 for event in release.releaseEvents:
-	print "  %s %s" % (u.getCountryName(event.country), event.date)
+	labelInfo = ''
+	if event.label:
+		labelInfo = '(' + event.label.name + ')'
+
+	print "  %s %s" % (u.getCountryName(event.country), event.date),
+
+	if event.catalogNumber:
+		print '#' + event.catalogNumber,
+
+	if event.barcode:
+		print 'EAN=' + event.barcode,
+
+	print
 
 
 if len(release.discs) > 0:
