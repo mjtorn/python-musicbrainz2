@@ -43,6 +43,7 @@ class DefaultFactory(object):
 	def newArtistAlias(self): return model.ArtistAlias()
 	def newUser(self): return model.User()
 	def newLabel(self): return model.Label()
+	def newLabelAlias(self): return model.LabelAlias()
 
 
 class ParseError(Exception):
@@ -710,6 +711,8 @@ class MbXmlParser(object):
 			elif _matches(node, 'life-span'):
 				label.setBeginDate(_getDateAttr(node, 'begin'))
 				label.setEndDate(_getDateAttr(node, 'end'))
+			elif _matches(node, 'alias-list'):
+				self._addLabelAliases(node, label)
 			
 		return label
 
@@ -783,11 +786,23 @@ class MbXmlParser(object):
 		for node in _getChildElements(aliasListNode):
 			if _matches(node, 'alias'):
 				alias = self._factory.newArtistAlias()
-				alias.setValue(_getText(node))
-				alias.setType(_getUriAttr(node, 'type'))
-				alias.setScript(_getAttr(node, 'script',
-					'^[A-Z][a-z]{3}$'))
+				self._initializeAlias(alias, node)
 				artist.addAlias(alias)
+
+
+	def _addLabelAliases(self, aliasListNode, label):
+		for node in _getChildElements(aliasListNode):
+			if _matches(node, 'alias'):
+				alias = self._factory.newLabelAlias()
+				self._initializeAlias(alias, node)
+				label.addAlias(alias)
+
+
+	def _initializeAlias(self, alias, node):
+		alias.setValue(_getText(node))
+		alias.setType(_getUriAttr(node, 'type'))
+		alias.setScript(_getAttr(node, 'script',
+			'^[A-Z][a-z]{3}$'))
 
 
 	def _createTrack(self, trackNode):

@@ -50,6 +50,10 @@ class ParseLabelTest(unittest.TestCase):
 		self.assertEquals(label.endDate, '2047')
 		self.assertEquals(label.country, 'US')
 		self.assertEquals(label.code, '121')
+		self.assertEquals(len(label.aliases), 1)
+
+		alias = label.aliases[0]
+		self.assertEquals(alias.value, 'Atlantic Rec.')
 
 		self.assertEquals(label.getUniqueName(),
 			'Atlantic Records (fake)')

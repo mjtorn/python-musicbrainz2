@@ -25,7 +25,8 @@ __revision__ = '$Id$'
 __all__ = [
 	'VARIOUS_ARTISTS_ID', 'NS_MMD_1', 'NS_REL_1', 'NS_EXT_1', 
 	'Entity', 'Artist', 'Release', 'Track', 'User', 
-	'Relation', 'ArtistAlias', 'Disc', 'ReleaseEvent', 
+	'Relation', 'Disc', 'ReleaseEvent', 
+	'Alias', 'ArtistAlias', 'LabelAlias', 
 ]
 
 
@@ -414,7 +415,7 @@ class Artist(Entity):
 		"""
 		return self._aliases
 
-	aliases = property(getAliases, doc='The list of aliases')
+	aliases = property(getAliases, doc='The list of aliases.')
 
 	def addAlias(self, alias):
 		"""Adds an alias for this artist.
@@ -526,6 +527,7 @@ class Label(Entity):
 		self._labelCode = None
 		self._beginDate = None
 		self._endDate = None
+		self._aliases = [ ]
 	
 	def getType(self):
 		"""Returns the type of this label.
@@ -704,6 +706,22 @@ class Label(Entity):
 
 	code = property(getCode, setCode,
 		doc='The label code.')
+
+	def getAliases(self):
+		"""Returns the list of aliases for this label.
+
+		@return: a list of L{LabelAlias} objects
+		"""
+		return self._aliases
+
+	aliases = property(getAliases, doc='The list of aliases.')
+
+	def addAlias(self, alias):
+		"""Adds an alias for this label.
+		
+		@param alias: a L{LabelAlias} object
+		"""
+		self._aliases.append(alias)
 
 
 class Release(Entity):
@@ -1729,17 +1747,8 @@ class Disc(object):
 		self._tracks.append(track)
 
 
-class ArtistAlias(object):
-	"""Represents an artist alias.
-
-	An alias (the I{alias value}) is a different representation of an
-	artist's name. This may be a common misspelling or a transliteration
-	(the I{alias type}).
-
-	The I{alias script} is interesting mostly for transliterations and
-	indicates which script is used for the alias value. To represent the
-	script, ISO-15924 script codes like 'Latn', 'Cyrl', or 'Hebr' are used.
-	"""
+class Alias(object):
+	"""An abstract super class for all alias classes."""
 	def __init__(self, value=None, type_=None, script=None):
 		"""Constructor.
 
@@ -1799,6 +1808,33 @@ class ArtistAlias(object):
 
 	script = property(getScript, setScript, doc='The alias script.')
 
+
+class ArtistAlias(Alias):
+	"""Represents an artist alias.
+
+	An alias (the I{alias value}) is a different representation of an
+	artist's name. This may be a common misspelling or a transliteration
+	(the I{alias type}).
+
+	The I{alias script} is interesting mostly for transliterations and
+	indicates which script is used for the alias value. To represent the
+	script, ISO-15924 script codes like 'Latn', 'Cyrl', or 'Hebr' are used.
+	"""
+	pass
+
+
+class LabelAlias(Alias):
+	"""Represents a label alias.
+
+	An alias (the I{alias value}) is a different representation of a
+	label's name. This may be a common misspelling or a transliteration
+	(the I{alias type}).
+
+	The I{alias script} is interesting mostly for transliterations and
+	indicates which script is used for the alias value. To represent the
+	script, ISO-15924 script codes like 'Latn', 'Cyrl', or 'Hebr' are used.
+	"""
+	pass
 
 
 class User(object):

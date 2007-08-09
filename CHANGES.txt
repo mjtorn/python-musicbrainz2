@@ -1,11 +1,11 @@
-Changes from 0.4.0:
+Changes in 0.4.1:
 
   * Access to a CD drive other than the default drive works again (Luks).
   * IWebService.post() now returns a file-like object instead of None (Luks).
   * Added the "Artificial" language and the "Pseudo-Release" type (Luks).
 
 
-Changes from 0.3.2:
+Changes in 0.4.0:
 
   * DiscID calculation now uses libdiscid instead of libmusicbrainz2.
   * Fixed the IFilter subclasses to properly encode strings (#2148)
@@ -15,19 +15,19 @@ Changes from 0.3.2:
   * Added mb-submit-disc, a tool for submitting DiscIDs to MusicBrainz.
 
 
-Changes from 0.3.1:
+Changes in 0.3.2:
 
   * Made the package work inside a zip file for py2exe (#1411, Luks).
   * Added the mb-submit-disc tool.
 
 
-Changes from 0.3.0:
+Changes in 0.3.1:
 
   * Fixed webservice.WebService.post(), to make PUID submission work (Luks).
   * Added and updated package metadata in setup.py.
 
 
-Changes from 0.2.2:
+Changes in 0.3.0:
 
   * API changes in model.Query to support relevance scores (#1175):
       - Changed getArtists() to return a list of ArtistResult objects.
@@ -77,12 +77,12 @@ Changes from 0.2.2:
   * Added more example code and improved the documentation.
 
 
-Changes from 0.2.1:
+Changes in 0.2.2:
 
   * Added the musicbrainz2.utils module (#1192).
 
 
-Changes from 0.2.0:
+Changes in 0.2.1:
 
   * Release date parsing has been fixed (#1181).
   * ctypes 0.9.9.3 is now supported.
@@ -90,11 +90,16 @@ Changes from 0.2.0:
   * Added type and script support to ArtistAlias.
 
 
-Changes from 0.1.0:
+Changes in 0.2.0:
 
   * API change: Switched from TRM to PUID (Luks).
     All interfaces with 'Trm' or 'trm' in the name are affected.
   * python 2.3 compatibility fixes (#1160)
+
+
+Changes in 0.1.0:
+
+  * Initial release.
 
 --
 $Id$
