@@ -524,7 +524,7 @@ class Label(Entity):
 		self._sortName = None
 		self._disambiguation = None
 		self._countryId = None
-		self._labelCode = None
+		self._code = None
 		self._beginDate = None
 		self._endDate = None
 		self._aliases = [ ]

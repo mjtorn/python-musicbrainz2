@@ -36,6 +36,17 @@ class ParseLabelTest(unittest.TestCase):
 		self.assertEquals(label.code, '121')
 
 
+	def testIncomplete(self):
+		f = os.path.join(VALID_LABEL_DIR, 'Atlantic_Records_3.xml')
+		md = MbXmlParser().parse(f)
+		label = md.getLabel()
+
+		self.failIf( label is None )
+		self.assertEquals(label.id,
+			makeId('50c384a2-0b44-401b-b893-8181173339c7'))
+		self.assertEquals(label.code, None)
+
+
 	def testLabelSubElements(self):
 		f = os.path.join(VALID_LABEL_DIR, 'Atlantic_Records_2.xml')
 		md = MbXmlParser().parse(f)
