@@ -24,11 +24,10 @@ if len(sys.argv) < 2:
 q = ws.Query()
 
 try:
-	# The result should include all official albums.
+	# The result should include all aliases.
 	#
-	#inc = ws.ArtistIncludes(
-	#	releases=(m.Release.TYPE_OFFICIAL, m.Release.TYPE_ALBUM))
-	label = q.getLabelById(sys.argv[1])
+	inc = ws.LabelIncludes(aliases=True)
+	label = q.getLabelById(sys.argv[1], inc)
 except ws.WebServiceError, e:
 	print 'Error:', e
 	sys.exit(1)
@@ -43,6 +42,9 @@ print "BeginDate  :", label.beginDate
 print "EndDate    :", label.endDate
 print "Country    :", label.country
 print "Label-Code :", label.code
-print
+print "Aliases    :"
+
+for alias in label.aliases:
+	print "        ", label.value
 
 # EOF

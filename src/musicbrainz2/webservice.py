@@ -30,6 +30,7 @@ __all__ = [
 	'WebServiceError', 'AuthenticationError', 'ConnectionError',
 	'RequestError', 'ResourceNotFoundError', 'ResponseError', 
 	'IIncludes', 'ArtistIncludes', 'ReleaseIncludes', 'TrackIncludes',
+	'LabelIncludes',
 	'IFilter', 'ArtistFilter', 'ReleaseFilter', 'TrackFilter',
 	'UserFilter', 'LabelFilter',
 	'IWebService', 'WebService', 'Query',
@@ -636,6 +637,17 @@ class TrackIncludes(IIncludes):
 			'release-rels':		releaseRelations,
 			'track-rels':		trackRelations,
 			'url-rels':		urlRelations,
+		}
+
+	def createIncludeTags(self):
+		return _createIncludes(self._includes)
+
+
+class LabelIncludes(IIncludes):
+	"""A specification on how much data to return with a label."""
+	def __init__(self, aliases=False):
+		self._includes = {
+			'aliases':		aliases,
 		}
 
 	def createIncludeTags(self):

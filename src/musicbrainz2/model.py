@@ -26,7 +26,7 @@ __all__ = [
 	'VARIOUS_ARTISTS_ID', 'NS_MMD_1', 'NS_REL_1', 'NS_EXT_1', 
 	'Entity', 'Artist', 'Release', 'Track', 'User', 
 	'Relation', 'Disc', 'ReleaseEvent', 
-	'Alias', 'ArtistAlias', 'LabelAlias', 
+	'AbstractAlias', 'ArtistAlias', 'LabelAlias', 
 ]
 
 
@@ -1747,7 +1747,7 @@ class Disc(object):
 		self._tracks.append(track)
 
 
-class Alias(object):
+class AbstractAlias(object):
 	"""An abstract super class for all alias classes."""
 	def __init__(self, value=None, type_=None, script=None):
 		"""Constructor.
@@ -1809,7 +1809,7 @@ class Alias(object):
 	script = property(getScript, setScript, doc='The alias script.')
 
 
-class ArtistAlias(Alias):
+class ArtistAlias(AbstractAlias):
 	"""Represents an artist alias.
 
 	An alias (the I{alias value}) is a different representation of an
@@ -1823,7 +1823,7 @@ class ArtistAlias(Alias):
 	pass
 
 
-class LabelAlias(Alias):
+class LabelAlias(AbstractAlias):
 	"""Represents a label alias.
 
 	An alias (the I{alias value}) is a different representation of a

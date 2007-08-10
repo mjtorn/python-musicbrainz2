@@ -984,7 +984,6 @@ class MbXmlWriter(object):
 		self._writeRelease(xml, metadata.getRelease())
 		self._writeTrack(xml, metadata.getTrack())
 
-		# TODO: count and offset
 		if len(metadata.getArtistResults()) > 0:
 			xml.start('artist-list', {
 				'offset': metadata.artistResultsOffset,
