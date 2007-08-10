@@ -983,6 +983,7 @@ class MbXmlWriter(object):
 		self._writeArtist(xml, metadata.getArtist())
 		self._writeRelease(xml, metadata.getRelease())
 		self._writeTrack(xml, metadata.getTrack())
+		self._writeLabel(xml, metadata.getLabel())
 
 		if len(metadata.getArtistResults()) > 0:
 			xml.start('artist-list', {
@@ -1014,6 +1015,16 @@ class MbXmlWriter(object):
 					result.getScore())
 			xml.end()
 
+		if len(metadata.getLabelResults()) > 0:
+			xml.start('label-list', {
+				'offset': metadata.labelResultsOffset,
+				'count': metadata.labelResultsCount,
+			})
+			for result in metadata.getLabelResults():
+				self._writeLabel(xml, result.getLabel(),
+					result.getScore())
+			xml.end()
+
 		xml.end()
 
 
@@ -1042,7 +1053,7 @@ class MbXmlWriter(object):
 					'type': alias.getType(),
 					'script': alias.getScript(),
 				})
-			xml.end('alias-list')
+			xml.end()
 
 		if len(artist.getReleases()) > 0:
 			xml.start('release-list')
@@ -1061,13 +1072,13 @@ class MbXmlWriter(object):
 			return
 
 		types = [mbutils.extractFragment(t) for t in release.getTypes()]
-		typeStr = None
+		typesStr = None
 		if len(types) > 0:
 			typesStr = ' '.join(types)
 
 		xml.start('release', {
 			'id': mbutils.extractUuid(release.getId()),
-			'type': typeStr,
+			'type': typesStr,
 			'ext:score': score,
 		})
 
@@ -1083,10 +1094,7 @@ class MbXmlWriter(object):
 		if len(release.getReleaseEvents()) > 0:
 			xml.start('release-event-list')
 			for event in release.getReleaseEvents():
-				xml.elem('alias', None, {
-					'country': event.getCountry(),
-					'date': event.getDate()
-				})
+				self._writeReleaseEvent(xml, event)
 			xml.end()
 
 		if len(release.getDiscs()) > 0:
@@ -1106,6 +1114,19 @@ class MbXmlWriter(object):
 		
 		self._writeRelationList(xml, release)
 		# TODO: extensions
+
+		xml.end()
+
+
+	def _writeReleaseEvent(self, xml, event):
+		xml.start('event', {
+			'country': event.getCountry(),
+			'date': event.getDate(),
+			'catalog-number': event.getCatalogNumber(),
+			'barcode': event.getBarcode()
+		})
+
+		self._writeLabel(xml, event.getLabel())
 
 		xml.end()
 
@@ -1137,6 +1158,41 @@ class MbXmlWriter(object):
 			xml.end()
 
 		self._writeRelationList(xml, track)
+		# TODO: extensions
+
+		xml.end()
+
+
+	def _writeLabel(self, xml, label, score=None):
+		if label is None:
+			return
+
+		xml.start('label', {
+			'id': mbutils.extractUuid(label.getId()),
+			'type': mbutils.extractFragment(label.getType()),
+			'ext:score': score,
+		})
+
+		xml.elem('name', label.getName())
+		xml.elem('sort-name', label.getSortName())
+		xml.elem('disambiguation', label.getDisambiguation())
+		xml.elem('life-span', None, {
+			'begin': label.getBeginDate(),
+			'end': label.getEndDate(),
+		})
+
+		if len(label.getAliases()) > 0:
+			xml.start('alias-list')
+			for alias in label.getAliases():
+				xml.elem('alias', alias.getValue(), {
+					'type': alias.getType(),
+					'script': alias.getScript(),
+				})
+			xml.end()
+
+		# TODO: releases, artists
+
+		self._writeRelationList(xml, label)
 		# TODO: extensions
 
 		xml.end()
