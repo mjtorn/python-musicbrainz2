@@ -1,3 +1,18 @@
+Changes in 0.5.0:
+
+  * Added label support (based on Oliver's patch in #2671):
+      - Added the model.Label and model.LabelAlias classes.
+      - Added a label property to model.Release.
+      - Updated the webservice.Query class.
+      - Added webservice.LabelFilter and webservice.LabelIncludes.
+      - Updated wsxml.Metadata, wsxml.MbXmlParser, and wsxml.MbXmlWriter.
+  * Added catalog number and barcode properties to model.ReleaseEvent.
+  * Changes to IFilter:
+      - Added a query parameter to pass in Lucene queries.
+      - Added an offset parameter to support paging through results.
+  * Added count and offset properties to all Result classes in wsxml.
+
+
 Changes in 0.4.1:
 
   * Access to a CD drive other than the default drive works again (Luks).

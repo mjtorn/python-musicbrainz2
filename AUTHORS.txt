@@ -15,5 +15,8 @@ Contributors:
     - Tested compatibility with python-2.3 on Debian.
     - Provided country/language/script lists.
 
+   Oliver Charles <depth dot of dot field at gmail dot com>
+    - Added initial label support.
+
 --
 $Id$
