@@ -15,6 +15,9 @@ use cases. The following demo scripts are available:
     Search MusicBrainz for a track matching the given track title and,
     optionally, artist name.
 
+ findlabel.py
+    Search MusicBrainz for a label matching the given label name.
+
  getartist.py
     Retrieve an artist using a MusicBrainz ID and display all officially
     released albums.
@@ -22,6 +25,9 @@ use cases. The following demo scripts are available:
  getrelease.py
     Retrieve a release by MusicBrainz ID, including tracks and other
     associated data, like release dates or DiscIDs.
+
+ getlabel.py
+    Retrieve a label by MusicBrainz ID, including aliases.
 
  getrelations.py
     Retrieve an artist by MusicBrainz ID and display relations to URLs and

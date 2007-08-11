@@ -45,6 +45,6 @@ print "Label-Code :", label.code
 print "Aliases    :"
 
 for alias in label.aliases:
-	print "        ", label.value
+	print "            ", label.value
 
 # EOF

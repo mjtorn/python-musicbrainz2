@@ -35,20 +35,19 @@ except WebServiceError, e:
 
 
 # No error occurred, so display the results of the search. It consists of
-# LabelResult objects, where each contains an artist.
+# LabelResult objects, where each contains a label.
 #
 for result in labelResults:
 	label = result.label
 	print "Score     :", result.score
 	print "Id        :", label.id
 	print "Name      :", label.name
-	#print "Sort Name :", label.sortName
+	print "Sort Name :", label.sortName
 	print
 
 #
-# Now that you have artist IDs, you can request an artist in more detail, for
-# example to display all official albums by that artist. See the 'getartist.py'
-# example on how achieve that.
+# Now that you have label IDs, you can request a label directly to get more
+# detail. See 'getlabel.py' for an example on how to do that.
 #
 
 # EOF
