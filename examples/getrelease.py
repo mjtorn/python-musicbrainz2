@@ -64,10 +64,6 @@ if len(release.releaseEvents) > 0:
 	print "Released (earliest: %s):" % release.getEarliestReleaseDate()
 
 for event in release.releaseEvents:
-	labelInfo = ''
-	if event.label:
-		labelInfo = '(' + event.label.name + ')'
-
 	print "  %s %s" % (u.getCountryName(event.country), event.date),
 
 	if event.catalogNumber:
@@ -75,6 +71,9 @@ for event in release.releaseEvents:
 
 	if event.barcode:
 		print 'EAN=' + event.barcode,
+
+	if event.label:
+		print '(' + event.label.name + ')',
 
 	print
 

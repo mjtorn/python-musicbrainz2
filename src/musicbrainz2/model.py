@@ -25,7 +25,7 @@ __revision__ = '$Id$'
 __all__ = [
 	'VARIOUS_ARTISTS_ID', 'NS_MMD_1', 'NS_REL_1', 'NS_EXT_1', 
 	'Entity', 'Artist', 'Release', 'Track', 'User', 
-	'Relation', 'Disc', 'ReleaseEvent', 
+	'Relation', 'Disc', 'ReleaseEvent', 'Label',
 	'AbstractAlias', 'ArtistAlias', 'LabelAlias', 
 ]
 
