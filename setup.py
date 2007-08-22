@@ -41,6 +41,9 @@ class GenerateDocsCommand(Command):
 	def run(self):
 		from distutils.spawn import find_executable, spawn
 		bin = find_executable('epydoc')
+		if not bin:
+			print>>sys.stderr, 'error: epydoc not found'
+			sys.exit(1)
 		noPrivate = '--no-private'
 		cmd = (bin, noPrivate, os.path.join('src', 'musicbrainz2'))
 
