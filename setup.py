@@ -87,7 +87,7 @@ setup_args = {
 	'author':	'Matthias Friedrich',
 	'author_email':	'matt@mafr.de',
 	'url':		'http://musicbrainz.org/products/python-musicbrainz2/',
-	'download_url':	'ftp://ftp.musicbrainz.org/pub/musicbrainz/python-musicbrainz2/',
+	'download_url':	'http://ftp.musicbrainz.org/pub/musicbrainz/python-musicbrainz2/',
 	'classifiers':	trove_classifiers,
 	'license':	'BSD',
 	'packages':	[ 'musicbrainz2', 'musicbrainz2.data' ],
