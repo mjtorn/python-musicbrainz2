@@ -1,7 +1,8 @@
 """Tests for parsing releases using MbXmlParser."""
 import unittest
 from musicbrainz2.wsxml import MbXmlParser, ParseError
-from musicbrainz2.model import VARIOUS_ARTISTS_ID, NS_MMD_1, Relation
+from musicbrainz2.model import VARIOUS_ARTISTS_ID, NS_MMD_1, \
+	Relation, ReleaseEvent
 import StringIO
 import os.path
 
@@ -134,7 +135,7 @@ class ParseReleaseTest(unittest.TestCase):
 		self.assertEquals(e1.date, '1994-01-31')
 		self.assertEquals(e1.catalogNumber, '82567-2')
 		self.assertEquals(e1.barcode, '07567825672')
-		self.assertEquals(e1.barcode, '07567825672')
+		self.assertEquals(e1.format, ReleaseEvent.FORMAT_CD)
 
 		self.failIf( e1.label is None )
 		self.assertEquals(e1.label.name, 'Atlantic Records')

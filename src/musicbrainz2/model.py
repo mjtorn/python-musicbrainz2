@@ -1514,7 +1514,23 @@ class ReleaseEvent(object):
 	All country codes used must be valid ISO-3166 country codes (i.e. 'DE',
 	'UK' or 'FR'). The dates are strings and must have the format 'YYYY',
 	'YYYY-MM' or 'YYYY-MM-DD'.
+
+	The format of the release medium is a URI that can be compared to the
+	constants on this class (L{FORMAT_CD}, L{FORMAT_DVD} and others).
 	"""
+	FORMAT_CD = NS_MMD_1 + 'CD'
+	FORMAT_DVD = NS_MMD_1 + 'DVD'
+	FORMAT_SACD = NS_MMD_1 + 'SACD'
+	FORMAT_DUALDISC = NS_MMD_1 + 'DualDisc'
+	FORMAT_LASERDISC = NS_MMD_1 + 'LaserDisc'
+	FORMAT_MINIDISC = NS_MMD_1 + 'MiniDisc'
+	FORMAT_VINYL = NS_MMD_1 + 'Vinyl'
+	FORMAT_CASSETTE = NS_MMD_1 + 'Cassette'
+	FORMAT_CARTRIDGE = NS_MMD_1 + 'Cartridge'
+	FORMAT_REEL_TO_REEL = NS_MMD_1 + 'ReelToReel'
+	FORMAT_DAT = NS_MMD_1 + 'DAT'
+	FORMAT_DIGITAL = NS_MMD_1 + 'Digital'
+	FORMAT_OTHER = NS_MMD_1 + 'Other'
 
 	def __init__(self, country=None, dateStr=None):
 		"""Constructor.
@@ -1527,6 +1543,7 @@ class ReleaseEvent(object):
 		self._catalogNumber = None
 		self._barcode = None
 		self._label = None
+		self._format = None
 
 	def getCountry(self):
 		"""Returns the country a release took place.
@@ -1617,6 +1634,22 @@ class ReleaseEvent(object):
 
 	date = property(getDate, setDate, doc='The date a release took place.')
 
+	def getFormat(self):
+		"""Returns the format of the release medium.
+
+		@return: a string containing a URI, or None
+		"""
+		return self._format
+
+	def setFormat(self, format):
+		"""Sets the format of the release medium.
+
+		@param format: a string containing a URI
+		"""
+		self._format = format
+
+	format = property(getFormat, setFormat,
+		doc='The format of the release medium.')
 
 
 class Disc(object):

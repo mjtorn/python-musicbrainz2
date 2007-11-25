@@ -756,6 +756,7 @@ class MbXmlParser(object):
 				date = _getDateAttr(node, 'date')
 				catalogNumber = _getAttr(node, 'catalog-number')
 				barcode = _getAttr(node, 'barcode')
+				format = _getUriAttr(node, 'format')
 
 				# The date attribute is mandatory. If it isn't present,
 				# we don't add anything from this release event.
@@ -765,6 +766,7 @@ class MbXmlParser(object):
 					event.setDate(date)
 					event.setCatalogNumber(catalogNumber)
 					event.setBarcode(barcode)
+					event.setFormat(format)
 					
 					for subNode in _getChildElements(node):
 						if _matches(subNode, 'label'):
@@ -1123,7 +1125,8 @@ class MbXmlWriter(object):
 			'country': event.getCountry(),
 			'date': event.getDate(),
 			'catalog-number': event.getCatalogNumber(),
-			'barcode': event.getBarcode()
+			'barcode': event.getBarcode(),
+			'format': event.getFormat()
 		})
 
 		self._writeLabel(xml, event.getLabel())
