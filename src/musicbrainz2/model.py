@@ -1530,6 +1530,8 @@ class ReleaseEvent(object):
 	FORMAT_REEL_TO_REEL = NS_MMD_1 + 'ReelToReel'
 	FORMAT_DAT = NS_MMD_1 + 'DAT'
 	FORMAT_DIGITAL = NS_MMD_1 + 'Digital'
+	FORMAT_WAX_CYLINDER = NS_MMD_1 + 'WaxCylinder'
+	FORMAT_PIANO_ROLL = NS_MMD_1 + 'PianoRoll'
 	FORMAT_OTHER = NS_MMD_1 + 'Other'
 
 	def __init__(self, country=None, dateStr=None):
