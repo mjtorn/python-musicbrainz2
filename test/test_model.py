@@ -1,6 +1,6 @@
 """Tests for various model classes."""
 import unittest
-from musicbrainz2.model import Artist, Release, Track, Relation, NS_REL_1
+from musicbrainz2.model import Artist, Release, Track, Relation, Tag, NS_REL_1
 
 class MiscModelTest(unittest.TestCase):
 	
@@ -72,3 +72,15 @@ class MiscModelTest(unittest.TestCase):
 		r.getTracks()[1].setArtist(Artist(id_=1))
 		self.assert_( r.isSingleArtistRelease() )
 
+	def testTags(self):
+		a = Artist()
+		a.addTag(Tag('foo', 1))
+		a.addTag(Tag('bar', 2))
+		a.addTag(Tag('bar', 5))
+
+		self.assertEquals(len(a.tags), 2)
+		self.assertEquals(a.getTag('foo').count, 1)
+		self.assertEquals(a.getTag('bar').count, 7)
+
+
+# EOF

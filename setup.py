@@ -45,7 +45,9 @@ class GenerateDocsCommand(Command):
 			print>>sys.stderr, 'error: epydoc not found'
 			sys.exit(1)
 		noPrivate = '--no-private'
-		cmd = (bin, noPrivate, os.path.join('src', 'musicbrainz2'))
+		verbose = '-v'
+		cmd = (bin, noPrivate, verbose,
+			os.path.join('src', 'musicbrainz2'))
 
 		spawn(cmd)
 

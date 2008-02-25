@@ -43,8 +43,9 @@ class Entity(object):
 	"""A first-level MusicBrainz class.
 
 	All entities in MusicBrainz have unique IDs (which are absolute URIs)
-	and may have any number of L{relations <Relation>} to other entities.
-	This class is abstract and should not be instantiated.
+	as well as any number of L{relations <Relation>} to other entities
+	and free text tags. This class is abstract and should not be
+	instantiated.
 
 	Relations are differentiated by their I{target type}, that means,
 	where they link to. MusicBrainz currently supports four target types
@@ -70,6 +71,7 @@ class Entity(object):
 		"""
 		self._id = id_
 		self._relations = { }
+		self._tags = { }
 
 	def getId(self):
 		"""Returns a MusicBrainz ID.
@@ -217,6 +219,37 @@ class Entity(object):
 		@see: L{getRelations}
 		"""
 		return self._relations.keys()
+
+	def getTag(self, value):
+		"""Return the tag with the given value (aka the tag's name).
+
+		@return: the L{Tag} with the given name or raises a KeyError
+		"""
+		return self._tags[value]
+
+	def getTags(self):
+		"""Return all tags attached to this Entity.
+
+		@return: a list of L{Tag} objects
+		"""
+		return self._tags.values()
+
+	tags = property(getTags, doc='The tags for this entity.')
+
+	def addTag(self, tag):
+		"""Add a new tag.
+
+		This merges an existing tag with the same name.
+
+		@param tag: the L{Tag} object to add
+
+		@see: L{getTags}
+		"""
+		if self._tags.has_key(tag.value):
+			existing = self._tags[tag.value]
+			existing.count += tag.count
+		else:
+			self._tags[tag.value] = tag
 
 
 class Artist(Entity):
@@ -494,6 +527,55 @@ class Artist(Entity):
 
 	releasesCount = property(getReleasesCount, setReleasesCount,
 		doc='The total number of releases')
+
+
+class Tag(object):
+	"""The representation of a MusicBrainz folksonomy tag.
+
+	The tag's value is the text that's displayed in the tag cloud.
+	The count attribute keeps track of how many users added the tag
+	to its owning entity.
+	"""
+	def __init__(self, value=None, count=None):
+		"""Constructor.
+
+		@param value: a string containing the tag's value
+		@param count: the number of users who added this tag
+		"""
+		self._value = value
+		self._count = count
+
+	def getValue(self):
+		"""Returns a string with the tag's value.
+
+		@return: a string containing the tags's value, or None
+		"""
+		return self._value
+	
+	def setValue(self, value):
+		"""Sets the value of this tag.
+		
+		@param value: A string containing the value of the tag
+		"""
+		self._value = value
+		
+	value = property(getValue, setValue, doc='The value of the text.')
+
+	def getCount(self):
+		"""Returns an integer containing the tag's frequency count.
+
+		@return: an integer containing the tags's frequency count, or None
+		"""
+		return self._count
+	
+	def setCount(self, count):
+		"""Sets the frequency count of this tag.
+		
+		@param count: an integer containing the tag's frequency count
+		"""
+		self._count = count
+		
+	count = property(getCount, setCount, doc="This tag's frequency count.")
 
 
 class Label(Entity):
