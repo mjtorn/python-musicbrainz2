@@ -139,6 +139,18 @@ class ParseReleaseTest(unittest.TestCase):
 
 		self.failIf( e1.label is None )
 		self.assertEquals(e1.label.name, 'Atlantic Records')
+
+
+	def testTags(self):
+		f = os.path.join(VALID_RELEASE_DIR, 'Highway_61_Revisited_2.xml')
+		md = MbXmlParser().parse(f)
+		release = md.getRelease()
+		
+		self.failIf( release is None )
+		self.assertEquals(release.getTag('rock').count, 100)
+		self.assertEquals(release.getTag('blues rock').count, 40)
+		self.assertEquals(release.getTag('folk rock').count, 40)
+		self.assertEquals(release.getTag('dylan').count, 4)
 		
 
 	def testResultAttributes(self):
@@ -147,5 +159,6 @@ class ParseReleaseTest(unittest.TestCase):
 
 		self.assertEquals(md.releaseResultsOffset, 0)
 		self.assertEquals(md.releaseResultsCount, 234)
+
 
 # EOF

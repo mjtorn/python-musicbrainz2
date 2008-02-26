@@ -70,6 +70,17 @@ class ParseLabelTest(unittest.TestCase):
 			'Atlantic Records (fake)')
 
 
+	def testTags(self):
+		f = os.path.join(VALID_LABEL_DIR, 'Atlantic_Records_3.xml')
+		md = MbXmlParser().parse(f)
+		label = md.getLabel()
+		
+		self.failIf( label is None )
+		self.assertEquals(label.getTag('american').count, None)
+		self.assertEquals(label.getTag('jazz').count, None)
+		self.assertEquals(label.getTag('blues').count, None)
+
+
 	def testSearchResults(self):
 		f = os.path.join(VALID_LABEL_DIR, 'search_result_1.xml')
 		md = MbXmlParser().parse(f)

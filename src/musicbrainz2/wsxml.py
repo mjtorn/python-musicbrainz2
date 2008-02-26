@@ -44,6 +44,7 @@ class DefaultFactory(object):
 	def newUser(self): return model.User()
 	def newLabel(self): return model.Label()
 	def newLabelAlias(self): return model.LabelAlias()
+	def newTag(self): return model.Tag()
 
 
 class ParseError(Exception):
@@ -688,6 +689,8 @@ class MbXmlParser(object):
 				self._addReleasesToList(node, artist.getReleases())
 			elif _matches(node, 'relation-list'):
 				self._addRelationsToEntity(node, artist)
+			elif _matches(node, 'tag-list'):
+				self._addTagsToEntity(node, artist)
 
 		return artist
 
@@ -713,7 +716,9 @@ class MbXmlParser(object):
 				label.setEndDate(_getDateAttr(node, 'end'))
 			elif _matches(node, 'alias-list'):
 				self._addLabelAliases(node, label)
-			
+			elif _matches(node, 'tag-list'):
+				self._addTagsToEntity(node, label)
+
 		return label
 
 	def _createRelease(self, releaseNode):
@@ -745,6 +750,8 @@ class MbXmlParser(object):
 				self._addTracksToList(node, release.getTracks())
 			elif _matches(node, 'relation-list'):
 				self._addRelationsToEntity(node, release)
+			elif _matches(node, 'tag-list'):
+				self._addTagsToEntity(node, release)
 
 		return release
 
@@ -824,6 +831,8 @@ class MbXmlParser(object):
 				self._addPuids(node, track)
 			elif _matches(node, 'relation-list'):
 				self._addRelationsToEntity(node, track)
+			elif _matches(node, 'tag-list'):
+				self._addTagsToEntity(node, track)
 
 		return track
 
@@ -895,6 +904,15 @@ class MbXmlParser(object):
 		relation.setTarget(target)
 
 		return relation
+
+
+	def _addTagsToEntity(self, tagListNode, entity):
+		for node in _getChildElements(tagListNode):
+			if _matches(node, 'tag'):
+				tag = self._factory.newTag()
+				tag.value = _getText(node)
+				tag.count = _getIntAttr(node, 'count')
+				entity.addTag(tag)
 
 
 #

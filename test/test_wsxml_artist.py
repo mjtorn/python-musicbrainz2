@@ -94,6 +94,19 @@ class ParseArtistTest(unittest.TestCase):
 		self.assertEquals(aliases[2].getValue(), 'Torie Amos')
 		self.assertEquals(aliases[2].getType(), NS_MMD_1 + 'Misspelling')
 
+
+	def testTags(self):
+		f = os.path.join(VALID_ARTIST_DIR, 'Tchaikovsky-2.xml')
+		md = MbXmlParser().parse(f)
+		artist = md.getArtist()
+		
+		self.failIf( artist is None )
+		self.assertEquals(artist.getTag('classical').count, 100)
+		self.assertEquals(artist.getTag('russian').count, 60)
+		self.assertEquals(artist.getTag('romantic era').count, 40)
+		self.assertEquals(artist.getTag('composer').count, 120)
+		
+
 	def testSearchResults(self):
 		f = os.path.join(VALID_ARTIST_DIR, 'search_result_1.xml')
 		md = MbXmlParser().parse(f)
