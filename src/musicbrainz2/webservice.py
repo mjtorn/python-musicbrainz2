@@ -1078,11 +1078,12 @@ class Query(object):
 		@raise RequestError: invalid ID, entity or tags
 		@raise AuthenticationError: invalid user name and/or password
 		"""
-		params = [ ]
-		params.append( ('type', 'xml') )
-		params.append( ('entity', entity) )
-		params.append( ('id', mbutils.extractUuid(id_, entity)) )
-		params.append( ('tags', ','.join([tag.value for tag in tags])) )
+		params = [ 
+			('type', 'xml'),
+			('entity', entity),
+			('id', mbutils.extractUuid(id_, entity)),
+			('tags', ','.join([tag.value.encode('utf-8') for tag in tags]))
+		]
 
 		encodedStr = urllib.urlencode(params)
 
