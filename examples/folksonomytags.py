@@ -8,6 +8,7 @@
 #
 # $Id$
 #
+import getpass
 import sys
 import logging
 import musicbrainz2.webservice as mbws
@@ -22,18 +23,14 @@ logger.setLevel(logging.DEBUG)
 
 
 # Get the username and password
-print 'Username: ',
-username = sys.stdin.readline().strip()
-print 'Password: ',
-password = sys.stdin.readline().strip()
+username = raw_input('Username: ')
+password = getpass.getpass('Password: ')
 
 # Ask for an entity type to tag.
-print 'Entity type to tag (artist, release, track or label): ',
-entity = sys.stdin.readline().strip()
+entity = raw_input('Entity type to tag (artist, release, track or label): ')
 
 # Ask for a MBID to tag.
-print 'Enter a MBID: ',
-id_ = sys.stdin.readline().strip()
+id_ = raw_input('Enter a MBID: ')
 mbid = extractUuid(id_)
 
 # Set the authentication for the webservice.
@@ -50,9 +47,8 @@ print 'Current tags: '
 print ', '.join([tag.value for tag in tags])
 
 # Ask the user for new tags and submit them
-print 'Enter new tags: '
-tag_str = sys.stdin.readline().strip()
+tag_str = raw_input('Enter new tags: ')
 new_tags = [Tag(tag) for tag in tag_str.split(',')]
-query.submitUserTags('artist', mbid, new_tags)
+query.submitUserTags(entity, mbid, new_tags)
 
 print 'Tags applied'
