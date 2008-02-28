@@ -83,4 +83,14 @@ class MiscModelTest(unittest.TestCase):
 		self.assertEquals(a.getTag('bar').count, 7)
 
 
+class TagTest(unittest.TestCase):
+	
+	def test__str__(self):
+		self.assertEquals("foo", str(Tag(u"foo")))
+		self.assertRaises(UnicodeEncodeError, str, Tag(u"f\u014do"))
+	
+	def test__unicode__(self):
+		self.assertEquals(u"foo", unicode(Tag(u"foo")))
+		self.assertEquals(u"f\u014do", unicode(Tag(u"f\u014do")))
+
 # EOF

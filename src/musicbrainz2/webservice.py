@@ -1072,8 +1072,9 @@ class Query(object):
 		@param entity: the entity type as a string ('artist', 'label',
 		               'release' or 'track')
 		@param id_: a string containing the entity's ID
-		@param tags: A list of L{Tag <musicbrainz2.model.Tag>} objects
-		
+		@param tags: A list of either L{Tag <musicbrainz2.model.Tag>} objects
+		             or strings
+
 		@raise ConnectionError: couldn't connect to server
 		@raise RequestError: invalid ID, entity or tags
 		@raise AuthenticationError: invalid user name and/or password
@@ -1082,7 +1083,7 @@ class Query(object):
 			('type', 'xml'),
 			('entity', entity),
 			('id', mbutils.extractUuid(id_, entity)),
-			('tags', ','.join([tag.value.encode('utf-8') for tag in tags]))
+			('tags', ','.join([unicode(tag).encode('utf-8') for tag in tags]))
 		]
 
 		encodedStr = urllib.urlencode(params)

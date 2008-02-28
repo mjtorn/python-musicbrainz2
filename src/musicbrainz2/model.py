@@ -1,3 +1,4 @@
+# kate: indent-mode python; space-indent off; replace-tabs off; tab-indents on;
 """The MusicBrainz domain model.
 
 These classes are part of the MusicBrainz domain model. They may be used
@@ -576,6 +577,12 @@ class Tag(object):
 		self._count = count
 		
 	count = property(getCount, setCount, doc="This tag's frequency count.")
+
+	def __str__(self):
+		return str(self._value)
+
+	def __unicode__(self):
+		return unicode(self._value)
 
 
 class Label(Entity):
