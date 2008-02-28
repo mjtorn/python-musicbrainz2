@@ -1,4 +1,3 @@
-# kate: indent-mode python; space-indent off; replace-tabs off; tab-indents on;
 """The MusicBrainz domain model.
 
 These classes are part of the MusicBrainz domain model. They may be used
