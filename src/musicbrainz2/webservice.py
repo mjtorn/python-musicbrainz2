@@ -571,7 +571,7 @@ class ArtistIncludes(IIncludes):
 	"""
 	def __init__(self, aliases=False, releases=(), vaReleases=(),
 			artistRelations=False, releaseRelations=False,
-			trackRelations=False, urlRelations=False):
+			trackRelations=False, urlRelations=False, tags=False):
 
 		assert not isinstance(releases, basestring)
 		assert not isinstance(vaReleases, basestring)
@@ -583,6 +583,7 @@ class ArtistIncludes(IIncludes):
 			'release-rels':		releaseRelations,
 			'track-rels':		trackRelations,
 			'url-rels':		urlRelations,
+			'tags':		tags,
 		}
 
 		for elem in releases:
@@ -601,7 +602,7 @@ class ReleaseIncludes(IIncludes):
 			discs=False, tracks=False,
 			artistRelations=False, releaseRelations=False,
 			trackRelations=False, urlRelations=False,
-			labels=False):
+			labels=False, tags=False):
 		self._includes = {
 			'artist':		artist,
 			'counts':		counts,
@@ -613,6 +614,7 @@ class ReleaseIncludes(IIncludes):
 			'release-rels':		releaseRelations,
 			'track-rels':		trackRelations,
 			'url-rels':		urlRelations,
+			'tags':		tags,
 		}
 
 		# Requesting labels without releaseEvents makes no sense,
@@ -628,7 +630,7 @@ class TrackIncludes(IIncludes):
 	"""A specification on how much data to return with a track."""
 	def __init__(self, artist=False, releases=False, puids=False,
 			artistRelations=False, releaseRelations=False,
-			trackRelations=False, urlRelations=False):
+			trackRelations=False, urlRelations=False, tags=False):
 		self._includes = {
 			'artist':		artist,
 			'releases':		releases,
@@ -637,6 +639,7 @@ class TrackIncludes(IIncludes):
 			'release-rels':		releaseRelations,
 			'track-rels':		trackRelations,
 			'url-rels':		urlRelations,
+			'tags':		tags,
 		}
 
 	def createIncludeTags(self):
@@ -645,9 +648,10 @@ class TrackIncludes(IIncludes):
 
 class LabelIncludes(IIncludes):
 	"""A specification on how much data to return with a label."""
-	def __init__(self, aliases=False):
+	def __init__(self, aliases=False, tags=False):
 		self._includes = {
 			'aliases':		aliases,
+			'tags':		tags,
 		}
 
 	def createIncludeTags(self):

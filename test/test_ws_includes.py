@@ -1,7 +1,8 @@
 """Tests for subclasses of IIncludes."""
 import unittest
 from musicbrainz2.model import Release
-from musicbrainz2.webservice import ArtistIncludes
+from musicbrainz2.webservice import (
+	ArtistIncludes, ReleaseIncludes, TrackIncludes, LabelIncludes)
 
 
 class ArtistIncludesTest(unittest.TestCase):
@@ -33,5 +34,15 @@ class ArtistIncludesTest(unittest.TestCase):
 		tags5.sort()
 		self.assertEqual(tags5, ['aliases', 'va-Bootleg'])
 
+	def testTags(self):
+		def check(includes_class):
+			inc1 = includes_class(tags=True)
+			tags1 = inc1.createIncludeTags()
+			tags1.sort()
+			self.assertEqual(tags1, ['tags'])
+		check(ArtistIncludes)
+		check(ReleaseIncludes)
+		check(TrackIncludes)
+		check(LabelIncludes)
 
 # EOF
