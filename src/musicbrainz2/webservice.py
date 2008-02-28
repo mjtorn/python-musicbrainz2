@@ -1066,6 +1066,60 @@ class Query(object):
 		self._ws.post('track', '', encodedStr)
 
 
+	def submitUserTags(self, entity, id_, tags):
+		"""Submit folksonomy tags for an entity.
+		
+		@param entity: the entity type as a string ('artist', 'label',
+		               'release' or 'track')
+		@param id_: a string containing the entity's ID
+		@param tags: A list of L{Tag <musicbrainz2.model.Tag>} objects
+		
+		@raise ConnectionError: couldn't connect to server
+		@raise RequestError: invalid ID, entity or tags
+		@raise AuthenticationError: invalid user name and/or password
+		"""
+		params = [ ]
+		params.append( ('type', 'xml') )
+		params.append( ('entity', entity) )
+		params.append( ('id', mbutils.extractUuid(id_, entity)) )
+		params.append( ('tags', ','.join([tag.value for tag in tags])) )
+
+		encodedStr = urllib.urlencode(params)
+
+		self._ws.post('tag', '', encodedStr)
+
+
+	def getUserTags(self, entity, id_):
+		"""Returns a list of folksonomy tags a user has applied to an entity.
+		
+		Note that this method only works if a valid user name and
+		password have been set. Only the tags the authenticated user
+		applied to the entity will be returned. If username and/or
+		password are incorrect, an AuthenticationError is raised.
+		
+		This method will return a list of L{Tag <musicbrainz2.model.Tag>} objects.
+		
+		@param entity: the entity type as a string ('artist', 'label',
+		               'release' or 'track')
+		@param id_: a string containing the entity's ID
+		
+  		@raise ConnectionError: couldn't connect to server
+		@raise RequestError: invalid ID or entity
+		@raise AuthenticationError: invalid user name and/or password
+		"""
+		uuid = mbutils.extractUuid(id_, entity)
+		params = { 'entity': entity, 'id': id_ }
+		
+		stream = self._ws.get('tag', uuid, filter=params)
+		try:
+			parser = MbXmlParser()
+			result = parser.parse(stream)
+		except ParseError, e:
+			raise ResponseError(str(e), e)
+		
+		return result.getTagList()
+		
+
 def _createIncludes(tagMap):
 	selected = filter(lambda x: x[1] == True, tagMap.items())
 	return map(lambda x: x[0], selected)

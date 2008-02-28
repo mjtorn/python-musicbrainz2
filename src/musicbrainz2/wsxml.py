@@ -91,6 +91,7 @@ class Metadata(object):
 		self._labelResults = [ ]
 		self._labelResultsOffset = None
 		self._labelResultsCount = None
+		self._tagList = [ ]
 		self._userList = [ ]
 
 	def getArtist(self):
@@ -370,6 +371,17 @@ class Metadata(object):
 		doc='The total number of track results.')
 
 
+	def getTagList(self):
+		"""Returns a list of tags.
+
+		@return: a list of L{model.Tag} objects
+		"""
+		return self._tagList
+
+	tagResults = property(getTagList,
+		doc='A list of Tag objects.')
+
+
 	# MusicBrainz extension to the schema
 	def getUserList(self):
 		"""Returns a list of users.
@@ -613,6 +625,8 @@ class MbXmlParser(object):
 				md.labelResultsOffset = offset
 				md.labelResultsCount = count
 				self._addLabelResults(node, md.getLabelResults())
+			elif _matches(node, 'tag-list'):
+				self._addTagsToList(node, md.getTagList())
 			elif _matches(node, 'user-list', NS_EXT_1):
 				self._addUsersToList(node, md.getUserList())
 
@@ -656,6 +670,14 @@ class MbXmlParser(object):
 	def _addUsersToList(self, listNode, resultList):
 		self._addToList(listNode, resultList, self._createUser)
 
+	def _addTagsToList(self, listNode, resultList):
+		self._addToList(listNode, resultList, self._createTag)
+
+	def _addTagsToEntity(self, listNode, entity):
+		for node in _getChildElements(listNode):
+			tag = self._createTag(node)
+			entity.addTag(tag)
+	
 	def _addToList(self, listNode, resultList, creator):
 		for c in _getChildElements(listNode):
 			resultList.append(creator(c))
@@ -850,7 +872,13 @@ class MbXmlParser(object):
 
 		return user
 
+	def _createTag(self, tagNode):
+		tag = self._factory.newTag()
+		tag.value = _getText(tagNode)
+		tag.count = _getIntAttr(tagNode, 'count')
+		return tag
 
+	
 	def _addPuids(self, puidListNode, track):
 		for node in _getChildElements(puidListNode):
 			if _matches(node, 'puid') and node.hasAttribute('id'):
@@ -904,15 +932,6 @@ class MbXmlParser(object):
 		relation.setTarget(target)
 
 		return relation
-
-
-	def _addTagsToEntity(self, tagListNode, entity):
-		for node in _getChildElements(tagListNode):
-			if _matches(node, 'tag'):
-				tag = self._factory.newTag()
-				tag.value = _getText(node)
-				tag.count = _getIntAttr(node, 'count')
-				entity.addTag(tag)
 
 
 #

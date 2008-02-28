@@ -17,6 +17,9 @@ Contributors:
 
    Oliver Charles <depth dot of dot field at gmail dot com>
     - Added initial label support.
+    
+   Philipp Wolfer <ph dot wolfer at googlemail dot com>
+    - Added folksonomy tagging support.
 
 --
 $Id$
