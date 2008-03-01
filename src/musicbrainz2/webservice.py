@@ -1072,6 +1072,10 @@ class Query(object):
 
 	def submitUserTags(self, entityUri, tags):
 		"""Submit folksonomy tags for an entity.
+
+		Note that all previously existing tags from the authenticated
+		user are replaced with the ones given to this method. Other
+		users' tags are not affected.
 		
 		@param entityUri: a string containing an absolute MB ID
 		@param tags: A list of either L{Tag <musicbrainz2.model.Tag>} objects
