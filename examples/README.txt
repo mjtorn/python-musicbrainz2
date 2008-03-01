@@ -18,6 +18,9 @@ use cases. The following demo scripts are available:
  findlabel.py
     Search MusicBrainz for a label matching the given label name.
 
+ folksonomytags.py
+    Get and submit MusicBrainz folksonomy tags for a given entity.
+
  getartist.py
     Retrieve an artist using a MusicBrainz ID and display all officially
     released albums.

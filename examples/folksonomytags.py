@@ -26,14 +26,10 @@ logger.setLevel(logging.DEBUG)
 username = raw_input('Username: ')
 password = getpass.getpass('Password: ')
 
-# Ask for an entity type to tag.
-entity = raw_input('Entity type to tag (artist, release, track or label): ')
-
 # Ask for a MBID to tag.
-id_ = raw_input('Enter a MBID: ')
-mbid = extractUuid(id_)
+mbid = raw_input('Enter an absolute MB ID: ')
 
-# Set the authentication for the webservice.
+# Set the authentication for the webservice (only needed for tag submission).
 service = mbws.WebService(host=MB_HOST, username=username, password=password)
 
 # Create a new Query object which will provide
@@ -41,14 +37,18 @@ service = mbws.WebService(host=MB_HOST, username=username, password=password)
 query = mbws.Query(service)
 
 # Read and print the current tags for the given MBID
-tags = query.getUserTags(entity, mbid)
+tags = query.getUserTags(mbid)
 print
 print 'Current tags: '
 print ', '.join([tag.value for tag in tags])
 
+
 # Ask the user for new tags and submit them
 tag_str = raw_input('Enter new tags: ')
-new_tags = [Tag(tag) for tag in tag_str.split(',')]
-query.submitUserTags(entity, mbid, new_tags)
+new_tags = [Tag(tag.strip()) for tag in tag_str.split(',')]
 
-print 'Tags applied'
+query.submitUserTags(mbid, new_tags)
+
+print 'Tags submitted.'
+
+# EOF

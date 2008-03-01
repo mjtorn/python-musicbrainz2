@@ -11,9 +11,15 @@ import urlparse
 import os.path
 
 __all__ = [
-	'extractUuid', 'extractFragment', 'getReleaseTypeName',
-	'getCountryName', 'getLanguageName', 'getScriptName',
+	'extractUuid', 'extractFragment', 'extractEntityType',
+	'getReleaseTypeName', 'getCountryName', 'getLanguageName',
+	'getScriptName',
 ]
+
+
+# A pattern to split the path part of an absolute MB URI.
+PATH_PATTERN = '^/(artist|release|track|label)/([^/]*)$'
+
 
 def extractUuid(uriStr, resType=None):
 	"""Extract the UUID part from a MusicBrainz identifier.
@@ -55,7 +61,7 @@ def extractUuid(uriStr, resType=None):
 	if scheme != 'http' or netloc != 'musicbrainz.org':
 		raise ValueError('%s is no MB ID.' % uriStr)
 
-	m = re.match('^/(artist|release|track|label)/([^/]*)$', path)
+	m = re.match(PATH_PATTERN, path)
 
 	if m:
 		if resType is None:
@@ -97,6 +103,33 @@ def extractFragment(uriStr, uriPrefix=None):
 	else:
 		raise ValueError("prefix doesn't match URI %s" % uriStr)
 
+
+def extractEntityType(uriStr):
+	"""Returns the entity type an entity URI is referring to.
+
+	@param uriStr: a string containing an absolute entity URI
+
+	@return: a string containing 'artist', 'release', 'track', or 'label'
+
+	@raise ValueError: if the given URI is no valid MusicBrainz ID
+	"""
+	if uriStr is None:
+		raise ValueError('None is no valid entity URI')
+
+	(scheme, netloc, path) = urlparse.urlparse(uriStr)[:3]
+
+	if scheme == '':
+		raise ValueError('%s is no absolute MB ID.' % uriStr)
+
+	if scheme != 'http' or netloc != 'musicbrainz.org':
+		raise ValueError('%s is no MB ID.' % uriStr)
+
+	m = re.match(PATH_PATTERN, path)
+
+	if m:
+		return m.group(1)
+	else:
+		raise ValueError('%s is no valid MB ID.' % uriStr)
 
 
 def getReleaseTypeName(releaseType):

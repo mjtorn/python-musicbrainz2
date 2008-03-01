@@ -1070,53 +1070,58 @@ class Query(object):
 		self._ws.post('track', '', encodedStr)
 
 
-	def submitUserTags(self, entity, id_, tags):
+	def submitUserTags(self, entityUri, tags):
 		"""Submit folksonomy tags for an entity.
 		
-		@param entity: the entity type as a string ('artist', 'label',
-		               'release' or 'track')
-		@param id_: a string containing the entity's ID
+		@param entityUri: a string containing an absolute MB ID
 		@param tags: A list of either L{Tag <musicbrainz2.model.Tag>} objects
 		             or strings
 
+		@raise ValueError: invalid entityUri
 		@raise ConnectionError: couldn't connect to server
 		@raise RequestError: invalid ID, entity or tags
 		@raise AuthenticationError: invalid user name and/or password
 		"""
-		params = [ 
+		entity = mbutils.extractEntityType(entityUri)
+		uuid = mbutils.extractUuid(entityUri, entity)
+		params = (
 			('type', 'xml'),
 			('entity', entity),
-			('id', mbutils.extractUuid(id_, entity)),
+			('id', uuid),
 			('tags', ','.join([unicode(tag).encode('utf-8') for tag in tags]))
-		]
+		)
 
 		encodedStr = urllib.urlencode(params)
 
 		self._ws.post('tag', '', encodedStr)
 
 
-	def getUserTags(self, entity, id_):
+	def getUserTags(self, entityUri):
 		"""Returns a list of folksonomy tags a user has applied to an entity.
+
+		The given parameter has to be a fully qualified MusicBrainz ID, as
+		returned by other library functions.
 		
 		Note that this method only works if a valid user name and
 		password have been set. Only the tags the authenticated user
 		applied to the entity will be returned. If username and/or
 		password are incorrect, an AuthenticationError is raised.
 		
-		This method will return a list of L{Tag <musicbrainz2.model.Tag>} objects.
+		This method will return a list of L{Tag <musicbrainz2.model.Tag>}
+		objects.
 		
-		@param entity: the entity type as a string ('artist', 'label',
-		               'release' or 'track')
-		@param id_: a string containing the entity's ID
+		@param entityUri: a string containing an absolute MB ID
 		
+		@raise ValueError: invalid entityUri
   		@raise ConnectionError: couldn't connect to server
 		@raise RequestError: invalid ID or entity
 		@raise AuthenticationError: invalid user name and/or password
 		"""
-		uuid = mbutils.extractUuid(id_, entity)
-		params = { 'entity': entity, 'id': id_ }
+		entity = mbutils.extractEntityType(entityUri)
+		uuid = mbutils.extractUuid(entityUri, entity)
+		params = { 'entity': entity, 'id': uuid }
 		
-		stream = self._ws.get('tag', uuid, filter=params)
+		stream = self._ws.get('tag', '', filter=params)
 		try:
 			parser = MbXmlParser()
 			result = parser.parse(stream)

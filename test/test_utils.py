@@ -43,6 +43,32 @@ class UtilsTest(unittest.TestCase):
 		self.assertRaises(ValueError, u.extractFragment, uri, prefix)
 
 
+	def testExtractEntityType(self):
+		prefix = 'http://musicbrainz.org'
+		uuid = 'c0b2500e-0cef-4130-869d-732b23ed9df5'
+
+		mbid1 = prefix + '/artist/' + uuid
+		self.assertEquals(u.extractEntityType(mbid1), 'artist')
+
+		mbid2 = prefix + '/release/' + uuid
+		self.assertEquals(u.extractEntityType(mbid2), 'release')
+
+		mbid3 = prefix + '/track/' + uuid
+		self.assertEquals(u.extractEntityType(mbid3), 'track')
+
+		mbid4 = prefix + '/label/' + uuid
+		self.assertEquals(u.extractEntityType(mbid4), 'label')
+
+		mbid5 = prefix + '/invalid/' + uuid
+		self.assertRaises(ValueError, u.extractEntityType, mbid5)
+
+		self.assertRaises(ValueError, u.extractEntityType, None)
+		self.assertRaises(ValueError, u.extractEntityType, uuid)
+
+		invalidUri = 'http://example.invalid/foo'
+		self.assertRaises(ValueError, u.extractEntityType, invalidUri)
+		
+
 	def testGetCountryName(self):
 		self.assertEquals(u.getCountryName('DE'), 'Germany')
 		self.assertEquals(u.getCountryName('FR'), 'France')

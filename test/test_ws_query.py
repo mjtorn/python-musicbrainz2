@@ -20,8 +20,13 @@ class QueryTest(unittest.TestCase):
 		q = Query(ws)
 		t1 = [u"foo", u"bar", u"f\u014do"]
 		t2 = [Tag(u"foo"), Tag(u"bar"), Tag(u"f\u014do")]
-		q.submitUserTags("artist", "c0b2500e-0cef-4130-869d-732b23ed9df5", t1)
-		q.submitUserTags("artist", "c0b2500e-0cef-4130-869d-732b23ed9df5", t2)
+
+		prefix = 'http://musicbrainz.org/artist/'
+		uri = prefix + 'c0b2500e-0cef-4130-869d-732b23ed9df5'
+
+		q.submitUserTags(uri, t1)
+		q.submitUserTags(uri, t2)
+
 		self.assertEquals(len(ws.data), 2)
 		self.assertEquals(ws.data[0], ws.data[1])
 
