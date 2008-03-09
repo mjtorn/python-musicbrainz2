@@ -1,3 +1,18 @@
+Changes in 0.6.0:
+
+  * Added folksonomy tagging support (mostly by Philipp Wolfer, #3285):
+      - Added getTag(), getTags(), and addTag() methods to model.Entity.
+      - Added getUserTags() and submitUserTags() to webservice.Query.
+      - Added an example script: examples/folksonomytags.py.
+  * Relation.DIR_BOTH is no longer used since the web service doesn't 
+    know bidirectional relations. If no direction is returned, the client
+    library maps it to Relation.DIR_NONE. Note that this is *not* entirely
+    backwards compatible (#3034).
+  * Added "WaxCylinder" and "PianoRoll" to ReleaseEvent (#3231).
+  * Changed download URL to HTTP for installation via setuptools (#3202).
+  * Warn if epydoc isn't found when installing from source (by intgr, #3124).
+
+
 Changes in 0.5.0:
 
   * Added label support (based on Oliver's patch in #2671):
