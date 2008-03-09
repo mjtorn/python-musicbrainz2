@@ -112,7 +112,7 @@ class Entity(object):
 
 		If C{direction} is set, only relations with the given reading
 		direction are returned. You can use the L{Relation.DIR_FORWARD},
-		L{Relation.DIR_BACKWARD}, and L{Relation.DIR_BOTH} constants
+		L{Relation.DIR_BACKWARD}, and L{Relation.DIR_NONE} constants
 		for this.
 
 		@param targetType: a string containing an absolute URI, or None
@@ -1372,9 +1372,10 @@ class Relation(object):
 	@cvar TO_TRACK: Identifies relations linking to a track.
 	@cvar TO_URL: Identifies relations linking to an URL.
 
-	@cvar DIR_BOTH: Relation reading direction doesn't matter.
+	@cvar DIR_NONE: Relation reading direction doesn't matter.
 	@cvar DIR_FORWARD: Relation reading direction is from source to target.
 	@cvar DIR_BACKWARD: Relation reading direction is from target to source.
+	@cvar DIR_BOTH: Relation reading direction doesn't matter (no longer used!).
 	"""
 	# Relation target types
 	#
@@ -1388,9 +1389,10 @@ class Relation(object):
 	DIR_BOTH = 'both'
 	DIR_FORWARD = 'forward'
 	DIR_BACKWARD = 'backward'
+	DIR_NONE = 'none'
 
 	def __init__(self, relationType=None, targetType=None, targetId=None,
-			direction=DIR_BOTH, attributes=None,
+			direction=DIR_NONE, attributes=None,
 			beginDate=None, endDate=None, target=None):
 		"""Constructor.
 
@@ -1398,7 +1400,7 @@ class Relation(object):
 		@param targetType: a string containing an absolute URI
 		@param targetId: a string containing an absolute URI
 		@param direction: one of C{Relation.DIR_FORWARD},
-		C{Relation.DIR_BACKWARD}, or C{Relation.DIR_BOTH}
+		C{Relation.DIR_BACKWARD}, or C{Relation.DIR_NONE}
 		@param attributes: a list of strings containing absolute URIs
 		@param beginDate: a string containing a date
 		@param endDate: a string containing a date
@@ -1547,15 +1549,16 @@ class Relation(object):
 		"""Returns the reading direction.
 
 		The direction may be one of L{Relation.DIR_FORWARD},
-		L{Relation.DIR_BACKWARD}, or L{Relation.DIR_BOTH},
+		L{Relation.DIR_BACKWARD}, or L{Relation.DIR_NONE},
 		depending on how the relation should be read. For example,
 		if direction is L{Relation.DIR_FORWARD} for a cover relation,
-		it is read as "X is a cover of Y". Some relations are
-		bidirectional, like marriages. In these cases, the direction
-		is L{Relation.DIR_BOTH}.
+		it is read as "X is a cover of Y". For some relations there is
+		no reading direction (like marriages) and the web service doesn't
+		send a direction. In these cases, the direction is set to
+		L{Relation.DIR_NONE}.
 
 		@return: L{Relation.DIR_FORWARD}, L{Relation.DIR_BACKWARD},
-		or L{Relation.DIR_BOTH}
+		or L{Relation.DIR_NONE}
 		"""
 		return self._direction
 
@@ -1563,7 +1566,7 @@ class Relation(object):
 		"""Sets the reading direction.
 
 		@param direction: L{Relation.DIR_FORWARD},
-		L{Relation.DIR_BACKWARD}, or L{Relation.DIR_BOTH}
+		L{Relation.DIR_BACKWARD}, or L{Relation.DIR_NONE}
 
 		@see: L{getDirection}
 		"""

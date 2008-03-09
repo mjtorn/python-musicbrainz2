@@ -43,7 +43,7 @@ class ParseTrackTest(unittest.TestCase):
 		self.assertEquals(len(trackRels), 1)
 		rel1 = trackRels[0]
 		self.assertEquals(rel1.getType(), NS_REL_1 + 'Cover')
-		self.assertEquals(rel1.getDirection(), 'backward')
+		self.assertEquals(rel1.getDirection(), Relation.DIR_BACKWARD)
 		self.assertEquals(rel1.getTargetId(),
 			makeId('31e1c0c4-967f-435e-b09a-35ee079ee234', 'track'))
 		self.assert_( rel1.getBeginDate() is None )

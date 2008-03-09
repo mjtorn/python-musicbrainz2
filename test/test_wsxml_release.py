@@ -85,6 +85,7 @@ class ParseReleaseTest(unittest.TestCase):
 
 		self.assertEquals(rel1.getTargetId(),
 			'http://en.wikipedia.org/wiki/Highway_61_Revisited')
+		self.assertEquals(rel1.getDirection(), Relation.DIR_NONE)
 		self.assertEquals(rel2.getTargetId(),
 			'http://www.amazon.com/gp/product/B0000024SI')
 

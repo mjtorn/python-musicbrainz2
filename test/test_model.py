@@ -40,7 +40,7 @@ class MiscModelTest(unittest.TestCase):
 		self.assertEquals(len(rel5), 0)
 
 		rel6 = artist.getRelations(Relation.TO_RELEASE,
-			NS_REL_1 + 'Producer', [NS_REL_1 + 'Co'], 'both')
+			NS_REL_1 + 'Producer', [NS_REL_1 + 'Co'], 'none')
 		self.assertEquals(len(rel6), 1)
 
 		rel6 = artist.getRelations(Relation.TO_RELEASE,
