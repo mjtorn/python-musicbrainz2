@@ -27,7 +27,8 @@ try:
 	# The result should include all official albums.
 	#
 	inc = ws.ArtistIncludes(
-		releases=(m.Release.TYPE_OFFICIAL, m.Release.TYPE_ALBUM))
+		releases=(m.Release.TYPE_OFFICIAL, m.Release.TYPE_ALBUM),
+		tags=True)
 	artist = q.getArtistById(sys.argv[1], inc)
 except ws.WebServiceError, e:
 	print 'Error:', e
@@ -41,6 +42,7 @@ print "UniqueName :", artist.getUniqueName()
 print "Type       :", artist.type
 print "BeginDate  :", artist.beginDate
 print "EndDate    :", artist.endDate
+print "Tags       :", ', '.join(t.value for t in artist.tags)
 print
 
 
