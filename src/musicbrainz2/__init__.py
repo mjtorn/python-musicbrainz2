@@ -21,6 +21,6 @@ This package contains the following modules:
 @author: Matthias Friedrich <matt@mafr.de>
 """
 __revision__ = '$Id$'
-__version__ = '0.5.0'
+__version__ = '0.6.0'
 
 # EOF
