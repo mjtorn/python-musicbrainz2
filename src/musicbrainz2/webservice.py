@@ -418,7 +418,7 @@ class ReleaseFilter(IFilter):
 
 	def __init__(self, title=None, discId=None, releaseTypes=None,
 			artistName=None, artistId=None, limit=None,
-			offset=None, query=None):
+			offset=None, query=None, trackCount=None):
 		"""Constructor.
 
 		If C{discId} or C{artistId} are set, only releases matching
@@ -449,6 +449,7 @@ class ReleaseFilter(IFilter):
 		@param limit: the maximum number of releases to return
 		@param offset: start results at this zero-based offset
 		@param query: a string containing a query in Lucene syntax
+		@param trackCount: the number of tracks in the release
 
 		@see: the constants in L{musicbrainz2.model.Release}
 		"""
@@ -467,6 +468,7 @@ class ReleaseFilter(IFilter):
 			('limit', limit),
 			('offset', offset),
 			('query', query),
+			('count', trackCount),
 		]
 
 		if not _paramsValid(self._params):
