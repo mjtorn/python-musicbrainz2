@@ -1257,7 +1257,7 @@ class MbXmlWriter(object):
 
 		attrs = {
 			'type': mbutils.extractFragment(rel.getType()),
-			'target': mbutils.extractUuid(rel.getTargetId()),
+			'target': rel.getTargetId(),
 			'direction': rel.getDirection(),
 			'begin': rel.getBeginDate(),
 			'end': rel.getBeginDate(),
@@ -1265,7 +1265,7 @@ class MbXmlWriter(object):
 		}
 
 		if rel.getTarget() is None:
-			xml.elem('relation', attrs)
+			xml.elem('relation', None, attrs)
 		else:
 			xml.start('relation', attrs)
 			if targetType == NS_REL_1 + 'Artist':
