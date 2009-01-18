@@ -1,6 +1,7 @@
 """Tests for webservice.Query."""
 import unittest
 from musicbrainz2.model import Tag
+from musicbrainz2.model import Rating
 from musicbrainz2.webservice import Query, IWebService
 
 
@@ -29,5 +30,11 @@ class QueryTest(unittest.TestCase):
 
 		self.assertEquals(len(ws.data), 2)
 		self.assertEquals(ws.data[0], ws.data[1])
+
+		q.submitUserRating(uri, Rating(5))
+		q.submitUserRating(uri, 5)
+
+		self.assertEquals(len(ws.data), 4)
+		self.assertEquals(ws.data[2], ws.data[3])
 
 # EOF

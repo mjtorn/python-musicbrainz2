@@ -21,5 +21,8 @@ Contributors:
    Philipp Wolfer <ph dot wolfer at googlemail dot com>
     - Added folksonomy tagging support.
 
+   Peter Schnebel <braindamaged at web dot de>
+    - Added rating support.
+
 --
 $Id$

@@ -573,7 +573,8 @@ class ArtistIncludes(IIncludes):
 	"""
 	def __init__(self, aliases=False, releases=(), vaReleases=(),
 			artistRelations=False, releaseRelations=False,
-			trackRelations=False, urlRelations=False, tags=False):
+			trackRelations=False, urlRelations=False, tags=False,
+			ratings=False):
 
 		assert not isinstance(releases, basestring)
 		assert not isinstance(vaReleases, basestring)
@@ -585,7 +586,8 @@ class ArtistIncludes(IIncludes):
 			'release-rels':		releaseRelations,
 			'track-rels':		trackRelations,
 			'url-rels':		urlRelations,
-			'tags':		tags,
+			'tags':			tags,
+			'ratings':		ratings,
 		}
 
 		for elem in releases:
@@ -604,7 +606,7 @@ class ReleaseIncludes(IIncludes):
 			discs=False, tracks=False,
 			artistRelations=False, releaseRelations=False,
 			trackRelations=False, urlRelations=False,
-			labels=False, tags=False):
+			labels=False, tags=False, ratings=False):
 		self._includes = {
 			'artist':		artist,
 			'counts':		counts,
@@ -616,7 +618,8 @@ class ReleaseIncludes(IIncludes):
 			'release-rels':		releaseRelations,
 			'track-rels':		trackRelations,
 			'url-rels':		urlRelations,
-			'tags':		tags,
+			'tags':			tags,
+			'ratings':		ratings,
 		}
 
 		# Requesting labels without releaseEvents makes no sense,
@@ -632,7 +635,8 @@ class TrackIncludes(IIncludes):
 	"""A specification on how much data to return with a track."""
 	def __init__(self, artist=False, releases=False, puids=False,
 			artistRelations=False, releaseRelations=False,
-			trackRelations=False, urlRelations=False, tags=False):
+			trackRelations=False, urlRelations=False, tags=False,
+			ratings=False):
 		self._includes = {
 			'artist':		artist,
 			'releases':		releases,
@@ -641,7 +645,8 @@ class TrackIncludes(IIncludes):
 			'release-rels':		releaseRelations,
 			'track-rels':		trackRelations,
 			'url-rels':		urlRelations,
-			'tags':		tags,
+			'tags':			tags,
+			'ratings':		ratings,
 		}
 
 	def createIncludeTags(self):
@@ -650,10 +655,11 @@ class TrackIncludes(IIncludes):
 
 class LabelIncludes(IIncludes):
 	"""A specification on how much data to return with a label."""
-	def __init__(self, aliases=False, tags=False):
+	def __init__(self, aliases=False, tags=False, ratings=False):
 		self._includes = {
 			'aliases':		aliases,
-			'tags':		tags,
+			'tags':			tags,
+			'ratings':		ratings,
 		}
 
 	def createIncludeTags(self):
@@ -1071,7 +1077,6 @@ class Query(object):
 
 		self._ws.post('track', '', encodedStr)
 
-
 	def submitUserTags(self, entityUri, tags):
 		"""Submit folksonomy tags for an entity.
 
@@ -1135,7 +1140,70 @@ class Query(object):
 			raise ResponseError(str(e), e)
 		
 		return result.getTagList()
+
+	def submitUserRating(self, entityUri, rating):
+		"""Submit rating for an entity.
+
+		Note that all previously existing rating from the authenticated
+		user are replaced with the one given to this method. Other
+		users' ratings are not affected.
 		
+		@param entityUri: a string containing an absolute MB ID
+		@param rating: A L{Rating <musicbrainz2.model.Rating>} object
+		             or integer
+
+		@raise ValueError: invalid entityUri
+		@raise ConnectionError: couldn't connect to server
+		@raise RequestError: invalid ID, entity or tags
+		@raise AuthenticationError: invalid user name and/or password
+		"""
+		entity = mbutils.extractEntityType(entityUri)
+		uuid = mbutils.extractUuid(entityUri, entity)
+		params = (
+			('type', 'xml'),
+			('entity', entity),
+			('id', uuid),
+			('rating', unicode(rating).encode('utf-8'))
+		)
+
+		encodedStr = urllib.urlencode(params)
+
+		self._ws.post('rating', '', encodedStr)
+
+
+	def getUserRating(self, entityUri):
+		"""Return the rating a user has applied to an entity.
+
+		The given parameter has to be a fully qualified MusicBrainz
+		ID, as returned by other library functions.
+		
+		Note that this method only works if a valid user name and
+		password have been set. Only the rating the authenticated user
+		applied to the entity will be returned. If username and/or
+		password are incorrect, an AuthenticationError is raised.
+		
+		This method will return a L{Rating <musicbrainz2.model.Rating>}
+		object.
+		
+		@param entityUri: a string containing an absolute MB ID
+		
+		@raise ValueError: invalid entityUri
+  		@raise ConnectionError: couldn't connect to server
+		@raise RequestError: invalid ID or entity
+		@raise AuthenticationError: invalid user name and/or password
+		"""
+		entity = mbutils.extractEntityType(entityUri)
+		uuid = mbutils.extractUuid(entityUri, entity)
+		params = { 'entity': entity, 'id': uuid }
+		
+		stream = self._ws.get('rating', '', filter=params)
+		try:
+			parser = MbXmlParser()
+			result = parser.parse(stream)
+		except ParseError, e:
+			raise ResponseError(str(e), e)
+		
+		return result.getRating()
 
 def _createIncludes(tagMap):
 	selected = filter(lambda x: x[1] == True, tagMap.items())

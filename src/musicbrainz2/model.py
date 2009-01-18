@@ -72,6 +72,7 @@ class Entity(object):
 		self._id = id_
 		self._relations = { }
 		self._tags = { }
+		self._rating = Rating()
 
 	def getId(self):
 		"""Returns a MusicBrainz ID.
@@ -251,6 +252,20 @@ class Entity(object):
 		else:
 			self._tags[tag.value] = tag
 
+	def getRating(self):
+		"""Return the rating of this Entity.
+		0 = Unrated
+		1 - 5 = Rating
+
+		@return: rating
+		"""
+		return self._rating
+
+	rating = property(getRating, doc='The rating for this entity.')
+
+	def setRating(self, value):
+		self._rating = value
+		
 
 class Artist(Entity):
 	"""Represents an artist.
@@ -527,6 +542,77 @@ class Artist(Entity):
 
 	releasesCount = property(getReleasesCount, setReleasesCount,
 		doc='The total number of releases')
+
+class Rating(object):
+	"""The representation of a MusicBrain rating.
+
+	The rating can have the following values:
+
+	  0 = Unrated
+	  [1..5] = Rating
+	"""
+	def __init__(self, value=None, count=None):
+		"""Constructor.
+
+		@param value: a string containing the tag's value
+		@param count: the number of users who added this tag
+		"""
+		self._value = value
+		self._count = count
+
+	def getValue(self):
+		"""Returns a string with the tag's value.
+
+		@return: an integer containing the rating's value, or None
+		"""
+		return self._value
+
+	def setValue(self, value):
+		""" Set the value of this rating.
+
+		0 or None = Clear your rating
+		1 - 5 = Rating
+
+		@param rating:  the rating to apply
+
+		@raise ValueError: if value is not a double or not in the
+		range 0 - 5 or None.
+		"""
+		if value == None:
+		  value = 0
+		try:
+		  value = float(value)
+		except ValueError, e:
+		  raise ValueError("Value for rating needs to be an" \
+		      "float.")
+		if value < 0.0 or value > 5.0:
+		  raise ValueError("Value needs to be in the range [0..5]")
+		self._value = value
+
+	value = property(getValue, setValue, doc='The value of the rating.')
+
+	def getCount(self):
+		"""Returns an integer containing the rating's frequency count.
+
+		@return: an integer containing the rating's frequency count,
+		or None
+		"""
+		return self._count
+	
+	def setCount(self, count):
+		"""Sets the frequency count of this rating.
+		
+		@param count: an integer containing the tag's frequency count
+		"""
+		self._count = count
+		
+	count = property(getCount, setCount, doc="This tag's frequency count.")
+
+	def __str__(self):
+		return str(self._value)
+
+	def __unicode__(self):
+		return unicode(self._value)
 
 
 class Tag(object):

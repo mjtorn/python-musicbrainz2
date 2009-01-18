@@ -45,6 +45,7 @@ class DefaultFactory(object):
 	def newLabel(self): return model.Label()
 	def newLabelAlias(self): return model.LabelAlias()
 	def newTag(self): return model.Tag()
+	def newRating(self): return model.Rating()
 
 
 class ParseError(Exception):
@@ -92,6 +93,7 @@ class Metadata(object):
 		self._labelResultsOffset = None
 		self._labelResultsCount = None
 		self._tagList = [ ]
+		self._rating = None
 		self._userList = [ ]
 
 	def getArtist(self):
@@ -380,6 +382,22 @@ class Metadata(object):
 
 	tagResults = property(getTagList,
 		doc='A list of Tag objects.')
+
+	def getRating(self):
+		"""Returns the rating.
+
+		@return: rating object
+		"""
+		return self._rating
+
+	def setRating(self, value):
+		"""Sets the rating.
+
+		@param: rating object
+		"""
+		self._rating = value
+
+	rating = property(getRating, setRating, doc='A Rating object.')
 
 
 	# MusicBrainz extension to the schema
@@ -677,7 +695,11 @@ class MbXmlParser(object):
 		for node in _getChildElements(listNode):
 			tag = self._createTag(node)
 			entity.addTag(tag)
-	
+
+	def _addRatingToEntity(self, attrNode, entity):
+		rating = self._createRating(attrNode)
+		entity.setRating(rating)
+
 	def _addToList(self, listNode, resultList, creator):
 		for c in _getChildElements(listNode):
 			resultList.append(creator(c))
@@ -686,6 +708,7 @@ class MbXmlParser(object):
 		offset = _getIntAttr(listNode, 'offset')
 		count = _getIntAttr(listNode, 'count')
 		return (offset, count)
+
 
 	def _createArtist(self, artistNode):
 		artist = self._factory.newArtist()
@@ -713,6 +736,8 @@ class MbXmlParser(object):
 				self._addRelationsToEntity(node, artist)
 			elif _matches(node, 'tag-list'):
 				self._addTagsToEntity(node, artist)
+			elif _matches(node, 'rating'):
+				self._addRatingToEntity(node, artist)
 
 		return artist
 
@@ -740,6 +765,8 @@ class MbXmlParser(object):
 				self._addLabelAliases(node, label)
 			elif _matches(node, 'tag-list'):
 				self._addTagsToEntity(node, label)
+			elif _matches(node, 'rating'):
+				self._addRatingToEntity(node, label)
 
 		return label
 
@@ -774,6 +801,8 @@ class MbXmlParser(object):
 				self._addRelationsToEntity(node, release)
 			elif _matches(node, 'tag-list'):
 				self._addTagsToEntity(node, release)
+			elif _matches(node, 'rating'):
+				self._addRatingToEntity(node, release)
 
 		return release
 
@@ -855,6 +884,8 @@ class MbXmlParser(object):
 				self._addRelationsToEntity(node, track)
 			elif _matches(node, 'tag-list'):
 				self._addTagsToEntity(node, track)
+			elif _matches(node, 'rating'):
+				self._addRatingToEntity(node, track)
 
 		return track
 
@@ -871,6 +902,12 @@ class MbXmlParser(object):
 				user.setShowNag(_getBooleanAttr(node, 'show'))
 
 		return user
+
+	def _createRating(self, ratingNode):
+		rating = self._factory.newRating()
+		rating.value = _getText(ratingNode)
+		rating.count = _getIntAttr(ratingNode, 'votes-count')
+		return rating
 
 	def _createTag(self, tagNode):
 		tag = self._factory.newTag()
