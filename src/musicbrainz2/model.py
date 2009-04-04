@@ -18,7 +18,10 @@ L{Artist}, L{Release}, and L{Track}.
 
 @author: Matthias Friedrich <matt@mafr.de>
 """
-from sets import Set
+try:
+	set
+except NameError:
+	from sets import Set as set
 
 __revision__ = '$Id$'
 
@@ -147,10 +150,10 @@ class Entity(object):
 		# Now filer for attribute type.
 		#
 		tmp = []
-		required = Set(iter(requiredAttributes))
+		required = set(iter(requiredAttributes))
 
 		for r in allRels:
-			attrs = Set(iter(r.getAttributes()))
+			attrs = set(iter(r.getAttributes()))
 			if required.issubset(attrs):
 				tmp.append(r)
 		return tmp
