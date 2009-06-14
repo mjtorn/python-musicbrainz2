@@ -24,5 +24,8 @@ Contributors:
    Peter Schnebel <pschnebel at googlemail dot com>
     - Added rating support.
 
+   Alastair Porter <alastair at porter dot net dot nz>
+    - Added ISRC support.
+
 --
 $Id$

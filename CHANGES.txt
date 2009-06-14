@@ -1,3 +1,15 @@
+Changes in 0.7.0:
+
+  * Added ISRC support (patch by Alastair Porter).
+  * Added rating support (patch by Peter Schnebel).
+  * Added a trackCount parameter to ReleaseFilter (#3781).
+  * Changed ReleaseFilter and TrackFilter to accept URIs for artistId
+    and releaseId (#4746).
+  * Fixed serialization of relations in MbXmlWriter (#4394).
+  * Fixed a crash on 64-bit systems in libdiscid bindings (Luks).
+  * Fixed a deprecation warning: use builtin set if available (#4956).
+
+
 Changes in 0.6.0:
 
   * Added folksonomy tagging support (mostly by Philipp Wolfer, #3285):
