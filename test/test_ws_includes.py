@@ -44,5 +44,19 @@ class ArtistIncludesTest(unittest.TestCase):
 		check(ReleaseIncludes)
 		check(TrackIncludes)
 		check(LabelIncludes)
-
+		
+class ReleaseIncludesTest(unittest.TestCase):
+	# Test that including isrcs in release also pulls in tracks
+	def testIsrcs(self):
+		inc = ReleaseIncludes(isrcs=True);
+		tags = inc.createIncludeTags()
+		tags.sort()
+		self.assertEqual(tags, ['isrcs', 'tracks'])
+		
+	# Test that including labels in release also pulls in release events
+	def testReleaseEvents(self):
+		inc = ReleaseIncludes(labels=True);
+		tags = inc.createIncludeTags()
+		tags.sort()
+		self.assertEqual(tags, ['labels', 'release-events'])
 # EOF

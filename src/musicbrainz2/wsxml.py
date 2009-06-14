@@ -880,6 +880,8 @@ class MbXmlParser(object):
 				self._addReleasesToList(node, track.getReleases())
 			elif _matches(node, 'puid-list'):
 				self._addPuids(node, track)
+			elif _matches(node, 'isrc-list'):
+				self._addISRCs(node, track)
 			elif _matches(node, 'relation-list'):
 				self._addRelationsToEntity(node, track)
 			elif _matches(node, 'tag-list'):
@@ -921,6 +923,10 @@ class MbXmlParser(object):
 			if _matches(node, 'puid') and node.hasAttribute('id'):
 				track.addPuid(node.getAttribute('id'))
 
+	def _addISRCs(self, isrcListNode, track):
+		for node in _getChildElements(isrcListNode):
+			if _matches(node, 'isrc') and node.hasAttribute('id'):
+				track.addISRC(node.getAttribute('id'))
 
 	def _addRelationsToEntity(self, relationListNode, entity):
 		targetType = _getUriAttr(relationListNode, 'target-type', NS_REL_1)

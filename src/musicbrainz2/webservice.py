@@ -606,7 +606,7 @@ class ReleaseIncludes(IIncludes):
 			discs=False, tracks=False,
 			artistRelations=False, releaseRelations=False,
 			trackRelations=False, urlRelations=False,
-			labels=False, tags=False, ratings=False):
+			labels=False, tags=False, ratings=False, isrcs=False):
 		self._includes = {
 			'artist':		artist,
 			'counts':		counts,
@@ -620,12 +620,16 @@ class ReleaseIncludes(IIncludes):
 			'url-rels':		urlRelations,
 			'tags':			tags,
 			'ratings':		ratings,
+			'isrcs':		isrcs,
 		}
 
 		# Requesting labels without releaseEvents makes no sense,
 		# so we pull in releaseEvents, if necessary.
 		if labels and not releaseEvents:
 			self._includes['release-events'] = True
+		# Ditto for isrcs with no tracks
+		if isrcs and not tracks:
+			self._includes['tracks'] = True
 
 	def createIncludeTags(self):
 		return _createIncludes(self._includes)
@@ -636,7 +640,7 @@ class TrackIncludes(IIncludes):
 	def __init__(self, artist=False, releases=False, puids=False,
 			artistRelations=False, releaseRelations=False,
 			trackRelations=False, urlRelations=False, tags=False,
-			ratings=False):
+			ratings=False, isrcs=False):
 		self._includes = {
 			'artist':		artist,
 			'releases':		releases,
@@ -647,6 +651,7 @@ class TrackIncludes(IIncludes):
 			'url-rels':		urlRelations,
 			'tags':			tags,
 			'ratings':		ratings,
+			'isrcs':		isrcs,
 		}
 
 	def createIncludeTags(self):
@@ -1062,7 +1067,7 @@ class Query(object):
 		@param tracks2puids: a dictionary mapping track IDs to PUIDs
 
 		@raise ConnectionError: couldn't connect to server
-		@raise RequestError: invalid track- or PUIDs
+		@raise RequestError: invalid track or PUIDs
 		@raise AuthenticationError: invalid user name and/or password
 		"""
 		assert self._clientId is not None, 'Please supply a client ID'
@@ -1072,6 +1077,34 @@ class Query(object):
 		for (trackId, puid) in tracks2puids.iteritems():
 			trackId = mbutils.extractUuid(trackId, 'track')
 			params.append( ('puid', trackId + ' ' + puid) )
+
+		encodedStr = urllib.urlencode(params, True)
+
+		self._ws.post('track', '', encodedStr)
+	
+	def submitISRCs(self, tracks2isrcs):
+		"""Submit track to ISRC mappings.
+
+		The C{tracks2isrcs} parameter has to be a dictionary, with the
+		keys being MusicBrainz track IDs (either as absolute URIs or
+		in their 36 character ASCII representation) and the values
+		being ISRCs (ASCII, 12 characters).
+
+		Note that this method only works if a valid user name and
+		password have been set. See the example in L{Query} on how
+		to supply authentication data.
+
+		@param tracks2isrcs: a dictionary mapping track IDs to ISRCs
+
+		@raise ConnectionError: couldn't connect to server
+		@raise RequestError: invalid track or ISRCs
+		@raise AuthenticationError: invalid user name and/or password
+		"""
+		params = [ ]
+
+		for (trackId, isrc) in tracks2isrcs.iteritems():
+			trackId = mbutils.extractUuid(trackId, 'track')
+			params.append( ('isrc', trackId + ' ' + isrc) )
 
 		encodedStr = urllib.urlencode(params, True)
 

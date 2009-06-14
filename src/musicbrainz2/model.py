@@ -1332,6 +1332,7 @@ class Track(Entity):
 		self._duration = None
 		self._puids = [ ]
 		self._releases = [ ]
+		self._isrcs = [ ]
 
 	def getTitle(self):
 		"""Returns the track's title.
@@ -1424,6 +1425,22 @@ class Track(Entity):
 		@param puid: a string containing a PUID
 		"""
 		self._puids.append(puid)
+	
+	def getISRCs(self):
+		"""Returns the ISRCs associated with this track.
+
+		@return: a list of strings, each containing one ISRC
+		"""
+		return self._isrcs
+
+	isrcs = property(getISRCs, doc='The list of associated ISRCs')
+
+	def addISRC(self, isrc):
+		"""Add a ISRC to this track.
+
+		@param isrc: a string containing an ISRC
+		"""
+		self._isrcs.append(isrc)
 
 	def getReleases(self):
 		"""Returns the list of releases this track appears on.
