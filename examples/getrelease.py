@@ -33,7 +33,7 @@ try:
 	# the track list.
 	#
 	inc = ws.ReleaseIncludes(artist=True, releaseEvents=True, labels=True,
-			discs=True, tracks=True)
+			discs=True, tracks=True, releaseGroup=True)
 	release = q.getReleaseById(sys.argv[1], inc)
 except ws.WebServiceError, e:
 	print 'Error:', e
@@ -55,6 +55,12 @@ if release.artist:
 	print "  Name      :", release.artist.name
 	print "  SortName  :", release.artist.sortName
 
+if release.releaseGroup:
+	print
+	print "Release Group:"
+	print "  Id        :", release.releaseGroup.id
+	print "  Title     :", release.releaseGroup.title
+	print "  Type      :", release.releaseGroup.type
 
 # Release events are the dates and times when a release took place.
 # We also have the catalog numbers and barcodes for some releases.

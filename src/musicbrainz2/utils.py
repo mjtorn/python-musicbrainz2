@@ -18,7 +18,7 @@ __all__ = [
 
 
 # A pattern to split the path part of an absolute MB URI.
-PATH_PATTERN = '^/(artist|release|track|label)/([^/]*)$'
+PATH_PATTERN = '^/(artist|release|track|label|release-group)/([^/]*)$'
 
 
 def extractUuid(uriStr, resType=None):

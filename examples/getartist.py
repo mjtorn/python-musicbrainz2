@@ -28,7 +28,7 @@ try:
 	#
 	inc = ws.ArtistIncludes(
 		releases=(m.Release.TYPE_OFFICIAL, m.Release.TYPE_ALBUM),
-		tags=True)
+		tags=True, releaseGroups=True)
 	artist = q.getArtistById(sys.argv[1], inc)
 except ws.WebServiceError, e:
 	print 'Error:', e
@@ -42,9 +42,8 @@ print "UniqueName :", artist.getUniqueName()
 print "Type       :", artist.type
 print "BeginDate  :", artist.beginDate
 print "EndDate    :", artist.endDate
-print "Tags       :", ', '.join(t.value for t in artist.tags)
+print "Tags       :", ', '.join([t.value for t in artist.tags])
 print
-
 
 if len(artist.getReleases()) == 0:
 	print "No releases found."
@@ -58,6 +57,23 @@ for release in artist.getReleases():
 	print "ASIN      :", release.asin
 	print "Text      :", release.textLanguage, '/', release.textScript
 	print "Types     :", release.types
+
+print
+
+if len(artist.getReleaseGroups()) == 0:
+	print
+	print "No release groups found."
+else:
+	print
+	print "Release groups:"
+
+for rg in artist.getReleaseGroups():
+	print
+	print "Id        :", rg.id
+	print "Title     :", rg.title
+	print "Type      :", rg.type
+
+print
 
 #
 # Using the release IDs and Query.getReleaseById(), you could now request 

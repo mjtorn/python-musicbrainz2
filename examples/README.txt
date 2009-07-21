@@ -18,6 +18,9 @@ use cases. The following demo scripts are available:
  findlabel.py
     Search MusicBrainz for a label matching the given label name.
 
+ findreleasegroup.py
+    Search MusicBrainz for a release group matching a Lucene query.
+
  folksonomytags.py
     Get and submit MusicBrainz folksonomy tags for a given entity.
 
@@ -28,6 +31,10 @@ use cases. The following demo scripts are available:
  getrelease.py
     Retrieve a release by MusicBrainz ID, including tracks and other
     associated data, like release dates or DiscIDs.
+
+ getreleasegroup.py
+    Retrieve a release group by MusicBrainz ID, including releases,
+    primary artist and release types.
 
  getlabel.py
     Retrieve a label by MusicBrainz ID, including aliases.

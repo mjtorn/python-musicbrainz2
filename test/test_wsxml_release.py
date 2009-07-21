@@ -141,6 +141,21 @@ class ParseReleaseTest(unittest.TestCase):
 		self.failIf( e1.label is None )
 		self.assertEquals(e1.label.name, 'Atlantic Records')
 
+	def testReleaseGroup(self):
+		f = os.path.join(VALID_RELEASE_DIR, 'Under_the_Pink_2.xml')
+		md = MbXmlParser().parse(f)
+		release = md.getRelease()
+
+		self.failIf(release is None)
+		self.assertEquals(release.getTitle(), 'Under the Pink')
+
+		releaseGroup = release.getReleaseGroup()
+		self.failIf(releaseGroup is None)
+		self.assertEquals(releaseGroup.id[-36:],
+			'ef2b891f-ca73-3e14-b38b-a68699dab8c4')
+		self.assertEquals(releaseGroup.getTitle(), 'Under the Pink')
+		self.assertEquals(releaseGroup.getType(), NS_MMD_1 + 'Album')
+
 
 	def testTags(self):
 		f = os.path.join(VALID_RELEASE_DIR, 'Highway_61_Revisited_2.xml')

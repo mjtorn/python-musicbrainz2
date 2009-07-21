@@ -45,6 +45,7 @@ class ParseArtistTest(unittest.TestCase):
 		self.assertEquals(artist.getUniqueName(), artist.getName())
 		self.assertEquals(artist.getBeginDate(), '1963-08-22')
 		self.assertEquals(len(artist.getReleases()), 3)
+		self.assertEquals(len(artist.getReleaseGroups()), 3)
 
 		release1 = artist.getReleases()[0]
 		self.assertEquals(release1.getTitle(), 'Strange Little Girls')
@@ -62,6 +63,9 @@ class ParseArtistTest(unittest.TestCase):
 		self.assertEquals(release3.getAsin(), 'B000002IXU')
 		self.assertEquals(release3.getArtist().getId(),
 			makeId('c0b2500e-0cef-4130-869d-732b23ed9df5'))
+		self.failIf(release3.getReleaseGroup() is None)
+		self.assertEquals(release3.getReleaseGroup().id[-36:],
+			'ef2b891f-ca73-3e14-b38b-a68699dab8c4')
 
 		events = release3.getReleaseEvents()
 		self.assertEquals(len(events), 5)
@@ -106,6 +110,29 @@ class ParseArtistTest(unittest.TestCase):
 		self.assertEquals(artist.getTag('romantic era').count, 40)
 		self.assertEquals(artist.getTag('composer').count, 120)
 		
+	
+	def testReleaseGroups(self):
+		f = os.path.join(VALID_ARTIST_DIR, 'Tori_Amos_2.xml')
+		md = MbXmlParser().parse(f)
+		artist = md.getArtist()
+
+		self.failIf(artist is None)
+		releaseGroups = artist.getReleaseGroups()
+		self.failIf(releaseGroups is None)
+		self.assertEquals(len(releaseGroups), 3)
+
+		expectedEntries = {
+			'ef2b891f-ca73-3e14-b38b-a68699dab8c4': 'Under the Pink',
+			'1fd43909-8056-3805-b2f9-c663ce7e71e6': 'To Venus and Back',
+			'a69a1574-dfe3-3e2a-b499-d26d5e916041': 'Strange Little Girls'}
+
+		for releaseGroup in releaseGroups:
+			self.assertEquals(releaseGroup.getType(), NS_MMD_1 + 'Album')
+			releaseGroupId = releaseGroup.id[-36:]
+			self.assert_(releaseGroupId in expectedEntries)
+			self.assertEquals(releaseGroup.getTitle(), expectedEntries[releaseGroupId])
+			del expectedEntries[releaseGroupId]
+
 
 	def testSearchResults(self):
 		f = os.path.join(VALID_ARTIST_DIR, 'search_result_1.xml')

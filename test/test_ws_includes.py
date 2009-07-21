@@ -34,6 +34,10 @@ class ArtistIncludesTest(unittest.TestCase):
 		tags5.sort()
 		self.assertEqual(tags5, ['aliases', 'va-Bootleg'])
 
+	def testReleaseGroups(self):
+		inc = ArtistIncludes(releaseGroups=True)
+		self.assertEqual(inc.createIncludeTags(), ['release-groups'])
+
 	def testTags(self):
 		def check(includes_class):
 			inc1 = includes_class(tags=True)
@@ -44,19 +48,26 @@ class ArtistIncludesTest(unittest.TestCase):
 		check(ReleaseIncludes)
 		check(TrackIncludes)
 		check(LabelIncludes)
-		
+
 class ReleaseIncludesTest(unittest.TestCase):
 	# Test that including isrcs in release also pulls in tracks
 	def testIsrcs(self):
-		inc = ReleaseIncludes(isrcs=True);
+		inc = ReleaseIncludes(isrcs=True)
 		tags = inc.createIncludeTags()
 		tags.sort()
 		self.assertEqual(tags, ['isrcs', 'tracks'])
-		
+
 	# Test that including labels in release also pulls in release events
 	def testReleaseEvents(self):
-		inc = ReleaseIncludes(labels=True);
+		inc = ReleaseIncludes(labels=True)
 		tags = inc.createIncludeTags()
 		tags.sort()
 		self.assertEqual(tags, ['labels', 'release-events'])
+
+	def testReleaseGroup(self):
+		inc = ReleaseIncludes(releaseGroup=True)
+		tags = inc.createIncludeTags()
+		self.assertEqual(tags, ['release-groups'])
+
+
 # EOF
