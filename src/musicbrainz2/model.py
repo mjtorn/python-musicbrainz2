@@ -1445,7 +1445,7 @@ class ReleaseGroup(Entity):
 		self._type = type_
 
 	type = property(getType, setType,
-		doc = 'The types of this release group.')
+		doc = 'The type of this release group.')
 
 	def getReleases(self):
 		"""Gets the releases in this release group.
