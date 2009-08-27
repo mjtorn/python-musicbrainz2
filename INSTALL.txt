@@ -26,6 +26,9 @@ root permissions are required):
 
     python setup.py install
 
+Note that on Debian-based systems like Ubuntu, you have to add the
+--install-layout=deb command line switch or it won't work on python 2.6
+and later.
 
 Optionally, API documentation can be generated using epydoc. This command
 runs epydoc (http://epydoc.sf.net) which creates a 'html' directory containing
