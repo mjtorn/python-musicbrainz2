@@ -28,7 +28,7 @@ __revision__ = '$Id$'
 __all__ = [
 	'VARIOUS_ARTISTS_ID', 'NS_MMD_1', 'NS_REL_1', 'NS_EXT_1', 
 	'Entity', 'Artist', 'Release', 'Track', 'User', 'ReleaseGroup',
-	'Relation', 'Disc', 'ReleaseEvent', 'Label', 'Tag',
+	'Relation', 'Disc', 'ReleaseEvent', 'Label', 'Tag', 'Rating',
 	'AbstractAlias', 'ArtistAlias', 'LabelAlias',
 ]
 
@@ -622,8 +622,8 @@ class Rating(object):
 
 	The rating can have the following values:
 
-	  0 = Unrated
-	  [1..5] = Rating
+	0 = Unrated
+	[1..5] = Rating
 	"""
 	def __init__(self, value=None, count=None):
 		"""Constructor.
@@ -647,7 +647,7 @@ class Rating(object):
 		0 or None = Clear your rating
 		1 - 5 = Rating
 
-		@param rating:  the rating to apply
+		@param value: the rating to apply
 
 		@raise ValueError: if value is not a double or not in the
 		range 0 - 5 or None.

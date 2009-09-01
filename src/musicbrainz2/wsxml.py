@@ -468,7 +468,7 @@ class Metadata(object):
 	def setRating(self, value):
 		"""Sets the rating.
 
-		@param: rating object
+		@param value: a L{model.Rating} object
 		"""
 		self._rating = value
 

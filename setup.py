@@ -98,8 +98,6 @@ setup_args = {
 	'cmdclass':	{ 'test': TestCommand, 'docs': GenerateDocsCommand },
 }
 
-(ver_major, ver_minor) = sys.version_info[0:2]
-
 setup(**setup_args)
 
 # EOF
