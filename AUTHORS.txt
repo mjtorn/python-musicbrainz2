@@ -27,6 +27,7 @@ Contributors:
 
    Alastair Porter <alastair at porter dot net dot nz>
     - Added ISRC support.
+    - Added support for user collections.
 
    John J. Jordan <jjjordan at cal dot berkeley dot edu>
     - Added Release Groups support.

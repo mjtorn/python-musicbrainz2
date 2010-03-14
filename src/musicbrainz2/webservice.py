@@ -1227,6 +1227,79 @@ class Query(object):
 
 		self._ws.post('track', '', encodedStr)
 
+	def addToUserCollection(self, releases):
+		"""Add releases to a user's collection.
+
+		The releases parameter must be a list. It can contain either L{Release}
+		objects or a string representing a MusicBrainz release ID (either as
+		absolute URIs or in their 36 character ASCII representation).
+
+		Adding a release that is already in the collection has no effect.
+
+		@param releases: a list of releases to add to the user collection
+
+		@raise ConnectionError: couldn't connect to server
+		@raise AuthenticationError: invalid user name and/or password
+		"""
+		rels = []
+		for release in releases:
+			if isinstance(release, Release):
+				rels.append(mbutils.extractUuid(release.id))
+			else:
+				rels.append(mbutils.extractUuid(release))
+		encodedStr = urllib.urlencode({'add': ",".join(rels)}, True)
+		self._ws.post('collection', '', encodedStr)
+
+	def removeFromUserCollection(self, releases):
+		"""Remove releases from a user's collection.
+
+		The releases parameter must be a list. It can contain either L{Release}
+		objects or a string representing a MusicBrainz release ID (either as
+		absolute URIs or in their 36 character ASCII representation).
+
+		Removing a release that is not in the collection has no effect.
+
+		@param releases: a list of releases to remove from the user collection
+
+		@raise ConnectionError: couldn't connect to server
+		@raise AuthenticationError: invalid user name and/or password
+		"""
+		rels = []
+		for release in releases:
+			if isinstance(release, Release):
+				rels.append(mbutils.extractUuid(release.id))
+			else:
+				rels.append(mbutils.extractUuid(release))
+		encodedStr = urllib.urlencode({'remove': ",".join(rels)}, True)
+		self._ws.post('collection', '', encodedStr)
+
+	def getUserCollection(self, offset=0, maxitems=100):
+		"""Get the releases that are in a user's collection
+		
+		A maximum of 100 items will be returned for any one call
+		to this method. To fetch more than 100 items, use the offset
+		parameter.
+
+		@param offset: the offset to start fetching results from
+		@param maxitems: the upper limit on items to return
+
+		@return: a list of L{musicbrainz2.wsxml.ReleaseResult} objects
+
+		@raise ConnectionError: couldn't connect to server
+		@raise AuthenticationError: invalid user name and/or password
+		"""
+		params = { 'offset': offset, 'maxitems': maxitems }
+		
+		stream = self._ws.get('collection', '', filter=params)
+		print stream
+		try:
+			parser = MbXmlParser()
+			result = parser.parse(stream)
+		except ParseError, e:
+			raise ResponseError(str(e), e)
+		
+		return result.getReleaseResults()
+
 	def submitUserTags(self, entityUri, tags):
 		"""Submit folksonomy tags for an entity.
 

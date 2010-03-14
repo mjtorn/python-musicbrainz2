@@ -2,6 +2,7 @@
 import unittest
 from musicbrainz2.model import Tag
 from musicbrainz2.model import Rating
+from musicbrainz2.model import Release
 from musicbrainz2.webservice import Query, IWebService, AuthenticationError, RequestError
 
 
@@ -22,6 +23,34 @@ class FakeBadRequestWebService(IWebService):
 		raise RequestError()
 
 class QueryTest(unittest.TestCase):
+
+	def testAddToUserCollection(self):
+		ws = FakeWebService()
+		q = Query(ws)
+
+		r1 = "9e186398-9ae2-45bf-a9f6-d26bc350221e"
+		r2 = "http://musicbrainz.org/release/6b050dcf-7ab1-456d-9e1b-c3c41c18eed2"
+		r3 = Release("d3cc336e-1010-4252-9091-7923f0429824")
+
+		q.addToUserCollection([r1, r2, r3])
+		self.assertEquals(len(ws.data), 1)
+		res = ws.data[0]
+		self.assertEquals(res[0], "collection")
+		self.assertEquals(res[2], "add=9e186398-9ae2-45bf-a9f6-d26bc350221e%2C6b050dcf-7ab1-456d-9e1b-c3c41c18eed2%2Cd3cc336e-1010-4252-9091-7923f0429824")
+
+	def testRemoveFromUserCollection(self):
+		ws = FakeWebService()
+		q = Query(ws)
+
+		r1 = "9e186398-9ae2-45bf-a9f6-d26bc350221e"
+		r2 = "http://musicbrainz.org/release/6b050dcf-7ab1-456d-9e1b-c3c41c18eed2"
+		r3 = Release("d3cc336e-1010-4252-9091-7923f0429824")
+
+		q.removeFromUserCollection([r1, r2, r3])
+		self.assertEquals(len(ws.data), 1)
+		res = ws.data[0]
+		self.assertEquals(res[0], "collection")
+		self.assertEquals(res[2], "remove=9e186398-9ae2-45bf-a9f6-d26bc350221e%2C6b050dcf-7ab1-456d-9e1b-c3c41c18eed2%2Cd3cc336e-1010-4252-9091-7923f0429824")
 
 	def testSubmitUserTags(self):
 		ws = FakeWebService()
