@@ -1,3 +1,10 @@
+Changes in 0.7.1:
+
+  * Added release group support (patch by John J. Jordan, review by Luks).
+  * Fixed libdiscid detection on OpenBSD (patch by Anton Yabchinskiy).
+  * Export model.Rating.
+  * Minor documentation cleanups.
+
 Changes in 0.7.0:
 
   * Added ISRC support (patch by Alastair Porter).
