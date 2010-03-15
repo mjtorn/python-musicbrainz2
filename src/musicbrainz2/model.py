@@ -2092,6 +2092,109 @@ class ReleaseEvent(object):
 		doc='The format of the release medium.')
 
 
+class CDStub(object):
+	"""Represents a CD Stub"""
+
+	def __init__(self, disc):
+		"""Constructor.
+
+		@param disc: a L{Disc} object to create this CD Stub from
+		"""
+		assert isinstance(disc, Disc), 'musicbrainz2.model.Disc expected'
+		self._disc = disc
+		self._tracks = [ ]
+		self._title = ""
+		self._artist = ""
+		self._barcode = ""
+		self._comment = ""
+
+	def setTitle(self, title):
+		"""Sets the title of this release.
+
+		@param title: a string containing the title
+		"""
+		self._title = title
+
+	def getTitle(self):
+		"""Returns the title of this release.
+
+		@return: a string containing the title
+		"""
+		return self._title
+
+	title = property(getTitle, setTitle,
+	       doc='The title of the release')
+
+	def setArtist(self, artist):
+		"""Sets the artist of this release.
+
+		@param artist: a string containing the artist
+		"""
+		self._artist = artist
+
+	def getArtist(self):
+		"""Returns the artist of this release.
+
+		@return: a string containing the artist
+		"""
+		return self._artist
+
+	artist = property(getArtist, setArtist,
+		doc='The artist of the release')
+
+	def setComment(self, comment):
+		"""Sets the comment for this release.
+
+		@param comment: a string containing the comment
+		"""
+		self._comment = comment
+
+	def getComment(self):
+		"""Returns the comment for this release.
+
+		@return: a string containing the comment
+		"""
+		return self._comment
+
+	comment = property(getComment, setComment,
+		 doc='Comment for the release (optional)')
+
+	def setBarcode(self, barcode):
+		"""Sets the barcode of this release.
+
+		@param barcode: a string containing the barcode
+		"""
+		self._barcode = barcode
+
+	def getBarcode(self):
+		"""Returns the barcode of this release.
+
+		@return: a string containing the barcode
+		"""
+		return self._barcode
+
+	barcode = property(getBarcode, setBarcode,
+		 doc='Barcode for the release (optional)')
+
+	def addTrack(self, title, artist=''):
+		"""Add a track to this release
+
+		@param title: a string containing the title of the track
+		@param artist: a string containing the artist of the track, 
+		               if different to the album artist
+		"""
+		self._tracks.append((title, artist))
+
+	def getTracks(self):
+		"""Return all the tracks on the release.
+
+		@return: a list of tuples containing (title, artist) pairs
+		         for each track
+		"""
+		return self._tracks
+
+	tracks = property(getTracks, doc='The tracks of the release.')
+
 class Disc(object):
 	"""Represents an Audio CD.
 

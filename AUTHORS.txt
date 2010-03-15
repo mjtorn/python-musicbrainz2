@@ -12,6 +12,11 @@ Contributors:
     - Created and submitted Debian/Ubuntu packages.
     - Lots of other things, including patch reviews.
 
+   Alastair Porter <alastair at porter dot net dot nz>
+    - Added ISRC support.
+    - Added support for user collections.
+    - Added CD Stub submission support.
+
    Nikki <nikki at lmfao dot org dot uk>
     - Tested compatibility with python-2.3 on Debian.
     - Provided country/language/script lists.
@@ -24,10 +29,6 @@ Contributors:
 
    Peter Schnebel <pschnebel at googlemail dot com>
     - Added rating support.
-
-   Alastair Porter <alastair at porter dot net dot nz>
-    - Added ISRC support.
-    - Added support for user collections.
 
    John J. Jordan <jjjordan at cal dot berkeley dot edu>
     - Added Release Groups support.

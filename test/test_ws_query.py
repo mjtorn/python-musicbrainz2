@@ -129,10 +129,69 @@ class QueryTest(unittest.TestCase):
 		
 		self.assertRaises(RequestError, q.submitPuids, {})
 		
-	def testSubmitNoClient(self):
+	def testSubmitPuidNoClient(self):
 		ws = FakeWebService()
 		q = Query(ws)
 		
 		self.assertRaises(AssertionError, q.submitPuids, None)
-	
+
+	def testSubmitCDStubNoClient(self):
+		ws = FakeWebService()
+		q = Query(ws)
+		
+		self.assertRaises(AssertionError, q.submitCDStub, None)
+
+	def testSubmitCdStub(self):
+		from musicbrainz2.model import Disc, CDStub
+
+		ws = FakeWebService()
+		q = Query(ws, clientId='test-1')
+
+		discid = "6EmGGSLhuDYz2lNXtqrCiCCqO0o-"
+		disc = Disc(discid)
+		disc.firstTrackNum = 1
+		disc.lastTrackNum = 4
+		disc.sectors = 89150
+		disc.addTrack( (150, 20551) )
+		disc.addTrack( (20701, 26074) )
+		disc.addTrack( (46775, 19438) )
+		disc.addTrack( (66213, 22937) )
+
+		cdstub = CDStub(disc)
+		cdstub.artist = "artist"
+		cdstub.title = "title"
+		cdstub.addTrack("trackname1")
+		cdstub.addTrack("trackname2")
+		cdstub.addTrack("trackname3")
+		cdstub.addTrack("trackname4")
+		q.submitCDStub(cdstub)
+
+		cdstub.barcode = "12345"
+		cdstub.comment = "acomment"
+		q.submitCDStub(cdstub)
+
+		self.assertEquals(len(ws.data), 2)
+		req = ws.data[0]
+		qstring = 'client=test-1&discid=6EmGGSLhuDYz2lNXtqrCiCCqO0o-&title=title&artist=artist&track0=trackname1&track1=trackname2&track2=trackname3&track3=trackname4&toc=1+4+89150+150+20701+46775+66213'
+		self.assertEquals(req[0], 'release')
+		self.assertEquals(req[2], qstring)
+
+		req = ws.data[1]
+		qstring = 'client=test-1&discid=6EmGGSLhuDYz2lNXtqrCiCCqO0o-&title=title&artist=artist&barcode=12345&comment=acomment&track0=trackname1&track1=trackname2&track2=trackname3&track3=trackname4&toc=1+4+89150+150+20701+46775+66213'
+		self.assertEquals(req[2], qstring)
+
+		cdstub._tracks = []
+		cdstub.addTrack("tname1", "artist1")
+		cdstub.addTrack("tname2", "artist2")
+		cdstub.addTrack("tname3", "artist3")
+		cdstub.addTrack("tname4", "artist4")
+		q.submitCDStub(cdstub)
+		self.assertEquals(len(ws.data), 3)
+		req = ws.data[2]
+		qstring = 'client=test-1&discid=6EmGGSLhuDYz2lNXtqrCiCCqO0o-&title=title&artist=artist&barcode=12345&comment=acomment&track0=tname1&artist0=artist1&track1=tname2&artist1=artist2&track2=tname3&artist2=artist3&track3=tname4&artist3=artist4&toc=1+4+89150+150+20701+46775+66213'
+		self.assertEquals(req[2], qstring)
+
+
+
+
 # EOF

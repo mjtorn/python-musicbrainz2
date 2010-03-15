@@ -1428,6 +1428,48 @@ class Query(object):
 		
 		return result.getRating()
 
+	def submitCDStub(self, cdstub):
+		"""Submit a CD Stub to the database.
+
+		The number of tracks added to the CD Stub must match the TOC and DiscID
+		otherwise the submission wil fail. The submission will also fail if 
+		the Disc ID is already in the MusicBrainz database.
+
+		This method will only work if no user name and password are set.
+
+		@param cdstub: a L{CDStub} object to submit
+		
+		@raise RequestError: Missmatching TOC/Track information or the
+		       the CD Stub already exists or the Disc ID already exists
+		"""
+		assert self._clientId is not None, 'Please supply a client ID'
+		disc = cdstub._disc
+		params = [ ]
+		params.append( ('client', self._clientId.encode('utf-8')) )
+		params.append( ('discid', disc.id) )
+		params.append( ('title', cdstub.title) )
+		params.append( ('artist', cdstub.artist) )
+		if cdstub.barcode != "":
+			params.append( ('barcode', cdstub.barcode) )
+		if cdstub.comment != "":
+			params.append( ('comment', cdstub.comment) )
+
+		trackind = 0
+		for track,artist in cdstub.tracks:
+			params.append( ('track%d' % trackind, track) )
+			if artist != "":
+				params.append( ('artist%d' % trackind, artist) )
+
+			trackind += 1
+
+		toc = "%d %d %d " % (disc.firstTrackNum, disc.lastTrackNum, disc.sectors)
+	        toc = toc + ' '.join( map(lambda x: str(x[0]), disc.getTracks()) )
+
+		params.append( ('toc', toc) )
+
+		encodedStr = urllib.urlencode(params)
+		self._ws.post('release', '', encodedStr)
+
 def _createIncludes(tagMap):
 	selected = filter(lambda x: x[1] == True, tagMap.items())
 	return map(lambda x: x[0], selected)

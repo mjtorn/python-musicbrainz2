@@ -1,9 +1,16 @@
+Changes in 0.7.2:
+
+  * Added support for CD stub submission (patch by Alastair Porter).
+
+
 Changes in 0.7.1:
 
   * Added release group support (patch by John J. Jordan, review by Luks).
+  * Added support for user collections (patch by Alastair Porter).
   * Fixed libdiscid detection on OpenBSD (patch by Anton Yabchinskiy).
   * Export model.Rating.
   * Minor documentation cleanups.
+
 
 Changes in 0.7.0:
 
