@@ -496,7 +496,7 @@ class Artist(Entity):
 
 		@param release: a L{Release} object
 		"""
-		self._release.append(release)
+		self._releases.append(release)
 
 	def getReleasesOffset(self):
 		"""Returns the offset of the release list.

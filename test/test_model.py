@@ -93,4 +93,12 @@ class TagTest(unittest.TestCase):
 		self.assertEquals(u"foo", unicode(Tag(u"foo")))
 		self.assertEquals(u"f\u014do", unicode(Tag(u"f\u014do")))
 
+class ArtistTest(unittest.TestCase):
+
+    def testAddRelease(self):
+        release = Release()
+        artist = Artist()
+        artist.addRelease(release)
+        self.assertEquals(artist.releases, [release])
+
 # EOF
