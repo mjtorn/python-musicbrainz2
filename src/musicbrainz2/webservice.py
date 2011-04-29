@@ -164,6 +164,21 @@ class ResponseError(WebServiceError):
 	"""
 	pass
 
+class DigestAuthHandler(urllib2.HTTPDigestAuthHandler):
+	"""Patched DigestAuthHandler to correctly handle Digest Auth according to RFC 2617.
+	
+	This will allow multiple qop values in the WWW-Authenticate header (e.g. "auth,auth-int").
+	The only supported qop value is still auth, though.
+	See http://bugs.python.org/issue9714
+	
+	@author Kuno Woudt
+	"""
+	def get_authorization(self, req, chal):
+		qop = chal.get('qop')
+		if qop and ',' in qop and 'auth' in qop.split(','):
+			chal['qop'] = 'auth'
+		
+		return urllib2.HTTPDigestAuthHandler.get_authorization(self, req, chal)
 
 class WebService(IWebService):
 	"""An interface to the MusicBrainz XML web service via HTTP.
@@ -204,7 +219,7 @@ class WebService(IWebService):
 			self._opener = opener
 
 		passwordMgr = self._RedirectPasswordMgr()
-		authHandler = urllib2.HTTPDigestAuthHandler(passwordMgr)
+		authHandler = DigestAuthHandler(passwordMgr)
 		authHandler.add_password(self._realm, (), # no host set
 			self._username, self._password)
 		self._opener.add_handler(authHandler)

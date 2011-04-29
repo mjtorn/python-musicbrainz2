@@ -1,7 +1,11 @@
+Changes in 0.7.3:
+
+  * Fixed typo in Artist.addRelease (#4076)
+  * Fixed HTTP Digest Authentication with the NGS web service (#5905)
+
 Changes in 0.7.2:
 
   * Added support for CD stub submission (patch by Alastair Porter).
-
 
 Changes in 0.7.1:
 
