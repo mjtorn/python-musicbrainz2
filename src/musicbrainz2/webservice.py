@@ -14,15 +14,12 @@ model <musicbrainz2.model>}.
 """
 __revision__ = '$Id$'
 
-import re
 import urllib
 import urllib2
 import urlparse
 import logging
-import os.path
-from StringIO import StringIO
 import musicbrainz2
-from musicbrainz2.model import Artist, Release, Track
+from musicbrainz2.model import Release
 from musicbrainz2.wsxml import MbXmlParser, ParseError
 import musicbrainz2.utils as mbutils
 

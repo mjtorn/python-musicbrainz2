@@ -8,7 +8,6 @@ __revision__ = '$Id$'
 
 import re
 import urlparse
-import os.path
 
 __all__ = [
 	'extractUuid', 'extractFragment', 'extractEntityType',
