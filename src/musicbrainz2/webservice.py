@@ -188,7 +188,7 @@ class WebService(IWebService):
 
 	def __init__(self, host='musicbrainz.org', port=80, pathPrefix='/ws',
 			username=None, password=None, realm='musicbrainz.org',
-			opener=None):
+			opener=None, userAgent=None):
 		"""Constructor.
 
 		This can be used without parameters. In this case, the
@@ -201,6 +201,7 @@ class WebService(IWebService):
 		@param password: a string containing the user's password
 		@param realm: a string containing the realm used for authentication
 		@param opener: an C{urllib2.OpenerDirector} object used for queries
+		@param userAgent: a string containing the user agent
 		"""
 		self._host = host
 		self._port = port
@@ -214,6 +215,13 @@ class WebService(IWebService):
 			self._opener = urllib2.build_opener()
 		else:
 			self._opener = opener
+
+		if userAgent is None:
+			self._userAgent = "python-musicbrainz/" + musicbrainz2.__version__
+		else:
+			self._userAgent = userAgent.replace("-", "/") \
+								+ " python-musicbrainz/" \
+								+ musicbrainz2.__version__
 
 		passwordMgr = self._RedirectPasswordMgr()
 		authHandler = DigestAuthHandler(passwordMgr)
@@ -243,9 +251,8 @@ class WebService(IWebService):
 
 
 	def _openUrl(self, url, data=None):
-		userAgent = 'python-musicbrainz/' + musicbrainz2.__version__
 		req = urllib2.Request(url)
-		req.add_header('User-Agent', userAgent)
+		req.add_header('User-Agent', self._userAgent)
 		return self._opener.open(req, data)
 
 
@@ -934,13 +941,16 @@ class Query(object):
 		The format is C{'application-version'}, where C{application}
 		is your application's name and C{version} is a version
 		number which may not include a '-' character.
+		Even if you don't plan to submit data, setting this parameter is
+		encouraged because it will set the user agent used to make requests if
+		you don't supply the C{ws} parameter.
 
 		@param ws: a subclass instance of L{IWebService}, or None
 		@param wsFactory: a callable object which creates an object
 		@param clientId: a unicode string containing the application's ID
 		"""
 		if ws is None:
-			self._ws = wsFactory()
+			self._ws = wsFactory(userAgent=clientId)
 		else:
 			self._ws = ws
 
