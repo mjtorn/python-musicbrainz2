@@ -168,7 +168,7 @@ class DigestAuthHandler(urllib2.HTTPDigestAuthHandler):
 	The only supported qop value is still auth, though.
 	See http://bugs.python.org/issue9714
 	
-	@author Kuno Woudt
+	@author: Kuno Woudt
 	"""
 	def get_authorization(self, req, chal):
 		qop = chal.get('qop')
