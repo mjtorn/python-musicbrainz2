@@ -1313,7 +1313,6 @@ class Query(object):
 		params = { 'offset': offset, 'maxitems': maxitems }
 		
 		stream = self._ws.get('collection', '', filter=params)
-		print stream
 		try:
 			parser = MbXmlParser()
 			result = parser.parse(stream)
