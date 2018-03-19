@@ -18,7 +18,7 @@ logger.setLevel(logging.DEBUG)
 
 
 if len(sys.argv) < 2:
-	print "Usage: getartist.py artist-id"
+	print("Usage: getartist.py artist-id")
 	sys.exit(1)
 
 q = ws.Query()
@@ -30,50 +30,50 @@ try:
 		releases=(m.Release.TYPE_OFFICIAL, m.Release.TYPE_ALBUM),
 		tags=True, releaseGroups=True)
 	artist = q.getArtistById(sys.argv[1], inc)
-except ws.WebServiceError, e:
-	print 'Error:', e
+except ws.WebServiceError as e:
+	print('Error:', e)
 	sys.exit(1)
 
 
-print "Id         :", artist.id
-print "Name       :", artist.name
-print "SortName   :", artist.sortName
-print "UniqueName :", artist.getUniqueName()
-print "Type       :", artist.type
-print "BeginDate  :", artist.beginDate
-print "EndDate    :", artist.endDate
-print "Tags       :", ', '.join([t.value for t in artist.tags])
-print
+print("Id         :", artist.id)
+print("Name       :", artist.name)
+print("SortName   :", artist.sortName)
+print("UniqueName :", artist.getUniqueName())
+print("Type       :", artist.type)
+print("BeginDate  :", artist.beginDate)
+print("EndDate    :", artist.endDate)
+print("Tags       :", ', '.join([t.value for t in artist.tags]))
+print()
 
 if len(artist.getReleases()) == 0:
-	print "No releases found."
+	print("No releases found.")
 else:
-	print "Releases:"
+	print("Releases:")
 
 for release in artist.getReleases():
-	print
-	print "Id        :", release.id
-	print "Title     :", release.title
-	print "ASIN      :", release.asin
-	print "Text      :", release.textLanguage, '/', release.textScript
-	print "Types     :", release.types
+	print()
+	print("Id        :", release.id)
+	print("Title     :", release.title)
+	print("ASIN      :", release.asin)
+	print("Text      :", release.textLanguage, '/', release.textScript)
+	print("Types     :", release.types)
 
-print
+print()
 
 if len(artist.getReleaseGroups()) == 0:
-	print
-	print "No release groups found."
+	print()
+	print("No release groups found.")
 else:
-	print
-	print "Release groups:"
+	print()
+	print("Release groups:")
 
 for rg in artist.getReleaseGroups():
-	print
-	print "Id        :", rg.id
-	print "Title     :", rg.title
-	print "Type      :", rg.type
+	print()
+	print("Id        :", rg.id)
+	print("Title     :", rg.title)
+	print("Type      :", rg.type)
 
-print
+print()
 
 #
 # Using the release IDs and Query.getReleaseById(), you could now request 

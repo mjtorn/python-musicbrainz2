@@ -18,7 +18,7 @@ logger.setLevel(logging.DEBUG)
 
 
 if len(sys.argv) < 2:
-	print "Usage: getlabel.py label-id"
+	print("Usage: getlabel.py label-id")
 	sys.exit(1)
 
 q = ws.Query()
@@ -28,23 +28,23 @@ try:
 	#
 	inc = ws.LabelIncludes(aliases=True)
 	label = q.getLabelById(sys.argv[1], inc)
-except ws.WebServiceError, e:
-	print 'Error:', e
+except ws.WebServiceError as e:
+	print('Error:', e)
 	sys.exit(1)
 
 
-print "Id         :", label.id
-print "Name       :", label.name
-print "SortName   :", label.sortName
-print "UniqueName :", label.getUniqueName()
-print "Type       :", label.type
-print "BeginDate  :", label.beginDate
-print "EndDate    :", label.endDate
-print "Country    :", label.country
-print "Label-Code :", label.code
-print "Aliases    :"
+print("Id         :", label.id)
+print("Name       :", label.name)
+print("SortName   :", label.sortName)
+print("UniqueName :", label.getUniqueName())
+print("Type       :", label.type)
+print("BeginDate  :", label.beginDate)
+print("EndDate    :", label.endDate)
+print("Country    :", label.country)
+print("Label-Code :", label.code)
+print("Aliases    :")
 
 for alias in label.aliases:
-	print "            ", label.value
+	print("            ", label.value)
 
 # EOF

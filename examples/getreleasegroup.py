@@ -23,7 +23,7 @@ logger.setLevel(logging.DEBUG)
 
 
 if len(sys.argv) < 2:
-	print "Usage: getreleasegroup.py releasegroup-id"
+	print("Usage: getreleasegroup.py releasegroup-id")
 	sys.exit(1)
 
 q = ws.Query()
@@ -35,33 +35,33 @@ try:
 	#
 	inc = ws.ReleaseGroupIncludes(artist=True, releases=True, tags=False)
 	releaseGroup = q.getReleaseGroupById(sys.argv[1], inc)
-except ws.WebServiceError, e:
-	print 'Error:', e
+except ws.WebServiceError as e:
+	print('Error:', e)
 	sys.exit(1)
 
 
-print "Id          :", releaseGroup.id
-print "Title       :", releaseGroup.title
-print "Type        :", releaseGroup.type
+print("Id          :", releaseGroup.id)
+print("Title       :", releaseGroup.title)
+print("Type        :", releaseGroup.type)
 
 
 # Print the main artist of this release group.
 #
 if releaseGroup.artist:
-	print
-	print "Artist:"
-	print "  Id        :", releaseGroup.artist.id
-	print "  Name      :", releaseGroup.artist.name
-	print "  SortName  :", releaseGroup.artist.sortName
+	print()
+	print("Artist:")
+	print("  Id        :", releaseGroup.artist.id)
+	print("  Name      :", releaseGroup.artist.name)
+	print("  SortName  :", releaseGroup.artist.sortName)
 
 
 # Show the releases contained by this release group.
 #
 for release in releaseGroup.releases:
-	print
-	print "Release:"
-	print "  Id        :", release.id
-	print "  Title     :", release.title
-	print "  Types     :", release.types
+	print()
+	print("Release:")
+	print("  Id        :", release.id)
+	print("  Title     :", release.title)
+	print("  Types     :", release.types)
 
 # EOF

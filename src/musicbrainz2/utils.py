@@ -7,7 +7,7 @@ This module contains helper functions to make common tasks easier.
 __revision__ = '$Id$'
 
 import re
-import urlparse
+import urllib.parse
 
 __all__ = [
 	'extractUuid', 'extractFragment', 'extractEntityType',
@@ -52,7 +52,7 @@ def extractUuid(uriStr, resType=None):
 	if uriStr is None:
 		return None
 
-	(scheme, netloc, path) = urlparse.urlparse(uriStr)[:3]
+	(scheme, netloc, path) = urllib.parse.urlparse(uriStr)[:3]
 
 	if scheme == '':
 		return uriStr	# no URI, probably already the UUID
@@ -93,7 +93,7 @@ def extractFragment(uriStr, uriPrefix=None):
 	if uriStr is None:
 		return None
 
-	(scheme, netloc, path, params, query, frag) = urlparse.urlparse(uriStr)
+	(scheme, netloc, path, params, query, frag) = urllib.parse.urlparse(uriStr)
 	if scheme == '':
 		return uriStr # this is no URI
 
@@ -115,7 +115,7 @@ def extractEntityType(uriStr):
 	if uriStr is None:
 		raise ValueError('None is no valid entity URI')
 
-	(scheme, netloc, path) = urlparse.urlparse(uriStr)[:3]
+	(scheme, netloc, path) = urllib.parse.urlparse(uriStr)[:3]
 
 	if scheme == '':
 		raise ValueError('%s is no absolute MB ID.' % uriStr)

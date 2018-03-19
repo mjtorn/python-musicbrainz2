@@ -17,7 +17,7 @@ logger.setLevel(logging.DEBUG)
 	
 
 if len(sys.argv) < 2:
-	print "Usage: findlabel.py 'label name'"
+	print("Usage: findlabel.py 'label name'")
 	sys.exit(1)
 
 q = Query()
@@ -29,8 +29,8 @@ try:
 	#
 	f = LabelFilter(name=sys.argv[1], limit=5)
 	labelResults = q.getLabels(f)
-except WebServiceError, e:
-	print 'Error:', e
+except WebServiceError as e:
+	print('Error:', e)
 	sys.exit(1)
 
 
@@ -39,11 +39,11 @@ except WebServiceError, e:
 #
 for result in labelResults:
 	label = result.label
-	print "Score     :", result.score
-	print "Id        :", label.id
-	print "Name      :", label.name
-	print "Sort Name :", label.sortName
-	print
+	print("Score     :", result.score)
+	print("Id        :", label.id)
+	print("Name      :", label.name)
+	print("Sort Name :", label.sortName)
+	print()
 
 #
 # Now that you have label IDs, you can request a label directly to get more

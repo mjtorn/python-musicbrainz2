@@ -2,7 +2,7 @@
 import unittest
 from musicbrainz2.wsxml import MbXmlParser, ParseError
 from musicbrainz2.model import NS_MMD_1
-import StringIO
+import io
 import os.path
 
 VALID_DATA_DIR = os.path.join('test-data', 'valid')
@@ -24,11 +24,11 @@ class ParseArtistTest(unittest.TestCase):
 		md = MbXmlParser().parse(f)
 		artist = md.getArtist()
 
-		self.failIf( artist is None )
-		self.assertEquals(artist.getName(), 'Tori Amos')
-		self.assertEquals(artist.getSortName(), 'Amos, Tori')
-		self.assertEquals(artist.getBeginDate(), '1963-08-22')
-		self.assertEquals(len(artist.getReleases()), 0)
+		self.assertFalse( artist is None )
+		self.assertEqual(artist.getName(), 'Tori Amos')
+		self.assertEqual(artist.getSortName(), 'Amos, Tori')
+		self.assertEqual(artist.getBeginDate(), '1963-08-22')
+		self.assertEqual(len(artist.getReleases()), 0)
 
 
 	def testArtistFull(self):
@@ -36,45 +36,45 @@ class ParseArtistTest(unittest.TestCase):
 		md = MbXmlParser().parse(f)
 		artist = md.getArtist()
 
-		self.failIf( artist is None )
-		self.assertEquals(artist.getId(),
+		self.assertFalse( artist is None )
+		self.assertEqual(artist.getId(),
 			makeId('c0b2500e-0cef-4130-869d-732b23ed9df5'))
-		self.assertEquals(artist.getName(), 'Tori Amos')
-		self.assertEquals(artist.getSortName(), 'Amos, Tori')
-		self.assert_(artist.getDisambiguation() is None)
-		self.assertEquals(artist.getUniqueName(), artist.getName())
-		self.assertEquals(artist.getBeginDate(), '1963-08-22')
-		self.assertEquals(len(artist.getReleases()), 3)
-		self.assertEquals(len(artist.getReleaseGroups()), 3)
+		self.assertEqual(artist.getName(), 'Tori Amos')
+		self.assertEqual(artist.getSortName(), 'Amos, Tori')
+		self.assertTrue(artist.getDisambiguation() is None)
+		self.assertEqual(artist.getUniqueName(), artist.getName())
+		self.assertEqual(artist.getBeginDate(), '1963-08-22')
+		self.assertEqual(len(artist.getReleases()), 3)
+		self.assertEqual(len(artist.getReleaseGroups()), 3)
 
 		release1 = artist.getReleases()[0]
-		self.assertEquals(release1.getTitle(), 'Strange Little Girls')
-		self.assertEquals(release1.getAsin(), 'B00005NKYQ')
+		self.assertEqual(release1.getTitle(), 'Strange Little Girls')
+		self.assertEqual(release1.getAsin(), 'B00005NKYQ')
 
 		# Check last release in more detail.
 		#
 		release3 = artist.getReleases()[2]
-		self.assertEquals(release3.getId(),
+		self.assertEqual(release3.getId(),
 			makeId('290e10c5-7efc-4f60-ba2c-0dfc0208fbf5', 'release'))
-		self.assertEquals(len(release3.getTypes()), 2)
-		self.assert_(NS_MMD_1 + 'Album' in release3.getTypes())
-		self.assert_(NS_MMD_1 + 'Official' in release3.getTypes())
-		self.assertEquals(release3.getTitle(), 'Under the Pink')
-		self.assertEquals(release3.getAsin(), 'B000002IXU')
-		self.assertEquals(release3.getArtist().getId(),
+		self.assertEqual(len(release3.getTypes()), 2)
+		self.assertTrue(NS_MMD_1 + 'Album' in release3.getTypes())
+		self.assertTrue(NS_MMD_1 + 'Official' in release3.getTypes())
+		self.assertEqual(release3.getTitle(), 'Under the Pink')
+		self.assertEqual(release3.getAsin(), 'B000002IXU')
+		self.assertEqual(release3.getArtist().getId(),
 			makeId('c0b2500e-0cef-4130-869d-732b23ed9df5'))
-		self.failIf(release3.getReleaseGroup() is None)
-		self.assertEquals(release3.getReleaseGroup().id[-36:],
+		self.assertFalse(release3.getReleaseGroup() is None)
+		self.assertEqual(release3.getReleaseGroup().id[-36:],
 			'ef2b891f-ca73-3e14-b38b-a68699dab8c4')
 
 		events = release3.getReleaseEvents()
-		self.assertEquals(len(events), 5)
-		self.assertEquals(events[0].getCountry(), 'DE')
-		self.assertEquals(events[0].getDate(), '1994-01-28')
-		self.assertEquals(events[4].getCountry(), 'AU')
-		self.assertEquals(events[4].getDate(), '1994-11')
+		self.assertEqual(len(events), 5)
+		self.assertEqual(events[0].getCountry(), 'DE')
+		self.assertEqual(events[0].getDate(), '1994-01-28')
+		self.assertEqual(events[4].getCountry(), 'AU')
+		self.assertEqual(events[4].getDate(), '1994-11')
 
-		self.assertEquals(release3.getEarliestReleaseDate(), '1994-01-28')
+		self.assertEqual(release3.getEarliestReleaseDate(), '1994-01-28')
 
 		#self.assertEquals(release3.getDiscCount(), 4)
 
@@ -84,19 +84,19 @@ class ParseArtistTest(unittest.TestCase):
 		md = MbXmlParser().parse(f)
 		artist = md.getArtist()
 		
-		self.failIf( artist is None )
-		self.assertEquals(artist.getDisambiguation(), 'yes, that one')
-		self.assertEquals(artist.getName(), 'Tori Amos')
-		self.assertEquals(artist.getUniqueName(),
+		self.assertFalse( artist is None )
+		self.assertEqual(artist.getDisambiguation(), 'yes, that one')
+		self.assertEqual(artist.getName(), 'Tori Amos')
+		self.assertEqual(artist.getUniqueName(),
 			'Tori Amos (yes, that one)')
 
 		aliases = artist.getAliases()
-		self.assertEquals(len(aliases), 3)
-		self.assertEquals(aliases[0].getValue(), 'Myra Ellen Amos')
-		self.assertEquals(aliases[0].getScript(), 'Latn')
-		self.assertEquals(aliases[1].getValue(), 'Myra Amos')
-		self.assertEquals(aliases[2].getValue(), 'Torie Amos')
-		self.assertEquals(aliases[2].getType(), NS_MMD_1 + 'Misspelling')
+		self.assertEqual(len(aliases), 3)
+		self.assertEqual(aliases[0].getValue(), 'Myra Ellen Amos')
+		self.assertEqual(aliases[0].getScript(), 'Latn')
+		self.assertEqual(aliases[1].getValue(), 'Myra Amos')
+		self.assertEqual(aliases[2].getValue(), 'Torie Amos')
+		self.assertEqual(aliases[2].getType(), NS_MMD_1 + 'Misspelling')
 
 
 	def testTags(self):
@@ -104,11 +104,11 @@ class ParseArtistTest(unittest.TestCase):
 		md = MbXmlParser().parse(f)
 		artist = md.getArtist()
 		
-		self.failIf( artist is None )
-		self.assertEquals(artist.getTag('classical').count, 100)
-		self.assertEquals(artist.getTag('russian').count, 60)
-		self.assertEquals(artist.getTag('romantic era').count, 40)
-		self.assertEquals(artist.getTag('composer').count, 120)
+		self.assertFalse( artist is None )
+		self.assertEqual(artist.getTag('classical').count, 100)
+		self.assertEqual(artist.getTag('russian').count, 60)
+		self.assertEqual(artist.getTag('romantic era').count, 40)
+		self.assertEqual(artist.getTag('composer').count, 120)
 		
 	
 	def testReleaseGroups(self):
@@ -116,10 +116,10 @@ class ParseArtistTest(unittest.TestCase):
 		md = MbXmlParser().parse(f)
 		artist = md.getArtist()
 
-		self.failIf(artist is None)
+		self.assertFalse(artist is None)
 		releaseGroups = artist.getReleaseGroups()
-		self.failIf(releaseGroups is None)
-		self.assertEquals(len(releaseGroups), 3)
+		self.assertFalse(releaseGroups is None)
+		self.assertEqual(len(releaseGroups), 3)
 
 		expectedEntries = {
 			'ef2b891f-ca73-3e14-b38b-a68699dab8c4': 'Under the Pink',
@@ -127,10 +127,10 @@ class ParseArtistTest(unittest.TestCase):
 			'a69a1574-dfe3-3e2a-b499-d26d5e916041': 'Strange Little Girls'}
 
 		for releaseGroup in releaseGroups:
-			self.assertEquals(releaseGroup.getType(), NS_MMD_1 + 'Album')
+			self.assertEqual(releaseGroup.getType(), NS_MMD_1 + 'Album')
 			releaseGroupId = releaseGroup.id[-36:]
-			self.assert_(releaseGroupId in expectedEntries)
-			self.assertEquals(releaseGroup.getTitle(), expectedEntries[releaseGroupId])
+			self.assertTrue(releaseGroupId in expectedEntries)
+			self.assertEqual(releaseGroup.getTitle(), expectedEntries[releaseGroupId])
 			del expectedEntries[releaseGroupId]
 
 
@@ -138,14 +138,14 @@ class ParseArtistTest(unittest.TestCase):
 		f = os.path.join(VALID_ARTIST_DIR, 'search_result_1.xml')
 		md = MbXmlParser().parse(f)
 
-		self.assertEquals(md.artistResultsOffset, 0)
-		self.assertEquals(md.artistResultsCount, 47)
+		self.assertEqual(md.artistResultsOffset, 0)
+		self.assertEqual(md.artistResultsCount, 47)
 
 		results = md.artistResults
-		self.assertEquals(len(results), 3)
+		self.assertEqual(len(results), 3)
 
-		self.assertEquals(results[0].score, 100)
+		self.assertEqual(results[0].score, 100)
 		artist1 = results[0].artist
-		self.assertEquals(artist1.name, 'Tori Amos')
+		self.assertEqual(artist1.name, 'Tori Amos')
 
 # EOF

@@ -29,8 +29,8 @@ query = mbws.Query(service)
 #
 try:
 	disc = mbdisc.readDisc()
-except mbdisc.DiscError, e:
-	print "Error:", e
+except mbdisc.DiscError as e:
+	print("Error:", e)
 	sys.exit(1)
 
 
@@ -39,28 +39,28 @@ except mbdisc.DiscError, e:
 try:
 	filter = mbws.ReleaseFilter(discId=disc.getId())
 	results = query.getReleases(filter)
-except mbws.WebServiceError, e:
-	print "Error:", e
+except mbws.WebServiceError as e:
+	print("Error:", e)
 	sys.exit(2)
 
 
 # No disc matching this DiscID has been found.
 #
 if len(results) == 0:
-	print "Disc is not yet in the MusicBrainz database."
-	print "Consider adding it via", mbdisc.getSubmissionUrl(disc)
+	print("Disc is not yet in the MusicBrainz database.")
+	print("Consider adding it via", mbdisc.getSubmissionUrl(disc))
 	sys.exit(0)
 
 
 # Display the returned results to the user.
 #
-print 'Matching releases:'
+print('Matching releases:')
 
 for result in results:
 	release = result.release
-	print 'Artist  :', release.artist.name
-	print 'Title   :', release.title
-	print
+	print('Artist  :', release.artist.name)
+	print('Title   :', release.title)
+	print()
 
 
 # Select one of the returned releases. We just pick the first one.
@@ -74,8 +74,8 @@ selectedRelease = results[0].release
 try:
 	inc = mbws.ReleaseIncludes(artist=True, tracks=True, releaseEvents=True)
 	release = query.getReleaseById(selectedRelease.getId(), inc)
-except mbws.WebServiceError, e:
-	print "Error:", e
+except mbws.WebServiceError as e:
+	print("Error:", e)
 	sys.exit(2)
 
 
@@ -83,7 +83,7 @@ except mbws.WebServiceError, e:
 #
 isSingleArtist = release.isSingleArtistRelease()
 
-print "%s - %s" % (release.artist.getUniqueName(), release.title)
+print("%s - %s" % (release.artist.getUniqueName(), release.title))
 
 i = 1
 for t in release.tracks:
@@ -93,7 +93,7 @@ for t in release.tracks:
 		title = t.artist.name + ' - ' +  t.title
 
 	(minutes, seconds) = t.getDurationSplit()
-	print " %2d. %s (%d:%02d)" % (i, title, minutes, seconds)
+	print(" %2d. %s (%d:%02d)" % (i, title, minutes, seconds))
 	i+=1
 
 

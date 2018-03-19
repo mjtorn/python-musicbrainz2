@@ -17,7 +17,7 @@ logger.setLevel(logging.DEBUG)
 	
 
 if len(sys.argv) < 2:
-	print "Usage: findtrack.py 'track name' ['artist name']"
+	print("Usage: findtrack.py 'track name' ['artist name']")
 	sys.exit(1)
 
 if len(sys.argv) > 2:
@@ -30,17 +30,17 @@ q = Query()
 try:
 	f = TrackFilter(title=sys.argv[1], artistName=artistName)
 	results = q.getTracks(f)
-except WebServiceError, e:
-	print 'Error:', e
+except WebServiceError as e:
+	print('Error:', e)
 	sys.exit(1)
 
 
 for result in results:
 	track = result.track
-	print "Score     :", result.score
-	print "Id        :", track.id
-	print "Title     :", track.title
-	print "Artist    :", track.artist.name
-	print
+	print("Score     :", result.score)
+	print("Id        :", track.id)
+	print("Title     :", track.title)
+	print("Artist    :", track.artist.name)
+	print()
 
 # EOF

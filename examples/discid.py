@@ -15,20 +15,20 @@ try:
 	# the 'deviceName' parameter to select a different drive.
 	#
 	disc = readDisc()
-except DiscError, e:
-	print "DiscID calculation failed:", str(e)
+except DiscError as e:
+	print("DiscID calculation failed:", str(e))
 	sys.exit(1)
 
-print 'DiscID      :', disc.id
-print 'First Track :', disc.firstTrackNum
-print 'Last Track  :', disc.lastTrackNum
-print 'Length      :', disc.sectors, 'sectors'
+print('DiscID      :', disc.id)
+print('First Track :', disc.firstTrackNum)
+print('Last Track  :', disc.lastTrackNum)
+print('Length      :', disc.sectors, 'sectors')
 
 i = disc.firstTrackNum
 for (offset, length) in disc.tracks:
-	print "Track %-2d    : %8d %8d" % (i, offset, length)
+	print("Track %-2d    : %8d %8d" % (i, offset, length))
 	i += 1
 
-print 'Submit via  :', getSubmissionUrl(disc)
+print('Submit via  :', getSubmissionUrl(disc))
 
 # EOF

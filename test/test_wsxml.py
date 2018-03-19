@@ -1,7 +1,7 @@
 """Tests for the MbXmlParser class."""
 import unittest
 from musicbrainz2.wsxml import MbXmlParser, ParseError, _makeAbsoluteUri
-import StringIO
+import io
 import os.path
 
 VALID_DATA_DIR = os.path.join('test-data', 'valid')
@@ -24,7 +24,7 @@ class BaseParserTest(unittest.TestCase):
 		for f in self._makeFiles(VALID_ARTIST_DIR, tests):
 			try:
 				MbXmlParser().parse(f)
-			except ParseError, e:
+			except ParseError as e:
 				self.fail(f.name + ' ' + e.msg)
 
 
@@ -42,15 +42,15 @@ class BaseParserTest(unittest.TestCase):
 
 
 	def testMakeAbsoluteUri(self):
-		self.assert_(_makeAbsoluteUri('http://mb.org/artist/', None) is None)
-		self.assertEquals('http://mb.org/artist/some_id',
+		self.assertTrue(_makeAbsoluteUri('http://mb.org/artist/', None) is None)
+		self.assertEqual('http://mb.org/artist/some_id',
 			_makeAbsoluteUri('http://mb.org/artist/', 'some_id'))
-		self.assertEquals('http://mb.org/artist/some_id',
+		self.assertEqual('http://mb.org/artist/some_id',
 			_makeAbsoluteUri('http://mb.org/artist/',
 				'http://mb.org/artist/some_id'))
-		self.assertEquals('http://mb.org/ns/mmd-1.0#name',
+		self.assertEqual('http://mb.org/ns/mmd-1.0#name',
 			_makeAbsoluteUri('http://mb.org/ns/mmd-1.0#', 'name'))
-		self.assertEquals('http://mb.org/ns/mmd-1.0#name',
+		self.assertEqual('http://mb.org/ns/mmd-1.0#name',
 			_makeAbsoluteUri('http://mb.org/ns/mmd-1.0#',
 				'http://mb.org/ns/mmd-1.0#name'))
 

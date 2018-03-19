@@ -17,7 +17,7 @@ logger.setLevel(logging.DEBUG)
 	
 
 if len(sys.argv) < 2:
-	print "Usage: findartist.py 'artist name'"
+	print("Usage: findartist.py 'artist name'")
 	sys.exit(1)
 
 q = Query()
@@ -29,8 +29,8 @@ try:
 	#
 	f = ArtistFilter(name=sys.argv[1], limit=5)
 	artistResults = q.getArtists(f)
-except WebServiceError, e:
-	print 'Error:', e
+except WebServiceError as e:
+	print('Error:', e)
 	sys.exit(1)
 
 
@@ -39,11 +39,11 @@ except WebServiceError, e:
 #
 for result in artistResults:
 	artist = result.artist
-	print "Score     :", result.score
-	print "Id        :", artist.id
-	print "Name      :", artist.name
-	print "Sort Name :", artist.sortName
-	print
+	print("Score     :", result.score)
+	print("Id        :", artist.id)
+	print("Name      :", artist.name)
+	print("Sort Name :", artist.sortName)
+	print()
 
 #
 # Now that you have artist IDs, you can request an artist in more detail, for

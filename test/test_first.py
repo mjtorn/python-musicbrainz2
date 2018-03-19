@@ -2,7 +2,7 @@ import unittest
 
 class First(unittest.TestCase):
 	def testRun(self):
-		self.assert_( True )
+		self.assertTrue( True )
 
 
 def suite():

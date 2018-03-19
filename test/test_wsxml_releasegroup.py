@@ -2,7 +2,7 @@
 import unittest
 from musicbrainz2.wsxml import MbXmlParser, MbXmlWriter, ParseError
 from musicbrainz2.model import ReleaseGroup, NS_MMD_1
-from StringIO import StringIO
+from io import StringIO
 import os.path
 
 VALID_DATA_DIR = os.path.join('test-data', 'valid')
@@ -20,11 +20,11 @@ class ParseReleaseGroupTest(unittest.TestCase):
 		md = MbXmlParser().parse(f)
 		releaseGroup = md.getReleaseGroup()
 		
-		self.failIf(releaseGroup is None)
-		self.assertEquals(releaseGroup.getId(),
+		self.assertFalse(releaseGroup is None)
+		self.assertEqual(releaseGroup.getId(),
 			makeId('c6a62b78-70f7-44f7-b159-064f6b7ba03a'))
-		self.assertEquals(releaseGroup.getTitle(), 'The Cure')
-		self.assertEquals(releaseGroup.getType(), NS_MMD_1 + 'Album')
+		self.assertEqual(releaseGroup.getTitle(), 'The Cure')
+		self.assertEqual(releaseGroup.getType(), NS_MMD_1 + 'Album')
 
 
 	def testReleaseGroupFull(self):
@@ -32,11 +32,11 @@ class ParseReleaseGroupTest(unittest.TestCase):
 		md = MbXmlParser().parse(f)
 		releaseGroup = md.getReleaseGroup()
 
-		self.failIf(releaseGroup is None)
+		self.assertFalse(releaseGroup is None)
 
 		releases = releaseGroup.getReleases()
-		self.failIf(releases is None)
-		self.assertEquals(len(releases), 4)
+		self.assertFalse(releases is None)
+		self.assertEqual(len(releases), 4)
 
 		# Check releases, which are in no particular order.
 		expectedIds = [
@@ -46,11 +46,11 @@ class ParseReleaseGroupTest(unittest.TestCase):
 			'61a4ec51-fa34-4757-85d7-83231776ed14']
 		actualIds = [release.id[-36:] for release in releases]
 		for expectedId in expectedIds:
-			self.assert_(expectedId in actualIds)
+			self.assertTrue(expectedId in actualIds)
 
 		# Check artist
-		self.assertEquals(releaseGroup.getArtist().getName(), 'The Cure')
-		self.assertEquals(releaseGroup.getArtist().id[-36:],
+		self.assertEqual(releaseGroup.getArtist().getName(), 'The Cure')
+		self.assertEqual(releaseGroup.getArtist().id[-36:],
 			'69ee3720-a7cb-4402-b48d-a02c366f2bcf')
 
 
@@ -59,9 +59,9 @@ class ParseReleaseGroupTest(unittest.TestCase):
 		md = MbXmlParser().parse(f)
 		releaseGroups = md.getReleaseGroupResults()
 
-		self.failIf(releaseGroups is None)
-		self.assertEquals(md.getReleaseGroupResultsOffset(), 0)
-		self.assertEquals(md.getReleaseGroupResultsCount(), 3)
+		self.assertFalse(releaseGroups is None)
+		self.assertEqual(md.getReleaseGroupResultsOffset(), 0)
+		self.assertEqual(md.getReleaseGroupResultsCount(), 3)
 
 		expectedEntries = {
 			'963eac15-e3da-3a92-aa5c-2ec23bfb6ec2': ['Signal Morning', 100],
@@ -69,14 +69,14 @@ class ParseReleaseGroupTest(unittest.TestCase):
 			'ea7d8352-7751-30be-8490-bb6df737f47c': ['Inside Views', 90]}
 		for result in releaseGroups:
 			releaseGroup = result.releaseGroup
-			self.failIf(releaseGroup is None)
+			self.assertFalse(releaseGroup is None)
 
 			releaseGroupId = releaseGroup.id[-36:]
-			self.assert_(releaseGroupId in expectedEntries)
+			self.assertTrue(releaseGroupId in expectedEntries)
 
 			expectedTitle, expectedScore = expectedEntries[releaseGroupId]
-			self.assertEquals(releaseGroup.title, expectedTitle)
-			self.assertEquals(result.score, expectedScore)
+			self.assertEqual(releaseGroup.title, expectedTitle)
+			self.assertEqual(result.score, expectedScore)
 
 			del expectedEntries[releaseGroupId]
 
@@ -97,12 +97,12 @@ class ParseReleaseGroupTest(unittest.TestCase):
 		# Check
 		releaseGroup = md2.getReleaseGroup()
 
-		self.failIf(releaseGroup is None)
-		self.assertEquals(len(releaseGroup.getReleases()), 4)
-		self.assertEquals(releaseGroup.getId(),
+		self.assertFalse(releaseGroup is None)
+		self.assertEqual(len(releaseGroup.getReleases()), 4)
+		self.assertEqual(releaseGroup.getId(),
 			makeId('c6a62b78-70f7-44f7-b159-064f6b7ba03a'))
-		self.assertEquals(releaseGroup.getTitle(), 'The Cure')
-		self.assertEquals(releaseGroup.getType(), NS_MMD_1 + 'Album')
+		self.assertEqual(releaseGroup.getTitle(), 'The Cure')
+		self.assertEqual(releaseGroup.getType(), NS_MMD_1 + 'Album')
 
 	def testEmptyType(self):
 		f = os.path.join(RELEASEGROUP_DIR, 'The_Cure_1.xml')
@@ -121,5 +121,5 @@ class ParseReleaseGroupTest(unittest.TestCase):
 		# Check
 		releaseGroup2 = md2.getReleaseGroup()
 
-		self.failIf(releaseGroup2 is None)
-		self.assertEquals(releaseGroup2.getType(), None)
+		self.assertFalse(releaseGroup2 is None)
+		self.assertEqual(releaseGroup2.getType(), None)

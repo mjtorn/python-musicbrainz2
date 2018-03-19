@@ -2,7 +2,7 @@
 import unittest
 from musicbrainz2.wsxml import MbXmlParser, ParseError
 from musicbrainz2.model import NS_MMD_1, NS_EXT_1
-import StringIO
+import io
 import os.path
 
 VALID_DATA_DIR = os.path.join('test-data', 'valid')
@@ -22,17 +22,17 @@ class ParseUserTest(unittest.TestCase):
 		md = MbXmlParser().parse(f)
 		userList = md.getUserList()
 
-		self.assertEquals(len(userList), 1)
+		self.assertEqual(len(userList), 1)
 
 		user = userList[0]
-		self.failIf( user is None )
-		self.assertEquals(user.getName(), 'matt')
-		self.assertEquals(user.getShowNag(), False)
+		self.assertFalse( user is None )
+		self.assertEqual(user.getName(), 'matt')
+		self.assertEqual(user.getShowNag(), False)
 
 		types = user.getTypes()
-		self.assertEquals(len(types), 2)
-		self.assert_( NS_EXT_1 + 'AutoEditor' in types )
-		self.assert_( NS_EXT_1 + 'RelationshipEditor' in types )
+		self.assertEqual(len(types), 2)
+		self.assertTrue( NS_EXT_1 + 'AutoEditor' in types )
+		self.assertTrue( NS_EXT_1 + 'RelationshipEditor' in types )
 
 
 # EOF

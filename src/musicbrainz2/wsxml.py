@@ -11,7 +11,7 @@ __revision__ = '$Id$'
 
 import re
 import logging
-import urlparse
+import urllib.parse
 import xml.dom.minidom
 import xml.sax.saxutils as saxutils 
 from xml.parsers.expat import ExpatError
@@ -700,10 +700,10 @@ class MbXmlParser(object):
 			doc.unlink()
 
 			return md
-		except ExpatError, e:
+		except ExpatError as e:
 			self._log.debug('ExpatError: ' + str(e))
 			raise ParseError(msg=str(e), reason=e)
-		except DOMException, e:
+		except DOMException as e:
 			self._log.debug('DOMException: ' + str(e))
 			raise ParseError(msg=str(e), reason=e)
 			
@@ -1142,7 +1142,7 @@ class _XmlWriter(object):
 
 	def elem(self, name, value, attrs={ }):
 		# delete attributes with an unset value
-		for (k, v) in attrs.items():
+		for (k, v) in list(attrs.items()):
 			if v is None or v == '':
 				del attrs[k]
 
@@ -1164,7 +1164,7 @@ class _XmlWriter(object):
 	def _makeTag(self, name, attrs={ }, close=False):
 		ret = '<' + name
 
-		for (k, v) in attrs.iteritems():
+		for (k, v) in list(attrs.items()):
 			if v is not None:
 				v = saxutils.quoteattr(str(v))
 				ret += ' %s=%s' % (k, v)
@@ -1607,10 +1607,10 @@ def _getUriListAttr(element, attrName, prefix=NS_MMD_1):
 		return [ ]
 
 	f = lambda x: x != ''
-	uris = filter(f, re.split('\s+', element.getAttribute(attrName)))
+	uris = list(filter(f, re.split('\s+', element.getAttribute(attrName))))
 
 	m = lambda x: _makeAbsoluteUri(prefix, x)
-	uris = map(m, uris)
+	uris = list(map(m, uris))
 
 	return uris
 
@@ -1652,7 +1652,7 @@ def _makeAbsoluteUri(prefix, uriStr):
 	if uriStr is None:
 		return None
 
-	(scheme, netloc, path, params, query, frag) = urlparse.urlparse(uriStr)
+	(scheme, netloc, path, params, query, frag) = urllib.parse.urlparse(uriStr)
 
 	if scheme == '' and netloc == '':
 		return prefix + uriStr

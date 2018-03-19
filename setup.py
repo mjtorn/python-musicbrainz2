@@ -42,7 +42,7 @@ class GenerateDocsCommand(Command):
 		from distutils.spawn import find_executable, spawn
 		bin = find_executable('epydoc')
 		if not bin:
-			print>>sys.stderr, 'error: epydoc not found'
+			print('error: epydoc not found', file=sys.stderr)
 			sys.exit(1)
 		noPrivate = '--no-private'
 		verbose = '-v'

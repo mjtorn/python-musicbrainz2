@@ -20,7 +20,7 @@ logger.setLevel(logging.DEBUG)
 	
 
 if len(sys.argv) < 2:
-	print "Usage: findreleasegroup.py 'release group name/Lucene query'"
+	print("Usage: findreleasegroup.py 'release group name/Lucene query'")
 	sys.exit(1)
 
 q = Query()
@@ -32,8 +32,8 @@ try:
 	#
 	f = ReleaseGroupFilter(query=sys.argv[1], limit=5)
 	results = q.getReleaseGroups(f)
-except WebServiceError, e:
-	print 'Error:', e
+except WebServiceError as e:
+	print('Error:', e)
 	sys.exit(1)
 
 
@@ -42,12 +42,12 @@ except WebServiceError, e:
 #
 for result in results:
 	releaseGroup = result.releaseGroup
-	print "Score\t\t :", result.score
-	print "Id        :", releaseGroup.id
-	print "Name      :", releaseGroup.title
-	print "Artist    :", releaseGroup.artist.name
-	print "Type      :", releaseGroup.type
-	print
+	print("Score\t\t :", result.score)
+	print("Id        :", releaseGroup.id)
+	print("Name      :", releaseGroup.title)
+	print("Artist    :", releaseGroup.artist.name)
+	print("Type      :", releaseGroup.type)
+	print()
 
 #
 # Now that you have release group IDs, you can request a release group in more detail, for

@@ -13,8 +13,8 @@ L{readDisc()} function.
 __revision__ = '$Id$'
 
 import sys
-import urllib
-import urlparse
+import urllib.request, urllib.parse, urllib.error
+import urllib.parse
 import ctypes
 import ctypes.util
 from musicbrainz2.model import Disc
@@ -46,7 +46,7 @@ def _openLibrary():
 			libDiscId = ctypes.cdll.find('discid')
 			_setPrototypes(libDiscId)
 			return libDiscId
-	except OSError, e:
+	except OSError as e:
 		raise NotImplementedError('Error opening library: ' + str(e))
 
 	# Try to find the library using ctypes.util
@@ -56,7 +56,7 @@ def _openLibrary():
 			libDiscId = ctypes.cdll.LoadLibrary(libName)
 			_setPrototypes(libDiscId)
 			return libDiscId
-		except OSError, e:
+		except OSError as e:
 			raise NotImplementedError('Error opening library: ' +
 				str(e))
 
@@ -78,7 +78,7 @@ def _openLibrary():
 		libDiscId = ctypes.cdll.LoadLibrary(libName)
 		_setPrototypes(libDiscId)
 		return libDiscId
-	except OSError, e:
+	except OSError as e:
 		raise NotImplementedError('Error opening library: ' + str(e))
 
 	assert False # not reached
@@ -144,9 +144,9 @@ def getSubmissionUrl(disc, host='mm.musicbrainz.org', port=80):
 
 	tracks = last - first + 1
 	toc = "%d %d %d " % (first, last, sectors)
-	toc = toc + ' '.join( map(lambda x: str(x[0]), disc.getTracks()) )
+	toc = toc + ' '.join( [str(x[0]) for x in disc.getTracks()] )
 
-	query = urllib.urlencode({ 'id': discid, 'toc': toc, 'tracks': tracks })
+	query = urllib.parse.urlencode({ 'id': discid, 'toc': toc, 'tracks': tracks })
 
 	if port == 80:
 		netloc = host
@@ -155,7 +155,7 @@ def getSubmissionUrl(disc, host='mm.musicbrainz.org', port=80):
 
 	url = ('http', netloc, '/bare/cdlookup.html', '', query, '')
 		
-	return urlparse.urlunparse(url)
+	return urllib.parse.urlunparse(url)
 
 
 def readDisc(deviceName=None):

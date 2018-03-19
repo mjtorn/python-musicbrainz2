@@ -131,7 +131,7 @@ class Entity(object):
 		if targetType is not None:
 			allRels = self._relations.setdefault(targetType, [ ])
 		else:
-			for (k, relList) in self._relations.items():
+			for (k, relList) in list(self._relations.items()):
 				for rel in relList:
 					allRels.append(rel)
 
@@ -222,7 +222,7 @@ class Entity(object):
 
 		@see: L{getRelations}
 		"""
-		return self._relations.keys()
+		return list(self._relations.keys())
 
 	def getTag(self, value):
 		"""Return the tag with the given value (aka the tag's name).
@@ -236,7 +236,7 @@ class Entity(object):
 
 		@return: a list of L{Tag} objects
 		"""
-		return self._tags.values()
+		return list(self._tags.values())
 
 	tags = property(getTags, doc='The tags for this entity.')
 
@@ -249,7 +249,7 @@ class Entity(object):
 
 		@see: L{getTags}
 		"""
-		if self._tags.has_key(tag.value):
+		if tag.value in self._tags:
 			existing = self._tags[tag.value]
 			existing.count += tag.count
 		else:
@@ -656,7 +656,7 @@ class Rating(object):
 		  value = 0
 		try:
 		  value = float(value)
-		except ValueError, e:
+		except ValueError as e:
 		  raise ValueError("Value for rating needs to be an" \
 		      "float.")
 		if value < 0.0 or value > 5.0:
@@ -686,7 +686,7 @@ class Rating(object):
 		return str(self._value)
 
 	def __unicode__(self):
-		return unicode(self._value)
+		return str(self._value)
 
 
 class Tag(object):
@@ -741,7 +741,7 @@ class Tag(object):
 		return str(self._value)
 
 	def __unicode__(self):
-		return unicode(self._value)
+		return str(self._value)
 
 
 class Label(Entity):

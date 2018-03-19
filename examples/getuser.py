@@ -17,7 +17,7 @@ logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
 
-user = raw_input('User name: ')
+user = eval(input('User name: '))
 passwd = getpass.getpass('Password: ')
 
 try:
@@ -27,13 +27,13 @@ try:
 
 	user = q.getUserByName(user)
 
-except WebServiceError, e:
-	print 'Error:', e
+except WebServiceError as e:
+	print('Error:', e)
 	sys.exit(1)
 
 
-print 'Name            :', user.name
-print 'ShowNag         :', user.showNag
-print 'Types           :', ' '.join(user.types)
+print('Name            :', user.name)
+print('ShowNag         :', user.showNag)
+print('Types           :', ' '.join(user.types))
 
 # EOF

@@ -23,11 +23,11 @@ logger.setLevel(logging.DEBUG)
 
 
 # Get the username and password
-username = raw_input('Username: ')
+username = eval(input('Username: '))
 password = getpass.getpass('Password: ')
 
 # Ask for a MBID to tag.
-mbid = raw_input('Enter an absolute MB ID: ')
+mbid = eval(input('Enter an absolute MB ID: '))
 
 # Set the authentication for the webservice (only needed for tag submission).
 service = mbws.WebService(host=MB_HOST, username=username, password=password)
@@ -38,17 +38,17 @@ query = mbws.Query(service)
 
 # Read and print the current tags for the given MBID
 tags = query.getUserTags(mbid)
-print
-print 'Current tags: '
-print ', '.join([tag.value for tag in tags])
+print()
+print('Current tags: ')
+print(', '.join([tag.value for tag in tags]))
 
 
 # Ask the user for new tags and submit them
-tag_str = raw_input('Enter new tags: ')
+tag_str = eval(input('Enter new tags: '))
 new_tags = [Tag(tag.strip()) for tag in tag_str.split(',')]
 
 query.submitUserTags(mbid, new_tags)
 
-print 'Tags submitted.'
+print('Tags submitted.')
 
 # EOF

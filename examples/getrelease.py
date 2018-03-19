@@ -22,7 +22,7 @@ logger.setLevel(logging.DEBUG)
 
 
 if len(sys.argv) < 2:
-	print "Usage: getrelease.py release-id"
+	print("Usage: getrelease.py release-id")
 	sys.exit(1)
 
 q = ws.Query()
@@ -35,71 +35,71 @@ try:
 	inc = ws.ReleaseIncludes(artist=True, releaseEvents=True, labels=True,
 			discs=True, tracks=True, releaseGroup=True)
 	release = q.getReleaseById(sys.argv[1], inc)
-except ws.WebServiceError, e:
-	print 'Error:', e
+except ws.WebServiceError as e:
+	print('Error:', e)
 	sys.exit(1)
 
 
-print "Id          :", release.id
-print "Title       :", release.title
-print "ASIN        :", release.asin
-print "Lang/Script :", release.textLanguage, '/', release.textScript
+print("Id          :", release.id)
+print("Title       :", release.title)
+print("ASIN        :", release.asin)
+print("Lang/Script :", release.textLanguage, '/', release.textScript)
 
 
 # Print the main artist of this release.
 #
 if release.artist:
-	print
-	print "Artist:"
-	print "  Id        :", release.artist.id
-	print "  Name      :", release.artist.name
-	print "  SortName  :", release.artist.sortName
+	print()
+	print("Artist:")
+	print("  Id        :", release.artist.id)
+	print("  Name      :", release.artist.name)
+	print("  SortName  :", release.artist.sortName)
 
 if release.releaseGroup:
-	print
-	print "Release Group:"
-	print "  Id        :", release.releaseGroup.id
-	print "  Title     :", release.releaseGroup.title
-	print "  Type      :", release.releaseGroup.type
+	print()
+	print("Release Group:")
+	print("  Id        :", release.releaseGroup.id)
+	print("  Title     :", release.releaseGroup.title)
+	print("  Type      :", release.releaseGroup.type)
 
 # Release events are the dates and times when a release took place.
 # We also have the catalog numbers and barcodes for some releases.
 #
 if len(release.releaseEvents) > 0:
-	print
-	print "Released (earliest: %s):" % release.getEarliestReleaseDate()
+	print()
+	print("Released (earliest: %s):" % release.getEarliestReleaseDate())
 
 for event in release.releaseEvents:
-	print "  %s %s" % (u.getCountryName(event.country), event.date),
+	print("  %s %s" % (u.getCountryName(event.country), event.date), end=' ')
 
 	if event.catalogNumber:
-		print '#' + event.catalogNumber,
+		print('#' + event.catalogNumber, end=' ')
 
 	if event.barcode:
-		print 'EAN=' + event.barcode,
+		print('EAN=' + event.barcode, end=' ')
 
 	if event.label:
-		print '(' + event.label.name + ')',
+		print('(' + event.label.name + ')', end=' ')
 
-	print
+	print()
 
 
 if len(release.discs) > 0:
-	print
-	print "Discs:"
+	print()
+	print("Discs:")
 
 for disc in release.discs:
-	print "  DiscId: %s (%d sectors)" % (disc.id, disc.sectors)
+	print("  DiscId: %s (%d sectors)" % (disc.id, disc.sectors))
 
 
 if len(release.tracks) > 0:
-	print
-	print "Tracks:"
+	print()
+	print("Tracks:")
 
 for track in release.tracks:
-	print "  Id        :", track.id
-	print "  Title     :", track.title
-	print "  Duration  :", track.duration
-	print
+	print("  Id        :", track.id)
+	print("  Title     :", track.title)
+	print("  Duration  :", track.duration)
+	print()
 
 # EOF

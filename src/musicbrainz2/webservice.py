@@ -14,9 +14,9 @@ model <musicbrainz2.model>}.
 """
 __revision__ = '$Id$'
 
-import urllib
-import urllib2
-import urlparse
+import urllib.request, urllib.parse, urllib.error
+import urllib.request, urllib.error, urllib.parse
+import urllib.parse
 import logging
 import musicbrainz2
 from musicbrainz2.model import Release
@@ -161,21 +161,21 @@ class ResponseError(WebServiceError):
 	"""
 	pass
 
-class DigestAuthHandler(urllib2.HTTPDigestAuthHandler):
+class DigestAuthHandler(urllib.request.HTTPDigestAuthHandler):
 	"""Patched DigestAuthHandler to correctly handle Digest Auth according to RFC 2617.
-	
+
 	This will allow multiple qop values in the WWW-Authenticate header (e.g. "auth,auth-int").
 	The only supported qop value is still auth, though.
 	See http://bugs.python.org/issue9714
-	
+
 	@author: Kuno Woudt
 	"""
 	def get_authorization(self, req, chal):
 		qop = chal.get('qop')
 		if qop and ',' in qop and 'auth' in qop.split(','):
 			chal['qop'] = 'auth'
-		
-		return urllib2.HTTPDigestAuthHandler.get_authorization(self, req, chal)
+
+		return urllib.request.HTTPDigestAuthHandler.get_authorization(self, req, chal)
 
 class WebService(IWebService):
 	"""An interface to the MusicBrainz XML web service via HTTP.
@@ -212,7 +212,7 @@ class WebService(IWebService):
 		self._log = logging.getLogger(str(self.__class__))
 
 		if opener is None:
-			self._opener = urllib2.build_opener()
+			self._opener = urllib.request.build_opener()
 		else:
 			self._opener = opener
 
@@ -243,15 +243,15 @@ class WebService(IWebService):
 			netloc += ':' + str(self._port)
 		path = '/'.join((self._pathPrefix, version, entity, id_))
 
-		query = urllib.urlencode(params)
+		query = urllib.parse.urlencode(params)
 
-		url = urlparse.urlunparse(('http', netloc, path, '', query,''))
+		url = urllib.parse.urlunparse(('http', netloc, path, '', query,''))
 
 		return url
 
 
 	def _openUrl(self, url, data=None):
-		req = urllib2.Request(url)
+		req = urllib.request.Request(url)
 		req.add_header('User-Agent', self._userAgent)
 		return self._opener.open(req, data)
 
@@ -277,7 +277,7 @@ class WebService(IWebService):
 
 		try:
 			return self._openUrl(url)
-		except urllib2.HTTPError, e:
+		except urllib.error.HTTPError as e:
 			self._log.debug("GET failed: " + str(e))
 			if e.code == 400:   # in python 2.4: httplib.BAD_REQUEST
 				raise RequestError(str(e), e)
@@ -287,7 +287,7 @@ class WebService(IWebService):
 				raise ResourceNotFoundError(str(e), e)
 			else:
 				raise WebServiceError(str(e), e)
-		except urllib2.URLError, e:
+		except urllib.error.URLError as e:
 			self._log.debug("GET failed: " + str(e))
 			raise ConnectionError(str(e), e)
 
@@ -312,7 +312,7 @@ class WebService(IWebService):
 
 		try:
 			return self._openUrl(url, data)
-		except urllib2.HTTPError, e:
+		except urllib.error.HTTPError as e:
 			self._log.debug("POST failed: " + str(e))
 			if e.code == 400:   # in python 2.4: httplib.BAD_REQUEST
 				raise RequestError(str(e), e)
@@ -322,7 +322,7 @@ class WebService(IWebService):
 				raise ResourceNotFoundError(str(e), e)
 			else:
 				raise WebServiceError(str(e), e)
-		except urllib2.URLError, e:
+		except urllib.error.URLError as e:
 			self._log.debug("POST failed: " + str(e))
 			raise ConnectionError(str(e), e)
 
@@ -331,7 +331,7 @@ class WebService(IWebService):
 	# ignoring the URI. As a consequence, only *ONE* (username, password)
 	# tuple per realm can be used for all URIs.
 	#
-	class _RedirectPasswordMgr(urllib2.HTTPPasswordMgr):
+	class _RedirectPasswordMgr(urllib.request.HTTPPasswordMgr):
 		def __init__(self):
 			self._realms = { }
 
@@ -653,8 +653,8 @@ class ArtistIncludes(IIncludes):
 			trackRelations=False, urlRelations=False, tags=False,
 			ratings=False, releaseGroups=False):
 
-		assert not isinstance(releases, basestring)
-		assert not isinstance(vaReleases, basestring)
+		assert not isinstance(releases, str)
+		assert not isinstance(vaReleases, str)
 		assert len(releases) == 0 or len(vaReleases) == 0
 
 		self._includes = {
@@ -918,7 +918,7 @@ class Query(object):
 	...     pass # implement your error handling here
 	... except ws.WebServiceError, e:
 	...     pass # catches all other web service errors
-	... 
+	...
 	>>>
 	"""
 
@@ -1000,10 +1000,10 @@ class Query(object):
 
 	def getLabelById(self, id_, include=None):
 		"""Returns a L{model.Label}
-		
+
 		If no label with that ID can be found, or there is a server problem,
 		an exception is raised.
-		
+
 		@param id_: a string containing the label's ID.
 
 		@raise ConnectionError: couldn't connect to server
@@ -1018,7 +1018,7 @@ class Query(object):
 			return label
 		else:
 			raise ResponseError("server didn't return a label")
-	
+
 	def getLabels(self, filter):
 		result = self._getFromWebService('label', '', filter=filter)
 		return result.getLabelResults()
@@ -1062,7 +1062,7 @@ class Query(object):
 		"""
 		result = self._getFromWebService('release', '', filter=filter)
 		return result.getReleaseResults()
-	
+
 	def getReleaseGroupById(self, id_, include=None):
 		"""Returns a release group.
 
@@ -1090,11 +1090,11 @@ class Query(object):
 
 	def getReleaseGroups(self, filter):
 		"""Returns release groups matching the given criteria.
-		
+
 		@param filter: a L{ReleaseGroupFilter} object
-		
+
 		@return: a list of L{musicbrainz2.wsxml.ReleaseGroupResult} objects
-		
+
 		@raise ConnectionError: couldn't connect to server
 		@raise RequestError: invalid ID or include tags
 		@raise ResponseError: server returned invalid data
@@ -1187,7 +1187,7 @@ class Query(object):
 		try:
 			parser = MbXmlParser()
 			return parser.parse(stream)
-		except ParseError, e:
+		except ParseError as e:
 			raise ResponseError(str(e), e)
 
 
@@ -1213,14 +1213,14 @@ class Query(object):
 		params = [ ]
 		params.append( ('client', self._clientId.encode('utf-8')) )
 
-		for (trackId, puid) in tracks2puids.iteritems():
+		for (trackId, puid) in list(tracks2puids.items()):
 			trackId = mbutils.extractUuid(trackId, 'track')
 			params.append( ('puid', trackId + ' ' + puid) )
 
-		encodedStr = urllib.urlencode(params, True)
+		encodedStr = urllib.parse.urlencode(params, True)
 
 		self._ws.post('track', '', encodedStr)
-	
+
 	def submitISRCs(self, tracks2isrcs):
 		"""Submit track to ISRC mappings.
 
@@ -1241,11 +1241,11 @@ class Query(object):
 		"""
 		params = [ ]
 
-		for (trackId, isrc) in tracks2isrcs.iteritems():
+		for (trackId, isrc) in list(tracks2isrcs.items()):
 			trackId = mbutils.extractUuid(trackId, 'track')
 			params.append( ('isrc', trackId + ' ' + isrc) )
 
-		encodedStr = urllib.urlencode(params, True)
+		encodedStr = urllib.parse.urlencode(params, True)
 
 		self._ws.post('track', '', encodedStr)
 
@@ -1269,7 +1269,7 @@ class Query(object):
 				rels.append(mbutils.extractUuid(release.id))
 			else:
 				rels.append(mbutils.extractUuid(release))
-		encodedStr = urllib.urlencode({'add': ",".join(rels)}, True)
+		encodedStr = urllib.parse.urlencode({'add': ",".join(rels)}, True)
 		self._ws.post('collection', '', encodedStr)
 
 	def removeFromUserCollection(self, releases):
@@ -1292,12 +1292,12 @@ class Query(object):
 				rels.append(mbutils.extractUuid(release.id))
 			else:
 				rels.append(mbutils.extractUuid(release))
-		encodedStr = urllib.urlencode({'remove': ",".join(rels)}, True)
+		encodedStr = urllib.parse.urlencode({'remove': ",".join(rels)}, True)
 		self._ws.post('collection', '', encodedStr)
 
 	def getUserCollection(self, offset=0, maxitems=100):
 		"""Get the releases that are in a user's collection
-		
+
 		A maximum of 100 items will be returned for any one call
 		to this method. To fetch more than 100 items, use the offset
 		parameter.
@@ -1311,14 +1311,14 @@ class Query(object):
 		@raise AuthenticationError: invalid user name and/or password
 		"""
 		params = { 'offset': offset, 'maxitems': maxitems }
-		
+
 		stream = self._ws.get('collection', '', filter=params)
 		try:
 			parser = MbXmlParser()
 			result = parser.parse(stream)
-		except ParseError, e:
+		except ParseError as e:
 			raise ResponseError(str(e), e)
-		
+
 		return result.getReleaseResults()
 
 	def submitUserTags(self, entityUri, tags):
@@ -1327,7 +1327,7 @@ class Query(object):
 		Note that all previously existing tags from the authenticated
 		user are replaced with the ones given to this method. Other
 		users' tags are not affected.
-		
+
 		@param entityUri: a string containing an absolute MB ID
 		@param tags: A list of either L{Tag <musicbrainz2.model.Tag>} objects
 		             or strings
@@ -1343,10 +1343,10 @@ class Query(object):
 			('type', 'xml'),
 			('entity', entity),
 			('id', uuid),
-			('tags', ','.join([unicode(tag).encode('utf-8') for tag in tags]))
+			('tags', ','.join([str(tag).encode('utf-8') for tag in tags]))
 		)
 
-		encodedStr = urllib.urlencode(params)
+		encodedStr = urllib.parse.urlencode(params)
 
 		self._ws.post('tag', '', encodedStr)
 
@@ -1356,17 +1356,17 @@ class Query(object):
 
 		The given parameter has to be a fully qualified MusicBrainz ID, as
 		returned by other library functions.
-		
+
 		Note that this method only works if a valid user name and
 		password have been set. Only the tags the authenticated user
 		applied to the entity will be returned. If username and/or
 		password are incorrect, an AuthenticationError is raised.
-		
+
 		This method will return a list of L{Tag <musicbrainz2.model.Tag>}
 		objects.
-		
+
 		@param entityUri: a string containing an absolute MB ID
-		
+
 		@raise ValueError: invalid entityUri
   		@raise ConnectionError: couldn't connect to server
 		@raise RequestError: invalid ID or entity
@@ -1375,14 +1375,14 @@ class Query(object):
 		entity = mbutils.extractEntityType(entityUri)
 		uuid = mbutils.extractUuid(entityUri, entity)
 		params = { 'entity': entity, 'id': uuid }
-		
+
 		stream = self._ws.get('tag', '', filter=params)
 		try:
 			parser = MbXmlParser()
 			result = parser.parse(stream)
-		except ParseError, e:
+		except ParseError as e:
 			raise ResponseError(str(e), e)
-		
+
 		return result.getTagList()
 
 	def submitUserRating(self, entityUri, rating):
@@ -1391,7 +1391,7 @@ class Query(object):
 		Note that all previously existing rating from the authenticated
 		user are replaced with the one given to this method. Other
 		users' ratings are not affected.
-		
+
 		@param entityUri: a string containing an absolute MB ID
 		@param rating: A L{Rating <musicbrainz2.model.Rating>} object
 		             or integer
@@ -1407,10 +1407,10 @@ class Query(object):
 			('type', 'xml'),
 			('entity', entity),
 			('id', uuid),
-			('rating', unicode(rating).encode('utf-8'))
+			('rating', str(rating).encode('utf-8'))
 		)
 
-		encodedStr = urllib.urlencode(params)
+		encodedStr = urllib.parse.urlencode(params)
 
 		self._ws.post('rating', '', encodedStr)
 
@@ -1420,17 +1420,17 @@ class Query(object):
 
 		The given parameter has to be a fully qualified MusicBrainz
 		ID, as returned by other library functions.
-		
+
 		Note that this method only works if a valid user name and
 		password have been set. Only the rating the authenticated user
 		applied to the entity will be returned. If username and/or
 		password are incorrect, an AuthenticationError is raised.
-		
+
 		This method will return a L{Rating <musicbrainz2.model.Rating>}
 		object.
-		
+
 		@param entityUri: a string containing an absolute MB ID
-		
+
 		@raise ValueError: invalid entityUri
   		@raise ConnectionError: couldn't connect to server
 		@raise RequestError: invalid ID or entity
@@ -1439,14 +1439,14 @@ class Query(object):
 		entity = mbutils.extractEntityType(entityUri)
 		uuid = mbutils.extractUuid(entityUri, entity)
 		params = { 'entity': entity, 'id': uuid }
-		
+
 		stream = self._ws.get('rating', '', filter=params)
 		try:
 			parser = MbXmlParser()
 			result = parser.parse(stream)
-		except ParseError, e:
+		except ParseError as e:
 			raise ResponseError(str(e), e)
-		
+
 		return result.getRating()
 
 	def submitCDStub(self, cdstub):
@@ -1459,7 +1459,7 @@ class Query(object):
 		This method will only work if no user name and password are set.
 
 		@param cdstub: a L{CDStub} object to submit
-		
+
 		@raise RequestError: Missmatching TOC/Track information or the
 		       the CD Stub already exists or the Disc ID already exists
 		"""
@@ -1484,22 +1484,22 @@ class Query(object):
 			trackind += 1
 
 		toc = "%d %d %d " % (disc.firstTrackNum, disc.lastTrackNum, disc.sectors)
-	        toc = toc + ' '.join( map(lambda x: str(x[0]), disc.getTracks()) )
+		toc = toc + ' '.join( [str(x[0]) for x in disc.getTracks()] )
 
 		params.append( ('toc', toc) )
 
-		encodedStr = urllib.urlencode(params)
+		encodedStr = urllib.parse.urlencode(params)
 		self._ws.post('release', '', encodedStr)
 
 def _createIncludes(tagMap):
-	selected = filter(lambda x: x[1] == True, tagMap.items())
-	return map(lambda x: x[0], selected)
+	selected = [x for x in list(tagMap.items()) if x[1] == True]
+	return [x[0] for x in selected]
 
 def _createParameters(params):
 	"""Remove (x, None) tuples and encode (x, str/unicode) to utf-8."""
 	ret = [ ]
 	for p in params:
-		if isinstance(p[1], (str, unicode)):
+		if isinstance(p[1], str):
 			ret.append( (p[0], p[1].encode('utf-8')) )
 		elif p[1] is not None:
 			ret.append(p)
